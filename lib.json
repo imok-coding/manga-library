@@ -1,0 +1,778 @@
+[
+    {
+        "ISBN": "979-8-8554-1381-6",
+        "Title": "Alya Sometimes Hides Her Feelings In Russian, Vol., Vol. 2",
+        "Authors": "Saho Tenamachi",
+        "Publisher": "Yen Press",
+        "Date": "Unknown",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-64609-365-6",
+        "Title": "My Dress-Up Darling, Vol. 13",
+        "Authors": "Shinichi Fukuda",
+        "Publisher": "Square Enix",
+        "Date": "2025",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "979-8-88877-096-2",
+        "Title": "Gachiakuta, Vol. 4",
+        "Authors": "Kei Urana, Hideyoshi Andou",
+        "Publisher": "Kodansha America, Incorporated",
+        "Date": "2024",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-3234-0",
+        "Title": "Kaiju No. 8, Vol. 4",
+        "Authors": "松本直也",
+        "Publisher": "SHONEN JUMP",
+        "Date": "10/11/2022",
+        "Cover": "https://covers.openlibrary.org/b/id/15132972-L.jpg"
+    },
+    {
+        "ISBN": "978-1-64609-432-5",
+        "Title": "My Dress-Up Darling, Vol. 14",
+        "Authors": "Shinichi Fukuda",
+        "Publisher": "Square Enix",
+        "Date": "2025",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "979-8-4009-0370-0",
+        "Title": "Solo Leveling, Vol., Vol. 11",
+        "Authors": "Abigail Blackman",
+        "Publisher": "",
+        "Date": "Unknown",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-1999-0",
+        "Title": "One Piece, Vol., Vol. 96",
+        "Authors": "尾田栄一郎",
+        "Publisher": "Viz Media, VIZ Media LLC",
+        "Date": "2021",
+        "Cover": "https://covers.openlibrary.org/b/id/13503197-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9753-3724-7",
+        "Title": "Solo Leveling, Vol., Vol. 4",
+        "Authors": "추공, Dubu",
+        "Publisher": "Yen Press LLC",
+        "Date": "2022",
+        "Cover": "https://covers.openlibrary.org/b/id/12749798-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4327-8",
+        "Title": "One Piece Vol., Vol. 105",
+        "Authors": "尾田栄一郎",
+        "Publisher": "VIZ Media",
+        "Date": "03/12/2024",
+        "Cover": "https://covers.openlibrary.org/b/id/14564421-L.jpg"
+    },
+    {
+        "ISBN": "979-8-88877-095-5",
+        "Title": "Gachiakuta, Vol. 3",
+        "Authors": "Kei Urana",
+        "Publisher": "",
+        "Date": "Unknown",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-64609-247-5",
+        "Title": "My Dress-Up Darling, Vol. 11",
+        "Authors": "Shinichi Fukuda",
+        "Publisher": "Square Enix",
+        "Date": "2024",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-5854-8",
+        "Title": "Chainsaw Man, Vol., Vol. 19",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2025",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-64609-034-1",
+        "Title": "My Dress-Up Darling, Vol. 03",
+        "Authors": "福田 晋一",
+        "Publisher": "Square Enix",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/12780418-L.jpg"
+    },
+    {
+        "ISBN": "979-8-88877-020-7",
+        "Title": "Gachiakuta, Vol. 1",
+        "Authors": "Kei Urana",
+        "Publisher": "Kodansha America, Incorporated",
+        "Date": "2024",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-3669-0",
+        "Title": "Choujin X, Vol., Vol. 1",
+        "Authors": "Sui Ishida",
+        "Publisher": "Viz Media, VIZ Media LLC",
+        "Date": "2023",
+        "Cover": "https://covers.openlibrary.org/b/id/13351444-L.jpg"
+    },
+    {
+        "ISBN": "978-1-64609-195-9",
+        "Title": "My Dress-Up Darling, Vol. 09",
+        "Authors": "Shinichi Fukuda",
+        "Publisher": "Square Enix",
+        "Date": "2023",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-3633-1",
+        "Title": "Kaiju No. 8, Vol. 6",
+        "Authors": "松本直也",
+        "Publisher": "SHONEN JUMP",
+        "Date": "04/11/2023",
+        "Cover": "https://covers.openlibrary.org/b/id/15133022-L.jpg"
+    },
+    {
+        "ISBN": "979-8-88877-094-8",
+        "Title": "Gachiakuta, Vol. 2",
+        "Authors": "Kei Urana, Hideyoshi Andou",
+        "Publisher": "Kodansha America, Incorporated",
+        "Date": "2024",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "979-8-8554-1379-3",
+        "Title": "Alya Sometimes Hides Her Feelings in Russian, Vol., Vol. 1",
+        "Authors": "Saho Tenamachi, 燦々SUN, Momoko, Matthew Rutsohn",
+        "Publisher": "Yen Press LLC",
+        "Date": "2025",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-3463-4",
+        "Title": "Dandadan, Vol., Vol. 1",
+        "Authors": "龍幸伸",
+        "Publisher": "VIZ Media LLC",
+        "Date": "10/11/2022",
+        "Cover": "https://covers.openlibrary.org/b/id/14554208-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0701-0",
+        "Title": "One Piece, Vol., Vol. 91",
+        "Authors": "尾田栄一郎",
+        "Publisher": "Viz Media",
+        "Date": "2019",
+        "Cover": "https://covers.openlibrary.org/b/id/15108128-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-5272-0",
+        "Title": "Kaiju No. 8, Vol. 12",
+        "Authors": "松本直也",
+        "Publisher": "SHONEN JUMP",
+        "Date": "02/25/2025",
+        "Cover": "https://covers.openlibrary.org/b/id/15133093-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-3870-0",
+        "Title": "ONE PIECE, Vol. 103",
+        "Authors": "尾田栄一郎",
+        "Publisher": "VIZ Media LLC",
+        "Date": "07/04/2023",
+        "Cover": "https://covers.openlibrary.org/b/id/14385308-L.jpg"
+    },
+    {
+        "ISBN": "978-1-64609-165-2",
+        "Title": "My Dress-Up Darling, Vol. 08",
+        "Authors": "Shinichi Fukuda",
+        "Publisher": "Square Enix",
+        "Date": "2023",
+        "Cover": "https://covers.openlibrary.org/b/id/15098064-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9753-1945-8",
+        "Title": "Solo Leveling, Vol., Vol. 2",
+        "Authors": "Dubu, 추공",
+        "Publisher": "Yen Press",
+        "Date": "07/20/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/11307679-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-5590-5",
+        "Title": "ONE PIECE, Vol. 109",
+        "Authors": "尾田栄一郎",
+        "Publisher": "VIZ Media",
+        "Date": "07/2025",
+        "Cover": "https://covers.openlibrary.org/b/id/14849265-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2598-4",
+        "Title": "Kaiju No. 8, Vol. 1",
+        "Authors": "松本直也",
+        "Publisher": "SHONEN JUMP",
+        "Date": "12/07/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/15132989-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4979-9",
+        "Title": "ONE PIECE, Vol. 107",
+        "Authors": "尾田栄一郎",
+        "Publisher": "VIZ Media",
+        "Date": "11/12/2024",
+        "Cover": "https://covers.openlibrary.org/b/id/14650280-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9753-1943-4",
+        "Title": "Solo Leveling, Vol., Vol. 1",
+        "Authors": "추공, Dubu",
+        "Publisher": "Yen Press",
+        "Date": "03/02/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/10839422-L.jpg"
+    },
+    {
+        "ISBN": "978-1-64609-033-4",
+        "Title": "My Dress-Up Darling, Vol. 02",
+        "Authors": "福田 晋一",
+        "Publisher": "Square Enix",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/12780419-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4358-2",
+        "Title": "Chainsaw Man, Vol., Vol. 14",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2024",
+        "Cover": "https://covers.openlibrary.org/b/id/14650154-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-5222-5",
+        "Title": "ONE PIECE, Vol. 108",
+        "Authors": "尾田栄一郎",
+        "Publisher": "VIZ Media",
+        "Date": "03/04/2025",
+        "Cover": "https://covers.openlibrary.org/b/id/14840739-L.jpg"
+    },
+    {
+        "ISBN": "979-8-88877-097-9",
+        "Title": "Gachiakuta, Vol. 5",
+        "Authors": "Kei Urana, Hideyoshi Andou",
+        "Publisher": "Kodansha America, Incorporated",
+        "Date": "2025",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "979-8-4009-0257-4",
+        "Title": "Solo Leveling, Vol., Vol. 12",
+        "Authors": "추공, h-goon, Dubu, J. Torres, 임혜영",
+        "Publisher": "Yen Press LLC",
+        "Date": "2025",
+        "Cover": "https://covers.openlibrary.org/b/id/15101746-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-5180-8",
+        "Title": "Dandadan, Vol., Vol. 11",
+        "Authors": "龍幸伸",
+        "Publisher": "Viz Media",
+        "Date": "2025",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "979-8-4009-0107-2",
+        "Title": "Solo Leveling, Vol., Vol. 8",
+        "Authors": "추공, DUBU(REDICE STUDIO), h-goon, 임혜영, J. Torres",
+        "Publisher": "Yen Press LLC",
+        "Date": "2024",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-4301-8",
+        "Title": "Kaiju No. 8, Vol. 9",
+        "Authors": "松本直也",
+        "Publisher": "SHONEN JUMP",
+        "Date": "01/02/2024",
+        "Cover": "https://covers.openlibrary.org/b/id/15133095-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4586-9",
+        "Title": "ONE PIECE, Vol. 106",
+        "Authors": "尾田栄一郎",
+        "Publisher": "VIZ Media",
+        "Date": "07/02/2024",
+        "Cover": "https://covers.openlibrary.org/b/id/14601953-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-3420-7",
+        "Title": "One Piece, Vol. 101",
+        "Authors": "尾田栄一郎",
+        "Publisher": "VIZ Media LLC",
+        "Date": "12/06/2022",
+        "Cover": "https://covers.openlibrary.org/b/id/14768909-L.jpg"
+    },
+    {
+        "ISBN": "978-1-50671-200-0",
+        "Title": "Berserk Deluxe Volume, Vol. 3",
+        "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
+        "Publisher": "Dark Horse Comics, Dark Horse Manga",
+        "Date": "2019",
+        "Cover": "https://covers.openlibrary.org/b/id/12735922-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2899-2",
+        "Title": "Kaiju No. 8, Vol. 3",
+        "Authors": "松本直也",
+        "Publisher": "SHONEN JUMP",
+        "Date": "07/12/2022",
+        "Cover": "https://covers.openlibrary.org/b/id/15132987-L.jpg"
+    },
+    {
+        "ISBN": "978-1-50671-198-0",
+        "Title": "Berserk Deluxe Volume, Vol. 1",
+        "Authors": "三浦建太郎 (Kentaro Miura), Jason DeAngelis",
+        "Publisher": "Dark Horse Manga",
+        "Date": "03/26/2019",
+        "Cover": "https://covers.openlibrary.org/b/id/8746964-L.jpg"
+    },
+    {
+        "ISBN": "978-1-64609-164-5",
+        "Title": "My Dress-Up Darling, Vol. 07",
+        "Authors": "Shinichi Fukuda",
+        "Publisher": "Square Enix",
+        "Date": "2023",
+        "Cover": "https://covers.openlibrary.org/b/id/13349483-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4059-8",
+        "Title": "Dandadan, Vol., Vol. 5",
+        "Authors": "龍幸伸",
+        "Publisher": "Viz Media LLC",
+        "Date": "2023",
+        "Cover": "https://covers.openlibrary.org/b/id/14647288-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-5792-3",
+        "Title": "Dandadan, Vol., Vol. 15",
+        "Authors": "Yukinobu Tatsu",
+        "Publisher": "VIZ Media LLC",
+        "Date": "Unknown",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-3655-3",
+        "Title": "ONE PIECE, Vol. 102",
+        "Authors": "尾田栄一郎",
+        "Publisher": "Viz Media",
+        "Date": "04/04/2023",
+        "Cover": "https://covers.openlibrary.org/b/id/14601956-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-3530-3",
+        "Title": "Dandadan, Vol., Vol. 2",
+        "Authors": "龍幸伸",
+        "Publisher": "Viz Media",
+        "Date": "01/01/2023",
+        "Cover": "https://covers.openlibrary.org/b/id/14647290-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-1537-4",
+        "Title": "One Piece, Vol., Vol. 94",
+        "Authors": "尾田栄一郎",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/15108132-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2714-8",
+        "Title": "Kaiju No. 8, Vol. 2",
+        "Authors": "松本直也",
+        "Publisher": "SHONEN JUMP",
+        "Date": "04/05/2022",
+        "Cover": "https://covers.openlibrary.org/b/id/15132988-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4058-1",
+        "Title": "Chainsaw Man, Vol., Vol. 12",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2023",
+        "Cover": "https://covers.openlibrary.org/b/id/14650164-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4601-9",
+        "Title": "Dandadan, Vol., Vol. 8",
+        "Authors": "龍幸伸",
+        "Publisher": "Viz Media",
+        "Date": "2024",
+        "Cover": "https://covers.openlibrary.org/b/id/15118471-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9753-4438-2",
+        "Title": "Solo Leveling, Vol., Vol. 5",
+        "Authors": "추공, Dubu",
+        "Publisher": "Yen Press LLC, Yen Press",
+        "Date": "2022",
+        "Cover": "https://covers.openlibrary.org/b/id/13716950-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-5227-0",
+        "Title": "Dandadan, Vol., Vol. 12",
+        "Authors": "Yukinobu Tatsu",
+        "Publisher": "VIZ Media LLC",
+        "Date": "Unknown",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-4129-8",
+        "Title": "ONE PIECE, Vol. 104",
+        "Authors": "尾田栄一郎",
+        "Publisher": "Viz Media",
+        "Date": "11/07/2023",
+        "Cover": "https://covers.openlibrary.org/b/id/14541562-L.jpg"
+    },
+    {
+        "ISBN": "979-8-4009-0259-8",
+        "Title": "Solo Leveling, Vol., Vol. 13",
+        "Authors": "Chugong, DUBU(REDICE STUDIO), Abigail Blackman, J. Torres",
+        "Publisher": "Ize Press",
+        "Date": "Unknown",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-5512-7",
+        "Title": "Kaiju No. 8, Vol. 13",
+        "Authors": "松本直也",
+        "Publisher": "SHONEN JUMP",
+        "Date": "06/03/2025",
+        "Cover": "https://covers.openlibrary.org/b/id/15133092-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4699-6",
+        "Title": "Kaiju No. 8, Vol. 10",
+        "Authors": "松本直也",
+        "Publisher": "SHONEN JUMP",
+        "Date": "06/04/2024",
+        "Cover": "https://covers.openlibrary.org/b/id/15133094-L.jpg"
+    },
+    {
+        "ISBN": "979-8-4009-0253-6",
+        "Title": "Solo Leveling, Vol., Vol. 10",
+        "Authors": "추공, Dubu, h-goon, 임혜영, J. Torres",
+        "Publisher": "Ize Press",
+        "Date": "2024",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-3531-0",
+        "Title": "Dandadan, Vol., Vol. 3",
+        "Authors": "龍幸伸",
+        "Publisher": "VIZ Media LLC",
+        "Date": "2023",
+        "Cover": "https://covers.openlibrary.org/b/id/14647291-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2519-9",
+        "Title": "One Piece, Vol. 98",
+        "Authors": "尾田栄一郎",
+        "Publisher": "VIZ Media LLC",
+        "Date": "12/07/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/15108142-L.jpg"
+    },
+    {
+        "ISBN": "979-8-4009-0026-6",
+        "Title": "Solo Leveling, Vol., Vol. 6",
+        "Authors": "추공, Dubu, 임혜영, J. Torres, Abigail Blackman",
+        "Publisher": "Yen Press LLC",
+        "Date": "2023",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "979-8-4009-0048-8",
+        "Title": "Solo Leveling, Vol., Vol. 7",
+        "Authors": "추공, DUBU(REDICE STUDIO), 임혜영, J. Torres, Abigail Blackman",
+        "Publisher": "Ize Press",
+        "Date": "2023",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "979-8-88877-283-6",
+        "Title": "Gachiakuta, Vol. 8",
+        "Authors": "Kei Urana, Hideyoshi Andou",
+        "Publisher": "Kodansha America, Incorporated",
+        "Date": "2025",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-1255-7",
+        "Title": "One Piece, Vol., Vol. 93",
+        "Authors": "尾田栄一郎",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/15108131-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4283-7",
+        "Title": "Dandadan, Vol., Vol. 6",
+        "Authors": "龍幸伸",
+        "Publisher": "Viz Media LLC",
+        "Date": "2024",
+        "Cover": "https://covers.openlibrary.org/b/id/14723550-L.jpg"
+    },
+    {
+        "ISBN": "978-1-64275-032-4",
+        "Title": "I Want to Eat Your Pancreas",
+        "Authors": "住野よる, KIRIHARA IZUMI",
+        "Publisher": "Seven Seas Entertainment, LLC",
+        "Date": "2019",
+        "Cover": "https://covers.openlibrary.org/b/id/14568648-L.jpg"
+    },
+    {
+        "ISBN": "978-1-64609-113-3",
+        "Title": "My Dress-Up Darling, Vol. 05",
+        "Authors": "Shinichi Fukuda",
+        "Publisher": "Square Enix",
+        "Date": "2022",
+        "Cover": "https://covers.openlibrary.org/b/id/12748277-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-3869-4",
+        "Title": "Kaiju No. 8, Vol. 7",
+        "Authors": "松本直也",
+        "Publisher": "SHONEN JUMP",
+        "Date": "07/11/2023",
+        "Cover": "https://covers.openlibrary.org/b/id/15133091-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4339-1",
+        "Title": "Dandadan, Vol., Vol. 7",
+        "Authors": "龍幸伸",
+        "Publisher": "Viz Media LLC",
+        "Date": "2024",
+        "Cover": "https://covers.openlibrary.org/b/id/15117717-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2900-5",
+        "Title": "One Piece, Vol. 99",
+        "Authors": "尾田栄一郎",
+        "Publisher": "Viz Media",
+        "Date": "05/03/2022",
+        "Cover": "https://covers.openlibrary.org/b/id/15108144-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-5493-9",
+        "Title": "Chainsaw Man, Vol., Vol. 18",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "VIZ Media LLC",
+        "Date": "Unknown",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-50671-199-7",
+        "Title": "Berserk Deluxe Volume, Vol. 2",
+        "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
+        "Publisher": "Dark Horse Comics",
+        "Date": "2019",
+        "Cover": "https://covers.openlibrary.org/b/id/12735920-L.jpg"
+    },
+    {
+        "ISBN": "979-8-88877-152-5",
+        "Title": "Gachiakuta, Vol. 6",
+        "Authors": "Kei Urana, Hideyoshi Andou",
+        "Publisher": "Kodansha America, Incorporated",
+        "Date": "2025",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-2289-1",
+        "Title": "One Piece, Vol. 97",
+        "Authors": "尾田栄一郎",
+        "Publisher": "VIZ Media LLC",
+        "Date": "08/03/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/10872552-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4984-3",
+        "Title": "Dandadan, Vol., Vol. 10",
+        "Authors": "Yukinobu Tatsu",
+        "Publisher": "VIZ Media LLC",
+        "Date": "Unknown",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "979-8-88877-157-0",
+        "Title": "Gachiakuta, Vol. 7",
+        "Authors": "Kei Urana",
+        "Publisher": "Kodansha Comics",
+        "Date": "Unknown",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-64609-128-7",
+        "Title": "My Dress-Up Darling, Vol. 06",
+        "Authors": "Shinichi Fukuda",
+        "Publisher": "Square Enix",
+        "Date": "2022",
+        "Cover": "https://covers.openlibrary.org/b/id/13349280-L.jpg"
+    },
+    {
+        "ISBN": "978-1-64609-303-8",
+        "Title": "My Dress-Up Darling, Vol. 12",
+        "Authors": "Shinichi Fukuda",
+        "Publisher": "Square Enix",
+        "Date": "2024",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-64609-228-4",
+        "Title": "My Dress-Up Darling, Vol. 10",
+        "Authors": "Shinichi Fukuda",
+        "Publisher": "Square Enix",
+        "Date": "2023",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-5575-2",
+        "Title": "Dandadan, Vol., Vol. 14",
+        "Authors": "Yukinobu Tatsu",
+        "Publisher": "VIZ Media LLC",
+        "Date": "Unknown",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-5839-5",
+        "Title": "Kaiju No. 8, Vol., Vol. 14",
+        "Authors": "Naoya Matsumoto",
+        "Publisher": "VIZ Media LLC",
+        "Date": "Unknown",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-64609-032-7",
+        "Title": "My Dress-Up Darling, Vol. 01",
+        "Authors": "福田 晋一",
+        "Publisher": "Square Enix",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/12780420-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4640-8",
+        "Title": "Chainsaw Man, Vol., Vol. 15",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2024",
+        "Cover": "https://covers.openlibrary.org/b/id/14647286-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-5511-0",
+        "Title": "Dandadan, Vol., Vol. 13",
+        "Authors": "Yukinobu Tatsu",
+        "Publisher": "VIZ Media LLC",
+        "Date": "06/03/2025",
+        "Cover": "https://covers.openlibrary.org/b/id/15095736-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-3744-4",
+        "Title": "Dandadan, Vol., Vol. 4",
+        "Authors": "龍幸伸",
+        "Publisher": "Viz Media",
+        "Date": "2023",
+        "Cover": "https://covers.openlibrary.org/b/id/14647289-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-3217-3",
+        "Title": "ONE PIECE, Vol. 100",
+        "Authors": "尾田栄一郎",
+        "Publisher": "Viz Media",
+        "Date": "08/02/2022",
+        "Cover": "https://covers.openlibrary.org/b/id/13199794-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4034-5",
+        "Title": "Takopi's Original Sin",
+        "Authors": "Taizan5",
+        "Publisher": "Viz Media",
+        "Date": "2023",
+        "Cover": "https://covers.openlibrary.org/b/id/14617793-L.jpg"
+    },
+    {
+        "ISBN": "979-8-4009-0193-5",
+        "Title": "Solo Leveling, Vol., Vol. 9",
+        "Authors": "추공, Dubu, 임혜영, h-goon, J. Torres",
+        "Publisher": "Ize Press",
+        "Date": "2024",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9753-3651-6",
+        "Title": "Solo Leveling, Vol., Vol. 3",
+        "Authors": "Dubu, 추공",
+        "Publisher": "Yen Press",
+        "Date": "09/21/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/12749793-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4897-6",
+        "Title": "Dandadan, Vol., Vol. 9",
+        "Authors": "Yukinobu Tatsu",
+        "Publisher": "VIZ Media LLC",
+        "Date": "Unknown",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-64609-051-8",
+        "Title": "My Dress-Up Darling, Vol. 04",
+        "Authors": "Shinichi Fukuda",
+        "Publisher": "Square Enix",
+        "Date": "2021",
+        "Cover": "https://covers.openlibrary.org/b/id/12780417-L.jpg"
+    },
+    {
+        "ISBN": "978-1-50671-521-6",
+        "Title": "Berserk Deluxe Volume, Vol. 4",
+        "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
+        "Publisher": "Dark Horse Manga",
+        "Date": "03/10/2020",
+        "Cover": "https://covers.openlibrary.org/b/id/10362938-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4062-8",
+        "Title": "Kaiju No. 8, Vol. 8",
+        "Authors": "松本直也",
+        "Publisher": "SHONEN JUMP",
+        "Date": "10/10/2023",
+        "Cover": "https://covers.openlibrary.org/b/id/15133096-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-3418-4",
+        "Title": "Kaiju No. 8, Vol. 5",
+        "Authors": "松本直也",
+        "Publisher": "SHONEN JUMP",
+        "Date": "01/10/2023",
+        "Cover": "https://covers.openlibrary.org/b/id/15132968-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4900-3",
+        "Title": "Kaiju No. 8, Vol., Vol. 11",
+        "Authors": "Naoya Matsumoto",
+        "Publisher": "VIZ Media LLC",
+        "Date": "Unknown",
+        "Cover": "https://via.placeholder.com/150x220?text=No+Cover"
+    },
+    {
+        "ISBN": "978-1-9747-1015-7",
+        "Title": "One Piece, Vol., Vol. 92",
+        "Authors": "尾田栄一郎",
+        "Publisher": "Viz Media",
+        "Date": "2019",
+        "Cover": "https://covers.openlibrary.org/b/id/15108130-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-1813-9",
+        "Title": "One Piece, Vol., Vol. 95",
+        "Authors": "尾田栄一郎",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/15108129-L.jpg"
+    }
+]
