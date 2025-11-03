@@ -15,7 +15,16 @@ h1{text-align:center;color:#7289DA;margin-top:10px;}
 .card .title{font-weight:bold;margin:6px 8px;font-size:13px;min-height:36px;}
 .card .meta{font-size:11px;margin:2px;color:#BBB;padding-bottom:8px;}
 </style>
+</head>
+<body>
+<div class="container">
+<h1>ISBN Library</h1>
+<input type="text" id="searchInput" onkeyup="searchLibrary()" placeholder="Search by title, author, publisher, ISBN...">
+<div class="grid" id="bookGrid"></div>
+</div>
+
 <script>
+// Search filter
 function searchLibrary() {
     let input = document.getElementById('searchInput').value.toLowerCase();
     let cards = document.getElementsByClassName('card');
@@ -26,47 +35,32 @@ function searchLibrary() {
     }
 }
 
-// Dynamically load books from lib.json
-async function loadBooks() {
-    try {
-        const res = await fetch('lib.json');
-        const books = await res.json();
-        books.sort((a,b) => {
-            const seriesA = (a.Title||'').replace(/,?\s*Vol\.?\s*\d+/,'').toLowerCase();
-            const seriesB = (b.Title||'').replace(/,?\s*Vol\.?\s*\d+/,'').toLowerCase();
-            const volA = parseInt((a.Title||'').match(/Vol\.? (\d+)/)?.[1] || 0);
-            const volB = parseInt((b.Title||'').match(/Vol\.? (\d+)/)?.[1] || 0);
-            return seriesA.localeCompare(seriesB) || volA - volB;
-        });
-        const grid = document.getElementById('bookGrid');
-        books.forEach(b => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.title = b.Title || '';
-            card.innerHTML = `
-                <img src="${b.Cover||'https://via.placeholder.com/150x220?text=No+Cover'}" onclick="window.open('${b.Cover||''}','_blank')">
-                <div class="title">${b.Title||''}</div>
-                <div class="meta">
-                    ${(b.Authors||'')}<br>
-                    ${(b.Publisher||'')}<br>
-                    ${(b.Date||'')}<br>
-                    ${(b.ISBN||'')}
-                </div>`;
-            grid.appendChild(card);
-        });
-    } catch (err) {
-        console.error('Failed to load books:', err);
-    }
-}
+// Fetch and render books from lib.json
+fetch('lib.json')
+  .then(res => res.json())
+  .then(books => {
+      const grid = document.getElementById('bookGrid');
+      books.sort((a,b) => {
+          // simple sort by title (you can add volume/date if needed)
+          return (a.Title || '').localeCompare(b.Title || '');
+      }).forEach(b => {
+          let cover = b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
+          let title = b.Title || '';
+          let authors = b.Authors && b.Authors !== 'Unknown' ? b.Authors+'<br>' : '';
+          let publisher = b.Publisher && b.Publisher !== 'Unknown' ? b.Publisher+'<br>' : '';
+          let date = b.Date && b.Date !== 'Unknown' ? b.Date+'<br>' : '';
+          let isbn = b.ISBN && b.ISBN !== 'Unknown' ? b.ISBN : '';
 
-window.onload = loadBooks;
+          let card = document.createElement('div');
+          card.className = 'card';
+          card.title = title;
+          card.innerHTML = `<img src="${cover}" alt="Cover" onclick="window.open('${cover}','_blank')">
+                            <div class="title">${title}</div>
+                            <div class="meta">${authors}${publisher}${date}${isbn}</div>`;
+          grid.appendChild(card);
+      });
+  })
+  .catch(err => console.error('Failed to load lib.json', err));
 </script>
-</head>
-<body>
-<div class="container">
-<h1>ISBN Library</h1>
-<input type="text" id="searchInput" onkeyup="searchLibrary()" placeholder="Search by title, author, publisher, ISBN...">
-<div class="grid" id="bookGrid"></div>
-</div>
 </body>
 </html>
