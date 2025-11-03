@@ -742,5 +742,37 @@
         "Publisher": "Viz Media",
         "Date": "2023",
         "Cover": "https://covers.openlibrary.org/b/id/14617793-L.jpg"
+    },
+    {
+        "ISBN": "978-1-50671-198-0",
+        "Title": "Berserk Deluxe, Vol. 1",
+        "Authors": "三浦建太郎 (Kentaro Miura), Jason DeAngelis",
+        "Publisher": "Dark Horse Manga",
+        "Date": "03/26/2019",
+        "Cover": "https://covers.openlibrary.org/b/id/8746964-L.jpg"
+    },
+    {
+        "ISBN": "978-1-50671-199-7",
+        "Title": "Berserk Deluxe, Vol. 2",
+        "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
+        "Publisher": "Dark Horse Comics",
+        "Date": "2019",
+        "Cover": "https://covers.openlibrary.org/b/id/12735920-L.jpg"
+    },
+    {
+        "ISBN": "978-1-50671-200-0",
+        "Title": "Berserk Deluxe, Vol. 3",
+        "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
+        "Publisher": "Dark Horse Comics, Dark Horse Manga",
+        "Date": "2019",
+        "Cover": "https://covers.openlibrary.org/b/id/12735922-L.jpg"
+    },
+    {
+        "ISBN": "978-1-50671-521-6",
+        "Title": "Berserk Deluxe, Vol. 4",
+        "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
+        "Publisher": "Dark Horse Manga",
+        "Date": "03/10/2020",
+        "Cover": "https://covers.openlibrary.org/b/id/10362938-L.jpg"
     }
 ]
