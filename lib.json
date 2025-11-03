@@ -1,7 +1,7 @@
 [
     {
         "ISBN": "979-8-8554-1379-3",
-        "Title": "Alya Sometimes Hides Her Feelings in Russian, Vol., Vol. 1",
+        "Title": "Alya Sometimes Hides Her Feelings in Russian, Vol. 1 (manga)",
         "Authors": "Saho Tenamachi, 燦々SUN, Momoko, Matthew Rutsohn",
         "Publisher": "Yen Press LLC",
         "Date": "2025",
@@ -9,7 +9,7 @@
     },
     {
         "ISBN": "979-8-8554-1381-6",
-        "Title": "Alya Sometimes Hides Her Feelings In Russian, Vol., Vol. 2",
+        "Title": "Alya Sometimes Hides Her Feelings In Russian, Vol. 2 (Manga)",
         "Authors": "Saho Tenamachi",
         "Publisher": "Yen Press",
         "Date": "Unknown",
@@ -21,7 +21,7 @@
         "Authors": "三浦建太郎 (Kentaro Miura), Jason DeAngelis",
         "Publisher": "Dark Horse Manga",
         "Date": "03/26/2019",
-        "Cover": "https://covers.openlibrary.org/b/isbn/9781506711980-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8746964-L.jpg"
     },
     {
         "ISBN": "978-1-50671-199-7",
@@ -49,7 +49,7 @@
     },
     {
         "ISBN": "978-1-9747-4058-1",
-        "Title": "Chainsaw Man, Vol., Vol. 12",
+        "Title": "Chainsaw Man, Vol. 12",
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2023",
@@ -57,7 +57,7 @@
     },
     {
         "ISBN": "978-1-9747-4358-2",
-        "Title": "Chainsaw Man, Vol., Vol. 14",
+        "Title": "Chainsaw Man, Vol. 14",
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2024",
@@ -65,7 +65,7 @@
     },
     {
         "ISBN": "978-1-9747-4640-8",
-        "Title": "Chainsaw Man, Vol., Vol. 15",
+        "Title": "Chainsaw Man, Vol. 15",
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2024",
@@ -73,7 +73,7 @@
     },
     {
         "ISBN": "978-1-9747-5493-9",
-        "Title": "Chainsaw Man, Vol., Vol. 18",
+        "Title": "Chainsaw Man, Vol. 18",
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
@@ -81,7 +81,7 @@
     },
     {
         "ISBN": "978-1-9747-5854-8",
-        "Title": "Chainsaw Man, Vol., Vol. 19",
+        "Title": "Chainsaw Man, Vol. 19",
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2025",
@@ -89,7 +89,7 @@
     },
     {
         "ISBN": "978-1-9747-3669-0",
-        "Title": "Choujin X, Vol., Vol. 1",
+        "Title": "Choujin X, Vol. 1",
         "Authors": "Sui Ishida",
         "Publisher": "Viz Media, VIZ Media LLC",
         "Date": "2023",
@@ -97,7 +97,7 @@
     },
     {
         "ISBN": "978-1-9747-3463-4",
-        "Title": "Dandadan, Vol., Vol. 1",
+        "Title": "Dandadan, Vol. 1",
         "Authors": "龍幸伸",
         "Publisher": "VIZ Media LLC",
         "Date": "10/11/2022",
@@ -105,7 +105,7 @@
     },
     {
         "ISBN": "978-1-9747-3530-3",
-        "Title": "Dandadan, Vol., Vol. 2",
+        "Title": "Dandadan, Vol. 2",
         "Authors": "龍幸伸",
         "Publisher": "Viz Media",
         "Date": "01/2023",
@@ -113,7 +113,7 @@
     },
     {
         "ISBN": "978-1-9747-3531-0",
-        "Title": "Dandadan, Vol., Vol. 3",
+        "Title": "Dandadan, Vol. 3",
         "Authors": "龍幸伸",
         "Publisher": "VIZ Media LLC",
         "Date": "2023",
@@ -121,7 +121,7 @@
     },
     {
         "ISBN": "978-1-9747-3744-4",
-        "Title": "Dandadan, Vol., Vol. 4",
+        "Title": "Dandadan, Vol. 4",
         "Authors": "龍幸伸",
         "Publisher": "Viz Media",
         "Date": "2023",
@@ -129,7 +129,7 @@
     },
     {
         "ISBN": "978-1-9747-4059-8",
-        "Title": "Dandadan, Vol., Vol. 5",
+        "Title": "Dandadan, Vol. 5",
         "Authors": "龍幸伸",
         "Publisher": "Viz Media LLC",
         "Date": "2023",
@@ -137,7 +137,7 @@
     },
     {
         "ISBN": "978-1-9747-4283-7",
-        "Title": "Dandadan, Vol., Vol. 6",
+        "Title": "Dandadan, Vol. 6",
         "Authors": "龍幸伸",
         "Publisher": "Viz Media LLC",
         "Date": "2024",
@@ -145,7 +145,7 @@
     },
     {
         "ISBN": "978-1-9747-4339-1",
-        "Title": "Dandadan, Vol., Vol. 7",
+        "Title": "Dandadan, Vol. 7",
         "Authors": "龍幸伸",
         "Publisher": "Viz Media LLC",
         "Date": "2024",
@@ -153,7 +153,7 @@
     },
     {
         "ISBN": "978-1-9747-4601-9",
-        "Title": "Dandadan, Vol., Vol. 8",
+        "Title": "Dandadan, Vol. 8",
         "Authors": "龍幸伸",
         "Publisher": "Viz Media",
         "Date": "2024",
@@ -161,7 +161,7 @@
     },
     {
         "ISBN": "978-1-9747-4897-6",
-        "Title": "Dandadan, Vol., Vol. 9",
+        "Title": "Dandadan, Vol. 9",
         "Authors": "Yukinobu Tatsu",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
@@ -169,7 +169,7 @@
     },
     {
         "ISBN": "978-1-9747-4984-3",
-        "Title": "Dandadan, Vol., Vol. 10",
+        "Title": "Dandadan, Vol. 10",
         "Authors": "Yukinobu Tatsu",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
@@ -177,7 +177,7 @@
     },
     {
         "ISBN": "978-1-9747-5180-8",
-        "Title": "Dandadan, Vol., Vol. 11",
+        "Title": "Dandadan, Vol. 11",
         "Authors": "龍幸伸",
         "Publisher": "Viz Media",
         "Date": "2025",
@@ -185,7 +185,7 @@
     },
     {
         "ISBN": "978-1-9747-5227-0",
-        "Title": "Dandadan, Vol., Vol. 12",
+        "Title": "Dandadan, Vol. 12",
         "Authors": "Yukinobu Tatsu",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
@@ -193,7 +193,7 @@
     },
     {
         "ISBN": "978-1-9747-5511-0",
-        "Title": "Dandadan, Vol., Vol. 13",
+        "Title": "Dandadan, Vol. 13",
         "Authors": "Yukinobu Tatsu",
         "Publisher": "VIZ Media LLC",
         "Date": "06/03/2025",
@@ -201,7 +201,7 @@
     },
     {
         "ISBN": "978-1-9747-5575-2",
-        "Title": "Dandadan, Vol., Vol. 14",
+        "Title": "Dandadan, Vol. 14",
         "Authors": "Yukinobu Tatsu",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
@@ -209,7 +209,7 @@
     },
     {
         "ISBN": "978-1-9747-5792-3",
-        "Title": "Dandadan, Vol., Vol. 15",
+        "Title": "Dandadan, Vol. 15",
         "Authors": "Yukinobu Tatsu",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
@@ -235,7 +235,7 @@
         "ISBN": "979-8-88877-095-5",
         "Title": "Gachiakuta, Vol. 3",
         "Authors": "Kei Urana",
-        "Publisher": "",
+        "Publisher": "Unknown",
         "Date": "Unknown",
         "Cover": "https://m.media-amazon.com/images/I/813D8HwssRL._SL1500_.jpg"
     },
@@ -369,7 +369,7 @@
     },
     {
         "ISBN": "978-1-9747-4900-3",
-        "Title": "Kaiju No. 8, Vol., Vol. 11",
+        "Title": "Kaiju No. 8, Vol. 11",
         "Authors": "Naoya Matsumoto",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
@@ -393,7 +393,7 @@
     },
     {
         "ISBN": "978-1-9747-5839-5",
-        "Title": "Kaiju No. 8, Vol., Vol. 14",
+        "Title": "Kaiju No. 8, Vol. 14",
         "Authors": "Naoya Matsumoto",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
@@ -401,7 +401,7 @@
     },
     {
         "ISBN": "978-1-64609-032-7",
-        "Title": "My Dress-Up Darling, Vol. 01",
+        "Title": "My Dress-Up Darling, Vol. 1",
         "Authors": "福田 晋一",
         "Publisher": "Square Enix",
         "Date": "2020",
@@ -409,7 +409,7 @@
     },
     {
         "ISBN": "978-1-64609-033-4",
-        "Title": "My Dress-Up Darling, Vol. 02",
+        "Title": "My Dress-Up Darling, Vol. 2",
         "Authors": "福田 晋一",
         "Publisher": "Square Enix",
         "Date": "2020",
@@ -417,7 +417,7 @@
     },
     {
         "ISBN": "978-1-64609-034-1",
-        "Title": "My Dress-Up Darling, Vol. 03",
+        "Title": "My Dress-Up Darling, Vol. 3",
         "Authors": "福田 晋一",
         "Publisher": "Square Enix",
         "Date": "2020",
@@ -425,7 +425,7 @@
     },
     {
         "ISBN": "978-1-64609-051-8",
-        "Title": "My Dress-Up Darling, Vol. 04",
+        "Title": "My Dress-Up Darling, Vol. 4",
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2021",
@@ -433,7 +433,7 @@
     },
     {
         "ISBN": "978-1-64609-113-3",
-        "Title": "My Dress-Up Darling, Vol. 05",
+        "Title": "My Dress-Up Darling, Vol. 5",
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2022",
@@ -441,7 +441,7 @@
     },
     {
         "ISBN": "978-1-64609-128-7",
-        "Title": "My Dress-Up Darling, Vol. 06",
+        "Title": "My Dress-Up Darling, Vol. 6",
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2022",
@@ -449,7 +449,7 @@
     },
     {
         "ISBN": "978-1-64609-164-5",
-        "Title": "My Dress-Up Darling, Vol. 07",
+        "Title": "My Dress-Up Darling, Vol. 7",
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2023",
@@ -457,7 +457,7 @@
     },
     {
         "ISBN": "978-1-64609-165-2",
-        "Title": "My Dress-Up Darling, Vol. 08",
+        "Title": "My Dress-Up Darling, Vol. 8",
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2023",
@@ -465,7 +465,7 @@
     },
     {
         "ISBN": "978-1-64609-195-9",
-        "Title": "My Dress-Up Darling, Vol. 09",
+        "Title": "My Dress-Up Darling, Vol. 9",
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2023",
@@ -513,7 +513,7 @@
     },
     {
         "ISBN": "978-1-9747-0701-0",
-        "Title": "One Piece, Vol., Vol. 91",
+        "Title": "One Piece, Vol. 91",
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2019",
@@ -521,7 +521,7 @@
     },
     {
         "ISBN": "978-1-9747-1015-7",
-        "Title": "One Piece, Vol., Vol. 92",
+        "Title": "One Piece, Vol. 92",
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2019",
@@ -529,7 +529,7 @@
     },
     {
         "ISBN": "978-1-9747-1255-7",
-        "Title": "One Piece, Vol., Vol. 93",
+        "Title": "One Piece, Vol. 93",
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2020",
@@ -537,7 +537,7 @@
     },
     {
         "ISBN": "978-1-9747-1537-4",
-        "Title": "One Piece, Vol., Vol. 94",
+        "Title": "One Piece, Vol. 94",
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2020",
@@ -545,7 +545,7 @@
     },
     {
         "ISBN": "978-1-9747-1813-9",
-        "Title": "One Piece, Vol., Vol. 95",
+        "Title": "One Piece, Vol. 95",
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2020",
@@ -553,7 +553,7 @@
     },
     {
         "ISBN": "978-1-9747-1999-0",
-        "Title": "One Piece, Vol., Vol. 96",
+        "Title": "One Piece, Vol. 96",
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media, VIZ Media LLC",
         "Date": "2021",
@@ -660,12 +660,12 @@
         "Title": "ONE PIECE, Vol. 109",
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
-        "Date": "07/2025",
+        "Date": "07/01/2025",
         "Cover": "https://covers.openlibrary.org/b/id/14849265-L.jpg"
     },
     {
         "ISBN": "978-1-9753-1943-4",
-        "Title": "Solo Leveling, Vol., Vol. 1",
+        "Title": "Solo Leveling, Vol. 1",
         "Authors": "추공, Dubu",
         "Publisher": "Yen Press",
         "Date": "03/02/2021",
@@ -673,7 +673,7 @@
     },
     {
         "ISBN": "978-1-9753-1945-8",
-        "Title": "Solo Leveling, Vol., Vol. 2",
+        "Title": "Solo Leveling, Vol. 2",
         "Authors": "Dubu, 추공",
         "Publisher": "Yen Press",
         "Date": "07/20/2021",
@@ -681,7 +681,7 @@
     },
     {
         "ISBN": "978-1-9753-3651-6",
-        "Title": "Solo Leveling, Vol., Vol. 3",
+        "Title": "Solo Leveling, Vol. 3",
         "Authors": "Dubu, 추공",
         "Publisher": "Yen Press",
         "Date": "09/21/2021",
@@ -689,7 +689,7 @@
     },
     {
         "ISBN": "978-1-9753-3724-7",
-        "Title": "Solo Leveling, Vol., Vol. 4",
+        "Title": "Solo Leveling, Vol. 4 (comic)",
         "Authors": "추공, Dubu",
         "Publisher": "Yen Press LLC",
         "Date": "2022",
@@ -697,7 +697,7 @@
     },
     {
         "ISBN": "978-1-9753-4438-2",
-        "Title": "Solo Leveling, Vol., Vol. 5",
+        "Title": "Solo Leveling, Vol. 5 (comic)",
         "Authors": "추공, Dubu",
         "Publisher": "Yen Press LLC, Yen Press",
         "Date": "2022",
@@ -705,7 +705,7 @@
     },
     {
         "ISBN": "979-8-4009-0026-6",
-        "Title": "Solo Leveling, Vol., Vol. 6",
+        "Title": "Solo Leveling, Vol. 6 (comic)",
         "Authors": "추공, Dubu, 임혜영, J. Torres, Abigail Blackman",
         "Publisher": "Yen Press LLC",
         "Date": "2023",
@@ -713,7 +713,7 @@
     },
     {
         "ISBN": "979-8-4009-0048-8",
-        "Title": "Solo Leveling, Vol., Vol. 7",
+        "Title": "Solo Leveling, Vol. 7 (comic)",
         "Authors": "추공, DUBU(REDICE STUDIO), 임혜영, J. Torres, Abigail Blackman",
         "Publisher": "Ize Press",
         "Date": "2023",
@@ -721,7 +721,7 @@
     },
     {
         "ISBN": "979-8-4009-0107-2",
-        "Title": "Solo Leveling, Vol., Vol. 8",
+        "Title": "Solo Leveling, Vol. 8 (comic)",
         "Authors": "추공, DUBU(REDICE STUDIO), h-goon, 임혜영, J. Torres",
         "Publisher": "Yen Press LLC",
         "Date": "2024",
@@ -729,7 +729,7 @@
     },
     {
         "ISBN": "979-8-4009-0193-5",
-        "Title": "Solo Leveling, Vol., Vol. 9",
+        "Title": "Solo Leveling, Vol. 9 (comic)",
         "Authors": "추공, Dubu, 임혜영, h-goon, J. Torres",
         "Publisher": "Ize Press",
         "Date": "2024",
@@ -737,7 +737,7 @@
     },
     {
         "ISBN": "979-8-4009-0253-6",
-        "Title": "Solo Leveling, Vol., Vol. 10",
+        "Title": "Solo Leveling, Vol. 10 (comic)",
         "Authors": "추공, Dubu, h-goon, 임혜영, J. Torres",
         "Publisher": "Ize Press",
         "Date": "2024",
@@ -745,15 +745,15 @@
     },
     {
         "ISBN": "979-8-4009-0370-0",
-        "Title": "Solo Leveling, Vol., Vol. 11",
+        "Title": "Solo Leveling, Vol. 11 (Comic, Crunchyroll Variant Cover)",
         "Authors": "Abigail Blackman",
-        "Publisher": "",
+        "Publisher": "Unknown",
         "Date": "Unknown",
         "Cover": "https://store.crunchyroll.com/dw/image/v2/BDGC_PRD/on/demandware.static/-/Sites-crunchyroll-master-catalog/default/dw896c2a23/images/9798400903700_solo-leveling-variant-cover-manhwa-volume-11-crunchyroll-exclusive_1.jpg"
     },
     {
         "ISBN": "979-8-4009-0257-4",
-        "Title": "Solo Leveling, Vol., Vol. 12",
+        "Title": "Solo Leveling, Vol. 12 (comic)",
         "Authors": "추공, h-goon, Dubu, J. Torres, 임혜영",
         "Publisher": "Yen Press LLC",
         "Date": "2025",
@@ -761,7 +761,7 @@
     },
     {
         "ISBN": "979-8-4009-0259-8",
-        "Title": "Solo Leveling, Vol., Vol. 13",
+        "Title": "Solo Leveling, Vol. 13 (Comic)",
         "Authors": "Chugong, DUBU(REDICE STUDIO), Abigail Blackman, J. Torres",
         "Publisher": "Ize Press",
         "Date": "Unknown",
