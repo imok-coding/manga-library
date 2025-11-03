@@ -7,7 +7,7 @@
 body{background:#2C2F33;color:#FFF;font-family:Helvetica,Arial,sans-serif;margin:0;padding:0;}
 .container{max-width:1200px;margin:0 auto;padding:20px;}
 h1{text-align:center;color:#7289DA;margin-top:10px;}
-#searchInput { width: 60%; margin: 12px auto; display: block; padding: 10px; font-size: 14px; border-radius: 6px; border: 1px solid #444; background: #23272A; color: #FFF;}
+#searchInput{width:60%;margin:12px auto;display:block;padding:10px;font-size:14px;border-radius:6px;border:1px solid #444;background:#23272A;color:#FFF;}
 .grid{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;padding:20px;}
 .card{background:#23272A;width:150px;border-radius:8px;overflow:hidden;text-align:center;transition: transform 0.12s;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.4);}
 .card:hover{transform: scale(1.05);}
@@ -15,6 +15,70 @@ h1{text-align:center;color:#7289DA;margin-top:10px;}
 .card .title{font-weight:bold;margin:6px 8px;font-size:13px;min-height:36px;}
 .card .meta{font-size:11px;margin:2px;color:#BBB;padding-bottom:8px;}
 </style>
+<script>
+function searchLibrary(){
+    let input=document.getElementById('searchInput').value.toLowerCase();
+    let cards=document.getElementsByClassName('card');
+    for(let i=0;i<cards.length;i++){
+        let card=cards[i];
+        let text=card.innerText.toLowerCase();
+        card.style.display=text.includes(input)?'':'none';
+    }
+}
+
+// Fetch and render books dynamically
+fetch('lib.json')
+.then(res => res.json())
+.then(books => {
+    const grid = document.getElementById('bookGrid');
+
+    function normalizeTitle(title){
+        if(!title) return '';
+        return title.toLowerCase().replace(/[^a-z0-9]/g,'');
+    }
+
+    function extractVolume(title){
+        if(!title) return 0;
+        let match = title.match(/vol\.?\s*(\d+)/i);
+        if(match) return parseInt(match[1],10);
+        match = title.match(/ (\d+)$/);
+        return match ? parseInt(match[1],10) : 0;
+    }
+
+    books.sort((a,b) => {
+        let titleA=normalizeTitle(a.Title);
+        let titleB=normalizeTitle(b.Title);
+        if(titleA<titleB) return -1;
+        if(titleA>titleB) return 1;
+        let volA=extractVolume(a.Title);
+        let volB=extractVolume(b.Title);
+        if(volA!==volB) return volA-volB;
+        let dateA=a.Date||'';
+        let dateB=b.Date||'';
+        if(dateA<dateB) return -1;
+        if(dateA>dateB) return 1;
+        return 0;
+    });
+
+    books.forEach(b => {
+        let cover=b.Cover||'https://via.placeholder.com/150x220?text=No+Cover';
+        let title=b.Title||'';
+        let authors=b.Authors && b.Authors!=='Unknown'?b.Authors+'<br>':'';
+        let publisher=b.Publisher && b.Publisher!=='Unknown'?b.Publisher+'<br>':'';
+        let date=b.Date && b.Date!=='Unknown'?b.Date+'<br>':'';
+        let isbn=b.ISBN && b.ISBN!=='Unknown'?b.ISBN:'';
+
+        let card=document.createElement('div');
+        card.className='card';
+        card.title=title;
+        card.innerHTML=`<img src="${cover}" alt="Cover" onclick="window.open('${cover}','_blank')">
+                          <div class="title">${title}</div>
+                          <div class="meta">${authors}${publisher}${date}${isbn}</div>`;
+        grid.appendChild(card);
+    });
+})
+.catch(err=>console.error('Failed to load lib.json',err));
+</script>
 </head>
 <body>
 <div class="container">
@@ -22,45 +86,5 @@ h1{text-align:center;color:#7289DA;margin-top:10px;}
 <input type="text" id="searchInput" onkeyup="searchLibrary()" placeholder="Search by title, author, publisher, ISBN...">
 <div class="grid" id="bookGrid"></div>
 </div>
-
-<script>
-// Search filter
-function searchLibrary() {
-    let input = document.getElementById('searchInput').value.toLowerCase();
-    let cards = document.getElementsByClassName('card');
-    for (let i=0;i<cards.length;i++){
-        let card = cards[i];
-        let text = card.innerText.toLowerCase();
-        card.style.display = text.includes(input) ? '' : 'none';
-    }
-}
-
-// Fetch and render books from lib.json
-fetch('lib.json')
-  .then(res => res.json())
-  .then(books => {
-      const grid = document.getElementById('bookGrid');
-      books.sort((a,b) => {
-          // simple sort by title (you can add volume/date if needed)
-          return (a.Title || '').localeCompare(b.Title || '');
-      }).forEach(b => {
-          let cover = b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
-          let title = b.Title || '';
-          let authors = b.Authors && b.Authors !== 'Unknown' ? b.Authors+'<br>' : '';
-          let publisher = b.Publisher && b.Publisher !== 'Unknown' ? b.Publisher+'<br>' : '';
-          let date = b.Date && b.Date !== 'Unknown' ? b.Date+'<br>' : '';
-          let isbn = b.ISBN && b.ISBN !== 'Unknown' ? b.ISBN : '';
-
-          let card = document.createElement('div');
-          card.className = 'card';
-          card.title = title;
-          card.innerHTML = `<img src="${cover}" alt="Cover" onclick="window.open('${cover}','_blank')">
-                            <div class="title">${title}</div>
-                            <div class="meta">${authors}${publisher}${date}${isbn}</div>`;
-          grid.appendChild(card);
-      });
-  })
-  .catch(err => console.error('Failed to load lib.json', err));
-</script>
 </body>
 </html>
