@@ -774,5 +774,101 @@
         "Publisher": "Dark Horse Manga",
         "Date": "03/10/2020",
         "Cover": "https://covers.openlibrary.org/b/id/10362938-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0993-9",
+        "Title": "Chainsaw Man, Vol., Vol. 1",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/12794650-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0994-6",
+        "Title": "Chainsaw Man, Vol., Vol. 2",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/12794652-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0995-3",
+        "Title": "Chainsaw Man, Vol., Vol. 3",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2021",
+        "Cover": "https://covers.openlibrary.org/b/id/11272054-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-1727-9",
+        "Title": "Chainsaw Man, Vol., Vol. 4",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2021",
+        "Cover": "https://covers.openlibrary.org/b/id/12794654-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-1922-8",
+        "Title": "Chainsaw Man, Vol., Vol. 5",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "VIZ Media LLC",
+        "Date": "06/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/11177825-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2071-2",
+        "Title": "Chainsaw Man, Vol., Vol. 6",
+        "Authors": "FUJIMOTO-T, Tatsuki Fujimoto",
+        "Publisher": "VIZ Media LLC",
+        "Date": "08/03/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/11947384-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2096-5",
+        "Title": "Chainsaw Man, Vol., Vol. 7",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "VIZ Media LLC",
+        "Date": "10/05/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/11994974-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2278-5",
+        "Title": "Chainsaw Man, Vol., Vol. 8",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2021",
+        "Cover": "https://covers.openlibrary.org/b/id/12794658-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2404-8",
+        "Title": "Chainsaw Man, Vol., Vol. 9",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2022",
+        "Cover": "https://covers.openlibrary.org/b/id/12794660-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2535-9",
+        "Title": "Chainsaw Man, Vol., Vol. 10",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2022",
+        "Cover": "https://covers.openlibrary.org/b/id/12794661-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2711-7",
+        "Title": "Chainsaw Man, Vol., Vol. 11",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2022",
+        "Cover": "https://covers.openlibrary.org/b/id/12794662-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4102-1",
+        "Title": "Chainsaw Man, Vol., Vol. 13",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2023",
+        "Cover": "https://covers.openlibrary.org/b/id/14650152-L.jpg"
     }
 ]
