@@ -40,10 +40,21 @@ fetch('lib.json')
   .then(res => res.json())
   .then(books => {
       const grid = document.getElementById('bookGrid');
-      books.sort((a,b) => {
-          // simple sort by title (you can add volume/date if needed)
-          return (a.Title || '').localeCompare(b.Title || '');
-      }).forEach(b => {
+        books.sort((a, b) => {
+            // Extract base series name (strip ", Vol. X")
+            const baseA = (a.Title || '').replace(/,\s*Vol\.\s*\d+/i, '').trim().toLowerCase();
+            const baseB = (b.Title || '').replace(/,\s*Vol\.\s*\d+/i, '').trim().toLowerCase();
+
+            // If same series, compare volume numbers numerically
+            if (baseA === baseB) {
+                const volA = parseInt((a.Title || '').match(/Vol\.\s*(\d+)/i)?.[1] || 0);
+                const volB = parseInt((b.Title || '').match(/Vol\.\s*(\d+)/i)?.[1] || 0);
+                return volA - volB;
+            }
+
+            // Otherwise sort alphabetically by base title
+            return baseA.localeCompare(baseB);
+        }).forEach(b => {
           let cover = b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
           let title = b.Title || '';
           let authors = b.Authors && b.Authors !== 'Unknown' ? b.Authors+'<br>' : '';
