@@ -111,30 +111,26 @@ fetch('lib.json')
   .then(books => {
       const grid = document.getElementById('bookGrid');
         books.sort((a, b) => {
-            const normalize = str => (str || '')
-                .normalize("NFKC")                      // Normalize Unicode (fixes weird spaces)
-                .replace(/\s+/g, ' ')                   // Collapse multiple spaces
-                .trim()
-                .toLowerCase();
-
-            const titleA = normalize(a.Title);
-            const titleB = normalize(b.Title);
-
-            // Extract base title (before ", Vol.")
-            const baseA = titleA.split(/,\s*vol\./i)[0];
-            const baseB = titleB.split(/,\s*vol\./i)[0];
-
-            // Extract numeric volume, handling "Vol. 105" and similar
-            const volA = parseInt(titleA.match(/vol\.\s*(\d+)/i)?.[1] || 0, 10);
-            const volB = parseInt(titleB.match(/vol\.\s*(\d+)/i)?.[1] || 0, 10);
-
-            if (baseA === baseB) {
-                // Sort purely numerically by volume number
-                return volA - volB;
+            // Extract base series name and volume number robustly
+            function parseTitle(t) {
+                t = (t || '').trim();
+                // Match "Series Name, Vol. X" or "Series Name Vol. X" or "Series Name Volume X"
+                let m = t.match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*(\d+))?$/i);
+                if (!m) return { name: t.toLowerCase(), vol: 0 };
+                let name = m[1].trim().toLowerCase();
+                let vol = parseInt(m[2] || "0", 10);
+                return { name, vol };
             }
 
-            // Otherwise sort alphabetically by normalized base title
-            return baseA.localeCompare(baseB);
+            let aParsed = parseTitle(a.Title);
+            let bParsed = parseTitle(b.Title);
+
+            // First sort alphabetically by series name
+            let cmp = aParsed.name.localeCompare(bParsed.name);
+            if (cmp !== 0) return cmp;
+
+            // Then numerically by volume
+            return aParsed.vol - bParsed.vol;
       }).forEach(b => {
           let cover = b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
           let title = b.Title || '';
