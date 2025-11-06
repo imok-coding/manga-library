@@ -5,30 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manga Library</title>
 <style>
-body {
+body {{
     background: #2C2F33;
     color: #FFF;
     font-family: Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-}
-.container {
+}}
+.container {{
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-}
-h1 {
+}}
+h1 {{
     text-align: center;
     color: #7289DA;
     margin-top: 10px;
-}
-#bookCountTop, #bookCountBottom {
+}}
+#bookCountTop, #bookCountBottom {{
     text-align: center;
-    margin: 10px 0;
+    margin: 6px 0;
+    color: #AAA;
     font-size: 14px;
-    color: #CCC;
-}
-#searchInput {
+}}
+#searchInput {{
     width: 90%;
     max-width: 500px;
     margin: 12px auto;
@@ -39,115 +39,100 @@ h1 {
     border: 1px solid #444;
     background: #23272A;
     color: #FFF;
-}
-.grid {
+}}
+.grid {{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 20px;
     justify-items: center;
     padding: 20px;
-}
-.card {
+}}
+.card {{
     background: #23272A;
     border-radius: 8px;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
     text-align: center;
+    transition: transform 0.12s;
+    cursor: default; /* remove pointer cursor */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     width: 100%;
     max-width: 150px;
-    height: 360px; /* fixed uniform height */
-    padding: 6px 4px;
-    box-sizing: border-box;
-    transition: transform 0.12s;
-}
-/* Hover animation (scale only) */
-.card:hover {
+}}
+.card:hover {{
     transform: scale(1.05);
-}
-.card img {
+}}
+.card img {{
     width: 100%;
-    max-height: 180px; /* full cover visible, but not too big */
-    object-fit: contain; /* preserves full image */
+    height: auto;
+    max-height: 220px;
+    object-fit: cover;
     display: block;
-    margin: 0 auto 6px;
-}
-.card .title {
+    margin: 0 auto;
+    background: #ddd;
+}}
+.card .title {{
     font-weight: bold;
+    margin: 6px 8px;
     font-size: 13px;
-    margin: 2px 0;
-    overflow-wrap: break-word; /* wrap long titles */
-    max-height: 40px; /* allow two lines max */
-}
-.card .meta {
+    min-height: 36px;
+}}
+.card .meta {{
     font-size: 11px;
+    margin: 2px;
     color: #BBB;
-    flex: 1; /* takes remaining space */
-    overflow-y: auto; /* scroll if too long */
-    margin-bottom: 4px;
-}
-.card .isbn {
-    font-size: 11px;
-    color: #888;
-    text-align: center;
-    margin-top: auto; /* sticks to bottom */
-    flex-shrink: 0;
-}
-@media (max-width: 600px) {
-    .grid {
+    padding-bottom: 8px;
+}}
+@media (max-width: 600px) {{
+    .grid {{
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    }
-    .card {
+    }}
+    .card {{
         max-width: 130px;
-    }
-}
+    }}
+}}
 </style>
 </head>
 <body>
 <div class="container">
 <h1>Manga Library</h1>
-<div id="bookCountTop"></div>
+<div id="bookCountTop">Total books: {book_count}</div>
 <input type="text" id="searchInput" onkeyup="searchLibrary()" placeholder="Search by title, author, publisher, ISBN...">
 <div class="grid" id="bookGrid"></div>
-<div id="bookCountBottom"></div>
+<div id="bookCountBottom">Total books: {book_count}</div>
 </div>
 
 <script>
 // Search filter
-function searchLibrary() {
+function searchLibrary() {{
     let input = document.getElementById('searchInput').value.toLowerCase();
     let cards = document.getElementsByClassName('card');
-    for (let i=0;i<cards.length;i++){
+    for (let i=0;i<cards.length;i++){{
         let card = cards[i];
         let text = card.innerText.toLowerCase();
         card.style.display = text.includes(input) ? '' : 'none';
-    }
-}
+    }}
+}}
 
 // Fetch and render books from lib.json
 fetch('lib.json')
   .then(res => res.json())
-  .then(books => {
+  .then(books => {{
       const grid = document.getElementById('bookGrid');
-      const countTop = document.getElementById('bookCountTop');
-      const countBottom = document.getElementById('bookCountBottom');
-      
-      books.sort((a, b) => {
-          function parseTitle(t) {
+      books.sort((a, b) => {{
+          function parseTitle(t) {{
               t = (t || '').trim();
               let m = t.match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*(\d+))?$/i);
-              if (!m) return { name: t.toLowerCase(), vol: 0 };
+              if (!m) return {{ name: t.toLowerCase(), vol: 0 }};
               let name = m[1].trim().toLowerCase();
               let vol = parseInt(m[2] || "0", 10);
-              return { name, vol };
-          }
+              return {{ name, vol }};
+          }}
           let aParsed = parseTitle(a.Title);
           let bParsed = parseTitle(b.Title);
           let cmp = aParsed.name.localeCompare(bParsed.name);
           if (cmp !== 0) return cmp;
           return aParsed.vol - bParsed.vol;
-      }).forEach(b => {
+      }}).forEach(b => {{
           let cover = b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
           let title = b.Title || '';
           let authors = b.Authors && b.Authors !== 'Unknown' ? b.Authors+'<br>' : '';
@@ -158,19 +143,12 @@ fetch('lib.json')
           let card = document.createElement('div');
           card.className = 'card';
           card.title = title;
-          card.innerHTML = `
-            <img src="${cover}" alt="Cover">
-            <div class="title">${title}</div>
-            <div class="meta">${authors}${publisher}${date}</div>
-            <div class="isbn">${isbn}</div>
-          `;
+          card.innerHTML = `<img src="${cover}" alt="Cover">
+                            <div class="title">${title}</div>
+                            <div class="meta">${authors}${publisher}${date}${isbn}</div>`;
           grid.appendChild(card);
-      });
-
-      // Update book count
-      countTop.innerText = `Total Books: ${books.length}`;
-      countBottom.innerText = `Total Books: ${books.length}`;
-  })
+      }});
+  }})
   .catch(err => console.error('Failed to load lib.json', err));
 </script>
 </body>
