@@ -5,30 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manga Library</title>
 <style>
-body {{
+body {
     background: #2C2F33;
     color: #FFF;
     font-family: Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-}}
-.container {{
+}
+.container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-}}
-h1 {{
+}
+h1 {
     text-align: center;
     color: #7289DA;
     margin-top: 10px;
-}}
-#bookCountTop, #bookCountBottom {{
-    text-align: center;
-    margin: 6px 0;
-    color: #AAA;
-    font-size: 14px;
-}}
-#searchInput {{
+}
+#searchInput {
     width: 90%;
     max-width: 500px;
     margin: 12px auto;
@@ -39,29 +33,29 @@ h1 {{
     border: 1px solid #444;
     background: #23272A;
     color: #FFF;
-}}
-.grid {{
+}
+.grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 20px;
     justify-items: center;
     padding: 20px;
-}}
-.card {{
+}
+.card {
     background: #23272A;
     border-radius: 8px;
     overflow: hidden;
     text-align: center;
     transition: transform 0.12s;
-    cursor: default; /* remove pointer cursor */
+    cursor: pointer;
     box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     width: 100%;
     max-width: 150px;
-}}
-.card:hover {{
+}
+.card:hover {
     transform: scale(1.05);
-}}
-.card img {{
+}
+.card img {
     width: 100%;
     height: auto;
     max-height: 220px;
@@ -69,70 +63,75 @@ h1 {{
     display: block;
     margin: 0 auto;
     background: #ddd;
-}}
-.card .title {{
+}
+.card .title {
     font-weight: bold;
     margin: 6px 8px;
     font-size: 13px;
     min-height: 36px;
-}}
-.card .meta {{
+}
+.card .meta {
     font-size: 11px;
     margin: 2px;
     color: #BBB;
     padding-bottom: 8px;
-}}
-@media (max-width: 600px) {{
-    .grid {{
+}
+@media (max-width: 600px) {
+    .grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    }}
-    .card {{
+    }
+    .card {
         max-width: 130px;
-    }}
-}}
+    }
+}
 </style>
 </head>
 <body>
 <div class="container">
 <h1>Manga Library</h1>
-<div id="bookCountTop">Total books: {book_count}</div>
 <input type="text" id="searchInput" onkeyup="searchLibrary()" placeholder="Search by title, author, publisher, ISBN...">
 <div class="grid" id="bookGrid"></div>
-<div id="bookCountBottom">Total books: {book_count}</div>
 </div>
 
 <script>
 // Search filter
-function searchLibrary() {{
+function searchLibrary() {
     let input = document.getElementById('searchInput').value.toLowerCase();
     let cards = document.getElementsByClassName('card');
-    for (let i=0;i<cards.length;i++){{
+    for (let i=0;i<cards.length;i++){
         let card = cards[i];
         let text = card.innerText.toLowerCase();
         card.style.display = text.includes(input) ? '' : 'none';
-    }}
-}}
+    }
+}
 
 // Fetch and render books from lib.json
 fetch('lib.json')
   .then(res => res.json())
-  .then(books => {{
+  .then(books => {
       const grid = document.getElementById('bookGrid');
-      books.sort((a, b) => {{
-          function parseTitle(t) {{
-              t = (t || '').trim();
-              let m = t.match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*(\d+))?$/i);
-              if (!m) return {{ name: t.toLowerCase(), vol: 0 }};
-              let name = m[1].trim().toLowerCase();
-              let vol = parseInt(m[2] || "0", 10);
-              return {{ name, vol }};
-          }}
-          let aParsed = parseTitle(a.Title);
-          let bParsed = parseTitle(b.Title);
-          let cmp = aParsed.name.localeCompare(bParsed.name);
-          if (cmp !== 0) return cmp;
-          return aParsed.vol - bParsed.vol;
-      }}).forEach(b => {{
+        books.sort((a, b) => {
+            // Extract base series name and volume number robustly
+            function parseTitle(t) {
+                t = (t || '').trim();
+                // Match "Series Name, Vol. X" or "Series Name Vol. X" or "Series Name Volume X"
+                let m = t.match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*(\d+))?$/i);
+                if (!m) return { name: t.toLowerCase(), vol: 0 };
+                let name = m[1].trim().toLowerCase();
+                let vol = parseInt(m[2] || "0", 10);
+                return { name, vol };
+            }
+
+            let aParsed = parseTitle(a.Title);
+            let bParsed = parseTitle(b.Title);
+
+            // First sort alphabetically by series name
+            let cmp = aParsed.name.localeCompare(bParsed.name);
+            if (cmp !== 0) return cmp;
+
+            // Then numerically by volume
+            return aParsed.vol - bParsed.vol;
+      }).forEach(b => {
           let cover = b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
           let title = b.Title || '';
           let authors = b.Authors && b.Authors !== 'Unknown' ? b.Authors+'<br>' : '';
@@ -143,12 +142,12 @@ fetch('lib.json')
           let card = document.createElement('div');
           card.className = 'card';
           card.title = title;
-          card.innerHTML = `<img src="${cover}" alt="Cover">
+          card.innerHTML = `<img src="${cover}" alt="Cover" onclick="window.open('${cover}','_blank')">
                             <div class="title">${title}</div>
                             <div class="meta">${authors}${publisher}${date}${isbn}</div>`;
           grid.appendChild(card);
-      }});
-  }})
+      });
+  })
   .catch(err => console.error('Failed to load lib.json', err));
 </script>
 </body>
