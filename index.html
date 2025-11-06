@@ -110,15 +110,23 @@ fetch('lib.json')
   .then(res => res.json())
   .then(books => {
       const grid = document.getElementById('bookGrid');
-      books.sort((a, b) => {
-          const baseA = (a.Title || '').replace(/,\s*Vol\.\s*\d+/i, '').trim().toLowerCase();
-          const baseB = (b.Title || '').replace(/,\s*Vol\.\s*\d+/i, '').trim().toLowerCase();
-          if (baseA === baseB) {
-              const volA = parseInt((a.Title || '').match(/Vol\.\s*(\d+)/i)?.[1] || 0);
-              const volB = parseInt((b.Title || '').match(/Vol\.\s*(\d+)/i)?.[1] || 0);
-              return volA - volB;
-          }
-          return baseA.localeCompare(baseB);
+        books.sort((a, b) => {
+            const titleA = a.Title || '';
+            const titleB = b.Title || '';
+
+            // Extract series base name (before ", Vol.")
+            const baseA = titleA.split(/,\s*Vol\./i)[0].trim().toLowerCase();
+            const baseB = titleB.split(/,\s*Vol\./i)[0].trim().toLowerCase();
+
+            // Extract volume number
+            const volA = parseInt(titleA.match(/Vol\.\s*(\d+)/i)?.[1] || 0);
+            const volB = parseInt(titleB.match(/Vol\.\s*(\d+)/i)?.[1] || 0);
+
+            // If same base title, sort by volume number
+            if (baseA === baseB) return volA - volB;
+
+            // Otherwise, sort alphabetically by base title
+            return baseA.localeCompare(baseB);
       }).forEach(b => {
           let cover = b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
           let title = b.Title || '';
