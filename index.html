@@ -22,6 +22,12 @@ h1 {
     color: #7289DA;
     margin-top: 10px;
 }
+#bookCountTop, #bookCountBottom {
+    text-align: center;
+    margin: 10px 0;
+    font-size: 14px;
+    color: #CCC;
+}
 #searchInput {
     width: 90%;
     max-width: 500px;
@@ -89,8 +95,10 @@ h1 {
 <body>
 <div class="container">
 <h1>Manga Library</h1>
+<div id="bookCountTop"></div>
 <input type="text" id="searchInput" onkeyup="searchLibrary()" placeholder="Search by title, author, publisher, ISBN...">
 <div class="grid" id="bookGrid"></div>
+<div id="bookCountBottom"></div>
 </div>
 
 <script>
@@ -110,27 +118,23 @@ fetch('lib.json')
   .then(res => res.json())
   .then(books => {
       const grid = document.getElementById('bookGrid');
-        books.sort((a, b) => {
-            // Extract base series name and volume number robustly
-            function parseTitle(t) {
-                t = (t || '').trim();
-                // Match "Series Name, Vol. X" or "Series Name Vol. X" or "Series Name Volume X"
-                let m = t.match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*(\d+))?$/i);
-                if (!m) return { name: t.toLowerCase(), vol: 0 };
-                let name = m[1].trim().toLowerCase();
-                let vol = parseInt(m[2] || "0", 10);
-                return { name, vol };
-            }
-
-            let aParsed = parseTitle(a.Title);
-            let bParsed = parseTitle(b.Title);
-
-            // First sort alphabetically by series name
-            let cmp = aParsed.name.localeCompare(bParsed.name);
-            if (cmp !== 0) return cmp;
-
-            // Then numerically by volume
-            return aParsed.vol - bParsed.vol;
+      const countTop = document.getElementById('bookCountTop');
+      const countBottom = document.getElementById('bookCountBottom');
+      
+      books.sort((a, b) => {
+          function parseTitle(t) {
+              t = (t || '').trim();
+              let m = t.match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*(\d+))?$/i);
+              if (!m) return { name: t.toLowerCase(), vol: 0 };
+              let name = m[1].trim().toLowerCase();
+              let vol = parseInt(m[2] || "0", 10);
+              return { name, vol };
+          }
+          let aParsed = parseTitle(a.Title);
+          let bParsed = parseTitle(b.Title);
+          let cmp = aParsed.name.localeCompare(bParsed.name);
+          if (cmp !== 0) return cmp;
+          return aParsed.vol - bParsed.vol;
       }).forEach(b => {
           let cover = b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
           let title = b.Title || '';
@@ -142,11 +146,18 @@ fetch('lib.json')
           let card = document.createElement('div');
           card.className = 'card';
           card.title = title;
-          card.innerHTML = `<img src="${cover}" alt="Cover" onclick="window.open('${cover}','_blank')">
-                            <div class="title">${title}</div>
-                            <div class="meta">${authors}${publisher}${date}${isbn}</div>`;
+          card.innerHTML = `
+            <img src="${cover}" alt="Cover">
+            <div class="title">${title}</div>
+            <div class="meta">${authors}${publisher}${date}</div>
+            <div class="isbn">${isbn}</div>
+          `;
           grid.appendChild(card);
       });
+
+      // Update book count
+      countTop.innerText = `Total Books: ${books.length}`;
+      countBottom.innerText = `Total Books: ${books.length}`;
   })
   .catch(err => console.error('Failed to load lib.json', err));
 </script>
