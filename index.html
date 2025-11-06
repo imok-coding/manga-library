@@ -82,6 +82,11 @@ h1 {
     color: #BBB;
     padding-bottom: 8px;
 }
+.card .isbn {
+    font-size: 10px;
+    color: #888; /* darker gray */
+    margin-top: 4px;
+}
 @media (max-width: 600px) {
     .grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -124,7 +129,7 @@ fetch('lib.json')
       books.sort((a, b) => {
           function parseTitle(t) {
               t = (t || '').trim();
-              let m = t.match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*(\d+))?$/i);
+              let m = t.match(/^(.*?),?\s*(?:Vol\.|Volume)\s*(\d+)\b/i);
               if (!m) return { name: t.toLowerCase(), vol: 0 };
               let name = m[1].trim().toLowerCase();
               let vol = parseInt(m[2] || "0", 10);
