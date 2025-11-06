@@ -57,30 +57,28 @@ h1 {
     text-align: center;
     width: 100%;
     max-width: 150px;
-    height: 360px; /* fixed card height */
+    height: 360px; /* fixed uniform height */
     padding: 6px 4px;
     box-sizing: border-box;
     transition: transform 0.12s;
 }
-/* Hover animation (scale) */
+/* Hover animation (scale only) */
 .card:hover {
     transform: scale(1.05);
 }
 .card img {
     width: 100%;
-    max-height: 200px; /* ensures cover is fully visible but not too big */
+    max-height: 180px; /* full cover visible, but not too big */
     object-fit: contain; /* preserves full image */
     display: block;
-    margin: 0 auto 4px;
+    margin: 0 auto 6px;
 }
 .card .title {
     font-weight: bold;
     font-size: 13px;
     margin: 2px 0;
-    min-height: 36px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: break-word; /* wrap long titles */
+    max-height: 40px; /* allow two lines max */
 }
 .card .meta {
     font-size: 11px;
