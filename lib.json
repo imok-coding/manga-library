@@ -16,12 +16,140 @@
         "Cover": "https://m.media-amazon.com/images/I/81+T0hWMUyL._SL1500_.jpg"
     },
     {
+        "ISBN": "978-1-50671-198-0",
+        "Title": "Berserk Deluxe Volume, Vol. 1",
+        "Authors": "三浦建太郎 (Kentaro Miura), Jason DeAngelis",
+        "Publisher": "Dark Horse Manga",
+        "Date": "03/26/2019",
+        "Cover": "https://covers.openlibrary.org/b/id/8746964-L.jpg"
+    },
+    {
+        "ISBN": "978-1-50671-199-7",
+        "Title": "Berserk Deluxe Volume, Vol. 2",
+        "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
+        "Publisher": "Dark Horse Comics",
+        "Date": "2019",
+        "Cover": "https://covers.openlibrary.org/b/id/12735920-L.jpg"
+    },
+    {
+        "ISBN": "978-1-50671-200-0",
+        "Title": "Berserk Deluxe Volume, Vol. 3",
+        "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
+        "Publisher": "Dark Horse Comics, Dark Horse Manga",
+        "Date": "2019",
+        "Cover": "https://covers.openlibrary.org/b/id/12735922-L.jpg"
+    },
+    {
+        "ISBN": "978-1-50671-521-6",
+        "Title": "Berserk Deluxe Volume, Vol. 4",
+        "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
+        "Publisher": "Dark Horse Manga",
+        "Date": "03/10/2020",
+        "Cover": "https://covers.openlibrary.org/b/id/10362938-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0993-9",
+        "Title": "Chainsaw Man, Vol. 1",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/12794650-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0994-6",
+        "Title": "Chainsaw Man, Vol. 2",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/12794652-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0995-3",
+        "Title": "Chainsaw Man, Vol. 3",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2021",
+        "Cover": "https://covers.openlibrary.org/b/id/11272054-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-1727-9",
+        "Title": "Chainsaw Man, Vol. 4",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2021",
+        "Cover": "https://covers.openlibrary.org/b/id/12794654-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-1922-8",
+        "Title": "Chainsaw Man, Vol. 5",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "VIZ Media LLC",
+        "Date": "06/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/11177825-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2071-2",
+        "Title": "Chainsaw Man, Vol. 6",
+        "Authors": "FUJIMOTO-T, Tatsuki Fujimoto",
+        "Publisher": "VIZ Media LLC",
+        "Date": "08/03/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/11947384-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2096-5",
+        "Title": "Chainsaw Man, Vol. 7",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "VIZ Media LLC",
+        "Date": "10/05/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/11994974-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2278-5",
+        "Title": "Chainsaw Man, Vol. 8",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2021",
+        "Cover": "https://covers.openlibrary.org/b/id/12794658-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2404-8",
+        "Title": "Chainsaw Man, Vol. 9",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2022",
+        "Cover": "https://covers.openlibrary.org/b/id/12794660-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2535-9",
+        "Title": "Chainsaw Man, Vol. 10",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2022",
+        "Cover": "https://covers.openlibrary.org/b/id/12794661-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2711-7",
+        "Title": "Chainsaw Man, Vol. 11",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2022",
+        "Cover": "https://covers.openlibrary.org/b/id/12794662-L.jpg"
+    },
+    {
         "ISBN": "978-1-9747-4058-1",
         "Title": "Chainsaw Man, Vol. 12",
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2023",
         "Cover": "https://covers.openlibrary.org/b/id/14650164-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-4102-1",
+        "Title": "Chainsaw Man, Vol. 13",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2023",
+        "Cover": "https://covers.openlibrary.org/b/id/14650152-L.jpg"
     },
     {
         "ISBN": "978-1-9747-4358-2",
@@ -38,6 +166,14 @@
         "Publisher": "Viz Media",
         "Date": "2024",
         "Cover": "https://covers.openlibrary.org/b/id/14647286-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-5269-0",
+        "Title": "Chainsaw Man, Vol. 17",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2025",
+        "Cover": "https://m.media-amazon.com/images/I/81X2O9UM1UL._SL1500_.jpg"
     },
     {
         "ISBN": "978-1-9747-5493-9",
@@ -182,6 +318,190 @@
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
         "Cover": "https://m.media-amazon.com/images/I/71046OVCc-L._SL1500_.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0052-3",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "VIZ Media LLC",
+        "Date": "07/03/2018",
+        "Cover": "https://covers.openlibrary.org/b/id/14323082-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0053-0",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "VIZ Media LLC",
+        "Date": "09/04/2018",
+        "Cover": "https://covers.openlibrary.org/b/id/14323087-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0054-7",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "VIZ Media LLC",
+        "Date": "11/06/2018",
+        "Cover": "https://covers.openlibrary.org/b/id/14323091-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0055-4",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "VIZ Media LLC",
+        "Date": "01/2019",
+        "Cover": "https://covers.openlibrary.org/b/id/8798152-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0056-1",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "VIZ Media LLC",
+        "Date": "03/05/2019",
+        "Cover": "https://covers.openlibrary.org/b/id/8798324-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0057-8",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "VIZ Media LLC",
+        "Date": "01/25/2022",
+        "Cover": "https://covers.openlibrary.org/b/id/8798585-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0441-5",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "VIZ Media LLC",
+        "Date": "07/02/2019",
+        "Cover": "https://covers.openlibrary.org/b/id/14323092-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0442-2",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "VIZ Media LLC",
+        "Date": "09/03/2019",
+        "Cover": "https://covers.openlibrary.org/b/id/10201332-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0443-9",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "VIZ Media LLC",
+        "Date": "11/05/2019",
+        "Cover": "https://covers.openlibrary.org/b/id/14323094-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0455-2",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/14848880-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-0648-8",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/11301066-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-1112-3",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/11252287-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-1113-0",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "VIZ Media LLC",
+        "Date": "06/02/2020",
+        "Cover": "https://covers.openlibrary.org/b/id/14323096-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-1114-7",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/11252333-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-1478-0",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/11252369-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-1477-3",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/14848881-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-1061-4",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/12372185-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-1760-6",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/12749510-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-1811-5",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "Viz Media",
+        "Date": "2020",
+        "Cover": "https://covers.openlibrary.org/b/id/12749511-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2097-2",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "Viz Media",
+        "Date": "2021",
+        "Cover": "https://m.media-amazon.com/images/I/81bfP2ZLKqL._SL1500_.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2120-7",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "VIZ Media LLC",
+        "Date": "04/06/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/15125101-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2341-6",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "VIZ Media LLC",
+        "Date": "06/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/11359633-L.jpg"
+    },
+    {
+        "ISBN": "978-1-9747-2363-8",
+        "Title": "Demon Slayer",
+        "Authors": "Koyoharu Gotōge",
+        "Publisher": "VIZ Media LLC",
+        "Date": "08/03/2021",
+        "Cover": "https://covers.openlibrary.org/b/id/11947383-L.jpg"
     },
     {
         "ISBN": "979-8-88877-020-7",
@@ -592,6 +912,14 @@
         "Cover": "https://covers.openlibrary.org/b/id/14541562-L.jpg"
     },
     {
+        "ISBN": "978-1-9747-4327-8",
+        "Title": "One Piece, Vol. 105",
+        "Authors": "尾田栄一郎",
+        "Publisher": "VIZ Media",
+        "Date": "03/12/2024",
+        "Cover": "https://covers.openlibrary.org/b/id/14564421-L.jpg"
+    },
+    {
         "ISBN": "978-1-9747-4586-9",
         "Title": "ONE PIECE, Vol. 106",
         "Authors": "尾田栄一郎",
@@ -734,149 +1062,5 @@
         "Publisher": "Viz Media",
         "Date": "2023",
         "Cover": "https://covers.openlibrary.org/b/id/14617793-L.jpg"
-    },
-    {
-        "ISBN": "978-1-50671-198-0",
-        "Title": "Berserk Deluxe, Vol. 1",
-        "Authors": "三浦建太郎 (Kentaro Miura), Jason DeAngelis",
-        "Publisher": "Dark Horse Manga",
-        "Date": "03/26/2019",
-        "Cover": "https://covers.openlibrary.org/b/id/8746964-L.jpg"
-    },
-    {
-        "ISBN": "978-1-50671-199-7",
-        "Title": "Berserk Deluxe, Vol. 2",
-        "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
-        "Publisher": "Dark Horse Comics",
-        "Date": "2019",
-        "Cover": "https://covers.openlibrary.org/b/id/12735920-L.jpg"
-    },
-    {
-        "ISBN": "978-1-50671-200-0",
-        "Title": "Berserk Deluxe, Vol. 3",
-        "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
-        "Publisher": "Dark Horse Comics, Dark Horse Manga",
-        "Date": "2019",
-        "Cover": "https://covers.openlibrary.org/b/id/12735922-L.jpg"
-    },
-    {
-        "ISBN": "978-1-50671-521-6",
-        "Title": "Berserk Deluxe, Vol. 4",
-        "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
-        "Publisher": "Dark Horse Manga",
-        "Date": "03/10/2020",
-        "Cover": "https://covers.openlibrary.org/b/id/10362938-L.jpg"
-    },
-    {
-        "ISBN": "978-1-9747-0993-9",
-        "Title": "Chainsaw Man, Vol. 1",
-        "Authors": "Tatsuki Fujimoto",
-        "Publisher": "Viz Media",
-        "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/12794650-L.jpg"
-    },
-    {
-        "ISBN": "978-1-9747-0994-6",
-        "Title": "Chainsaw Man, Vol. 2",
-        "Authors": "Tatsuki Fujimoto",
-        "Publisher": "Viz Media",
-        "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/12794652-L.jpg"
-    },
-    {
-        "ISBN": "978-1-9747-0995-3",
-        "Title": "Chainsaw Man, Vol. 3",
-        "Authors": "Tatsuki Fujimoto",
-        "Publisher": "Viz Media",
-        "Date": "2021",
-        "Cover": "https://covers.openlibrary.org/b/id/11272054-L.jpg"
-    },
-    {
-        "ISBN": "978-1-9747-1727-9",
-        "Title": "Chainsaw Man, Vol. 4",
-        "Authors": "Tatsuki Fujimoto",
-        "Publisher": "Viz Media",
-        "Date": "2021",
-        "Cover": "https://covers.openlibrary.org/b/id/12794654-L.jpg"
-    },
-    {
-        "ISBN": "978-1-9747-1922-8",
-        "Title": "Chainsaw Man, Vol. 5",
-        "Authors": "Tatsuki Fujimoto",
-        "Publisher": "VIZ Media LLC",
-        "Date": "06/2021",
-        "Cover": "https://covers.openlibrary.org/b/id/11177825-L.jpg"
-    },
-    {
-        "ISBN": "978-1-9747-2071-2",
-        "Title": "Chainsaw Man, Vol. 6",
-        "Authors": "FUJIMOTO-T, Tatsuki Fujimoto",
-        "Publisher": "VIZ Media LLC",
-        "Date": "08/03/2021",
-        "Cover": "https://covers.openlibrary.org/b/id/11947384-L.jpg"
-    },
-    {
-        "ISBN": "978-1-9747-2096-5",
-        "Title": "Chainsaw Man, Vol. 7",
-        "Authors": "Tatsuki Fujimoto",
-        "Publisher": "VIZ Media LLC",
-        "Date": "10/05/2021",
-        "Cover": "https://covers.openlibrary.org/b/id/11994974-L.jpg"
-    },
-    {
-        "ISBN": "978-1-9747-2278-5",
-        "Title": "Chainsaw Man, Vol. 8",
-        "Authors": "Tatsuki Fujimoto",
-        "Publisher": "Viz Media",
-        "Date": "2021",
-        "Cover": "https://covers.openlibrary.org/b/id/12794658-L.jpg"
-    },
-    {
-        "ISBN": "978-1-9747-2404-8",
-        "Title": "Chainsaw Man, Vol. 9",
-        "Authors": "Tatsuki Fujimoto",
-        "Publisher": "Viz Media",
-        "Date": "2022",
-        "Cover": "https://covers.openlibrary.org/b/id/12794660-L.jpg"
-    },
-    {
-        "ISBN": "978-1-9747-2535-9",
-        "Title": "Chainsaw Man, Vol. 10",
-        "Authors": "Tatsuki Fujimoto",
-        "Publisher": "Viz Media",
-        "Date": "2022",
-        "Cover": "https://covers.openlibrary.org/b/id/12794661-L.jpg"
-    },
-    {
-        "ISBN": "978-1-9747-2711-7",
-        "Title": "Chainsaw Man, Vol. 11",
-        "Authors": "Tatsuki Fujimoto",
-        "Publisher": "Viz Media",
-        "Date": "2022",
-        "Cover": "https://covers.openlibrary.org/b/id/12794662-L.jpg"
-    },
-    {
-        "ISBN": "978-1-9747-4102-1",
-        "Title": "Chainsaw Man, Vol. 13",
-        "Authors": "Tatsuki Fujimoto",
-        "Publisher": "Viz Media",
-        "Date": "2023",
-        "Cover": "https://covers.openlibrary.org/b/id/14650152-L.jpg"
-    },
-    {
-        "ISBN": "978-1-9747-4327-8",
-        "Title": "One Piece, Vol. 105",
-        "Authors": "尾田栄一郎",
-        "Publisher": "VIZ Media",
-        "Date": "03/12/2024",
-        "Cover": "https://covers.openlibrary.org/b/id/14564421-L.jpg"
-    },
-    {
-        "ISBN": "978-1-9747-5269-0",
-        "Title": "Chainsaw Man, Vol. 17",
-        "Authors": "Tatsuki Fujimoto",
-        "Publisher": "Viz Media",
-        "Date": "2025",
-        "Cover": "https://m.media-amazon.com/images/I/81X2O9UM1UL._SL1500_.jpg"
     }
 ]
