@@ -5,7 +5,8 @@
         "Authors": "Saho Tenamachi, 燦々SUN, Momoko, Matthew Rutsohn",
         "Publisher": "Yen Press LLC",
         "Date": "2025",
-        "Cover": "https://store.crunchyroll.com/dw/image/v2/BDGC_PRD/on/demandware.static/-/Sites-crunchyroll-master-catalog/default/dwc8c42db0/images/9798855413793_alya-sometimes-hides-her-feelings-in-russian-manga-volume-1_1.jpg"
+        "Cover": "https://store.crunchyroll.com/dw/image/v2/BDGC_PRD/on/demandware.static/-/Sites-crunchyroll-master-catalog/default/dwc8c42db0/images/9798855413793_alya-sometimes-hides-her-feelings-in-russian-manga-volume-1_1.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-8554-1381-6",
@@ -13,7 +14,8 @@
         "Authors": "Saho Tenamachi",
         "Publisher": "Yen Press",
         "Date": "Unknown",
-        "Cover": "https://m.media-amazon.com/images/I/81+T0hWMUyL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81+T0hWMUyL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-50671-198-0",
@@ -21,7 +23,8 @@
         "Authors": "三浦建太郎 (Kentaro Miura), Jason DeAngelis",
         "Publisher": "Dark Horse Manga",
         "Date": "03/26/2019",
-        "Cover": "https://m.media-amazon.com/images/I/91eRoWSACCL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/91eRoWSACCL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-50671-199-7",
@@ -29,7 +32,8 @@
         "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
         "Publisher": "Dark Horse Comics",
         "Date": "2019",
-        "Cover": "https://m.media-amazon.com/images/I/91RL+XK7MPL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/91RL+XK7MPL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-50671-200-0",
@@ -37,7 +41,8 @@
         "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
         "Publisher": "Dark Horse Comics, Dark Horse Manga",
         "Date": "2019",
-        "Cover": "https://m.media-amazon.com/images/I/91TZp6zV2vL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/91TZp6zV2vL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-50671-521-6",
@@ -45,7 +50,8 @@
         "Authors": "三浦建太郎 (Kentaro Miura), Duane Johnson",
         "Publisher": "Dark Horse Manga",
         "Date": "03/10/2020",
-        "Cover": "https://m.media-amazon.com/images/I/91FY2B3PCgL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/91FY2B3PCgL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0993-9",
@@ -53,7 +59,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/12794650-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12794650-L.jpg",
+        "Read": true
     },
     {
         "ISBN": "978-1-9747-0994-6",
@@ -61,7 +68,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/12794652-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12794652-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0995-3",
@@ -69,7 +77,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2021",
-        "Cover": "https://covers.openlibrary.org/b/id/11272054-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/11272054-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1727-9",
@@ -77,7 +86,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2021",
-        "Cover": "https://covers.openlibrary.org/b/id/12794654-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12794654-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1922-8",
@@ -85,7 +95,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "VIZ Media LLC",
         "Date": "06/2021",
-        "Cover": "https://covers.openlibrary.org/b/id/11177825-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/11177825-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2071-2",
@@ -93,7 +104,8 @@
         "Authors": "FUJIMOTO-T, Tatsuki Fujimoto",
         "Publisher": "VIZ Media LLC",
         "Date": "08/03/2021",
-        "Cover": "https://covers.openlibrary.org/b/id/11947384-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/11947384-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2096-5",
@@ -101,7 +113,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "VIZ Media LLC",
         "Date": "10/05/2021",
-        "Cover": "https://covers.openlibrary.org/b/id/11994974-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/11994974-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2278-5",
@@ -109,7 +122,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2021",
-        "Cover": "https://covers.openlibrary.org/b/id/12794658-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12794658-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2404-8",
@@ -117,7 +131,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2022",
-        "Cover": "https://covers.openlibrary.org/b/id/12794660-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12794660-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2535-9",
@@ -125,7 +140,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2022",
-        "Cover": "https://covers.openlibrary.org/b/id/12794661-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12794661-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2711-7",
@@ -133,7 +149,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2022",
-        "Cover": "https://covers.openlibrary.org/b/id/12794662-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12794662-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4058-1",
@@ -141,7 +158,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2023",
-        "Cover": "https://covers.openlibrary.org/b/id/14650164-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14650164-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4102-1",
@@ -149,7 +167,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2023",
-        "Cover": "https://covers.openlibrary.org/b/id/14650152-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14650152-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4358-2",
@@ -157,7 +176,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2024",
-        "Cover": "https://covers.openlibrary.org/b/id/14650154-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14650154-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4640-8",
@@ -165,7 +185,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2024",
-        "Cover": "https://covers.openlibrary.org/b/id/14647286-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14647286-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-5269-0",
@@ -173,7 +194,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2025",
-        "Cover": "https://m.media-amazon.com/images/I/81X2O9UM1UL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81X2O9UM1UL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-5493-9",
@@ -181,7 +203,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
-        "Cover": "https://m.media-amazon.com/images/I/61+5xbA4vWL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/61+5xbA4vWL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-5854-8",
@@ -189,7 +212,8 @@
         "Authors": "Tatsuki Fujimoto",
         "Publisher": "Viz Media",
         "Date": "2025",
-        "Cover": "https://m.media-amazon.com/images/I/81RjRHP1cIL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81RjRHP1cIL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-3669-0",
@@ -197,7 +221,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "Viz Media, VIZ Media LLC",
         "Date": "2023",
-        "Cover": "https://covers.openlibrary.org/b/id/13351444-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/13351444-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-3463-4",
@@ -205,7 +230,8 @@
         "Authors": "龍幸伸",
         "Publisher": "VIZ Media LLC",
         "Date": "10/11/2022",
-        "Cover": "https://covers.openlibrary.org/b/id/14554208-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14554208-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-3530-3",
@@ -213,7 +239,8 @@
         "Authors": "龍幸伸",
         "Publisher": "Viz Media",
         "Date": "01/2023",
-        "Cover": "https://covers.openlibrary.org/b/id/14647290-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14647290-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-3531-0",
@@ -221,7 +248,8 @@
         "Authors": "龍幸伸",
         "Publisher": "VIZ Media LLC",
         "Date": "2023",
-        "Cover": "https://covers.openlibrary.org/b/id/14647291-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14647291-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-3744-4",
@@ -229,7 +257,8 @@
         "Authors": "龍幸伸",
         "Publisher": "Viz Media",
         "Date": "2023",
-        "Cover": "https://covers.openlibrary.org/b/id/14647289-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14647289-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4059-8",
@@ -237,7 +266,8 @@
         "Authors": "龍幸伸",
         "Publisher": "Viz Media LLC",
         "Date": "2023",
-        "Cover": "https://covers.openlibrary.org/b/id/14647288-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14647288-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4283-7",
@@ -245,7 +275,8 @@
         "Authors": "龍幸伸",
         "Publisher": "Viz Media LLC",
         "Date": "2024",
-        "Cover": "https://covers.openlibrary.org/b/id/14723550-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14723550-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4339-1",
@@ -253,7 +284,8 @@
         "Authors": "龍幸伸",
         "Publisher": "Viz Media LLC",
         "Date": "2024",
-        "Cover": "https://m.media-amazon.com/images/I/81jPgY8ghpL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81jPgY8ghpL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4601-9",
@@ -261,7 +293,8 @@
         "Authors": "龍幸伸",
         "Publisher": "Viz Media",
         "Date": "2024",
-        "Cover": "https://covers.openlibrary.org/b/id/15118471-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15118471-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4897-6",
@@ -269,7 +302,8 @@
         "Authors": "Yukinobu Tatsu",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
-        "Cover": "https://m.media-amazon.com/images/I/81rWnBWSITL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81rWnBWSITL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4984-3",
@@ -277,7 +311,8 @@
         "Authors": "Yukinobu Tatsu",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
-        "Cover": "https://m.media-amazon.com/images/I/81XZC7jYfKL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81XZC7jYfKL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-5180-8",
@@ -285,7 +320,8 @@
         "Authors": "龍幸伸",
         "Publisher": "Viz Media",
         "Date": "2025",
-        "Cover": "https://m.media-amazon.com/images/I/81clpVfDoiL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81clpVfDoiL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-5227-0",
@@ -293,7 +329,8 @@
         "Authors": "Yukinobu Tatsu",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
-        "Cover": "https://m.media-amazon.com/images/I/81eidJZczYL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81eidJZczYL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-5511-0",
@@ -301,7 +338,8 @@
         "Authors": "Yukinobu Tatsu",
         "Publisher": "VIZ Media LLC",
         "Date": "06/03/2025",
-        "Cover": "https://covers.openlibrary.org/b/id/15095736-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15095736-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-5575-2",
@@ -309,7 +347,8 @@
         "Authors": "Yukinobu Tatsu",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
-        "Cover": "https://m.media-amazon.com/images/I/91wM5F-GTdL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/91wM5F-GTdL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-5792-3",
@@ -317,7 +356,8 @@
         "Authors": "Yukinobu Tatsu",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
-        "Cover": "https://m.media-amazon.com/images/I/71046OVCc-L._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/71046OVCc-L._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0052-3",
@@ -325,7 +365,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "VIZ Media LLC",
         "Date": "07/03/2018",
-        "Cover": "https://covers.openlibrary.org/b/id/14323082-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14323082-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0053-0",
@@ -333,7 +374,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "VIZ Media LLC",
         "Date": "09/04/2018",
-        "Cover": "https://covers.openlibrary.org/b/id/14323087-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14323087-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0054-7",
@@ -341,7 +383,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "VIZ Media LLC",
         "Date": "11/06/2018",
-        "Cover": "https://covers.openlibrary.org/b/id/14323091-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14323091-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0055-4",
@@ -349,7 +392,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "VIZ Media LLC",
         "Date": "01/2019",
-        "Cover": "https://covers.openlibrary.org/b/id/8798152-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8798152-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0056-1",
@@ -357,7 +401,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "VIZ Media LLC",
         "Date": "03/05/2019",
-        "Cover": "https://covers.openlibrary.org/b/id/8798324-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8798324-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0057-8",
@@ -365,7 +410,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "VIZ Media LLC",
         "Date": "01/25/2022",
-        "Cover": "https://covers.openlibrary.org/b/id/8798585-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8798585-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0441-5",
@@ -373,7 +419,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "VIZ Media LLC",
         "Date": "07/02/2019",
-        "Cover": "https://covers.openlibrary.org/b/id/14323092-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14323092-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0442-2",
@@ -381,7 +428,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "VIZ Media LLC",
         "Date": "09/03/2019",
-        "Cover": "https://covers.openlibrary.org/b/id/10201332-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/10201332-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0443-9",
@@ -389,7 +437,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "VIZ Media LLC",
         "Date": "11/05/2019",
-        "Cover": "https://covers.openlibrary.org/b/id/14323094-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14323094-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0455-2",
@@ -397,7 +446,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "Viz Media",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/14848880-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14848880-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0648-8",
@@ -405,7 +455,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "Viz Media",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/11301066-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/11301066-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1112-3",
@@ -413,7 +464,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "Viz Media",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/11252287-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/11252287-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1113-0",
@@ -421,7 +473,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "VIZ Media LLC",
         "Date": "06/02/2020",
-        "Cover": "https://covers.openlibrary.org/b/id/14323096-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14323096-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1114-7",
@@ -429,7 +482,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "Viz Media",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/11252333-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/11252333-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1478-0",
@@ -437,7 +491,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "Viz Media",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/11252369-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/11252369-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1477-3",
@@ -445,7 +500,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "Viz Media",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/14848881-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14848881-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1061-4",
@@ -453,7 +509,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "Viz Media",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/12372185-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12372185-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1760-6",
@@ -461,7 +518,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "Viz Media",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/12749510-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12749510-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1811-5",
@@ -469,7 +527,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "Viz Media",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/12749511-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12749511-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2097-2",
@@ -477,7 +536,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "Viz Media",
         "Date": "2021",
-        "Cover": "https://m.media-amazon.com/images/I/81bfP2ZLKqL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81bfP2ZLKqL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2120-7",
@@ -485,7 +545,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "VIZ Media LLC",
         "Date": "04/06/2021",
-        "Cover": "https://m.media-amazon.com/images/I/81+HXqExkHL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81+HXqExkHL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2341-6",
@@ -493,7 +554,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "VIZ Media LLC",
         "Date": "06/2021",
-        "Cover": "https://m.media-amazon.com/images/I/81usG+6SF-L._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81usG+6SF-L._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2363-8",
@@ -501,7 +563,8 @@
         "Authors": "Koyoharu Gotōge",
         "Publisher": "VIZ Media LLC",
         "Date": "08/03/2021",
-        "Cover": "https://covers.openlibrary.org/b/id/11947383-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/11947383-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-88877-020-7",
@@ -509,7 +572,8 @@
         "Authors": "Kei Urana",
         "Publisher": "Kodansha America, Incorporated",
         "Date": "2024",
-        "Cover": "https://m.media-amazon.com/images/I/810fzo9zreL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/810fzo9zreL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-88877-094-8",
@@ -517,7 +581,8 @@
         "Authors": "Kei Urana, Hideyoshi Andou",
         "Publisher": "Kodansha America, Incorporated",
         "Date": "2024",
-        "Cover": "https://m.media-amazon.com/images/I/81w9Th7YEXL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81w9Th7YEXL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-88877-095-5",
@@ -525,7 +590,8 @@
         "Authors": "Kei Urana",
         "Publisher": "Unknown",
         "Date": "Unknown",
-        "Cover": "https://m.media-amazon.com/images/I/813D8HwssRL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/813D8HwssRL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-88877-096-2",
@@ -533,7 +599,8 @@
         "Authors": "Kei Urana, Hideyoshi Andou",
         "Publisher": "Kodansha America, Incorporated",
         "Date": "2024",
-        "Cover": "https://m.media-amazon.com/images/I/810BemDrumL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/810BemDrumL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-88877-097-9",
@@ -541,7 +608,8 @@
         "Authors": "Kei Urana, Hideyoshi Andou",
         "Publisher": "Kodansha America, Incorporated",
         "Date": "2025",
-        "Cover": "https://m.media-amazon.com/images/I/91x8r1yAK0L._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/91x8r1yAK0L._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-88877-152-5",
@@ -549,7 +617,8 @@
         "Authors": "Kei Urana, Hideyoshi Andou",
         "Publisher": "Kodansha America, Incorporated",
         "Date": "2025",
-        "Cover": "https://m.media-amazon.com/images/I/91xc6M8DCPL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/91xc6M8DCPL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-88877-157-0",
@@ -557,7 +626,8 @@
         "Authors": "Kei Urana",
         "Publisher": "Kodansha Comics",
         "Date": "Unknown",
-        "Cover": "https://m.media-amazon.com/images/I/81BuspZP2rL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81BuspZP2rL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-88877-283-6",
@@ -565,7 +635,8 @@
         "Authors": "Kei Urana, Hideyoshi Andou",
         "Publisher": "Kodansha America, Incorporated",
         "Date": "2025",
-        "Cover": "https://m.media-amazon.com/images/I/91cU77JgRBL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/91cU77JgRBL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64275-032-4",
@@ -573,7 +644,8 @@
         "Authors": "住野よる, KIRIHARA IZUMI",
         "Publisher": "Seven Seas Entertainment, LLC",
         "Date": "2019",
-        "Cover": "https://covers.openlibrary.org/b/id/14568648-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14568648-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2598-4",
@@ -581,7 +653,8 @@
         "Authors": "松本直也",
         "Publisher": "SHONEN JUMP",
         "Date": "12/07/2021",
-        "Cover": "https://covers.openlibrary.org/b/id/15132989-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15132989-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2714-8",
@@ -589,7 +662,8 @@
         "Authors": "松本直也",
         "Publisher": "SHONEN JUMP",
         "Date": "04/05/2022",
-        "Cover": "https://covers.openlibrary.org/b/id/15132988-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15132988-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2899-2",
@@ -597,7 +671,8 @@
         "Authors": "松本直也",
         "Publisher": "SHONEN JUMP",
         "Date": "07/12/2022",
-        "Cover": "https://covers.openlibrary.org/b/id/15132987-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15132987-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-3234-0",
@@ -605,7 +680,8 @@
         "Authors": "松本直也",
         "Publisher": "SHONEN JUMP",
         "Date": "10/11/2022",
-        "Cover": "https://covers.openlibrary.org/b/id/15132972-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15132972-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-3418-4",
@@ -613,7 +689,8 @@
         "Authors": "松本直也",
         "Publisher": "SHONEN JUMP",
         "Date": "01/10/2023",
-        "Cover": "https://covers.openlibrary.org/b/id/15132968-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15132968-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-3633-1",
@@ -621,7 +698,8 @@
         "Authors": "松本直也",
         "Publisher": "SHONEN JUMP",
         "Date": "04/11/2023",
-        "Cover": "https://covers.openlibrary.org/b/id/15133022-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15133022-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-3869-4",
@@ -629,7 +707,8 @@
         "Authors": "松本直也",
         "Publisher": "SHONEN JUMP",
         "Date": "07/11/2023",
-        "Cover": "https://covers.openlibrary.org/b/id/15133091-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15133091-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4062-8",
@@ -637,7 +716,8 @@
         "Authors": "松本直也",
         "Publisher": "SHONEN JUMP",
         "Date": "10/10/2023",
-        "Cover": "https://covers.openlibrary.org/b/id/15133096-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15133096-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4301-8",
@@ -645,7 +725,8 @@
         "Authors": "松本直也",
         "Publisher": "SHONEN JUMP",
         "Date": "01/02/2024",
-        "Cover": "https://covers.openlibrary.org/b/id/15133095-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15133095-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4699-6",
@@ -653,7 +734,8 @@
         "Authors": "松本直也",
         "Publisher": "SHONEN JUMP",
         "Date": "06/04/2024",
-        "Cover": "https://covers.openlibrary.org/b/id/15133094-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15133094-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4900-3",
@@ -661,7 +743,8 @@
         "Authors": "Naoya Matsumoto",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
-        "Cover": "https://m.media-amazon.com/images/I/811l5II8C6L._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/811l5II8C6L._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-5272-0",
@@ -669,7 +752,8 @@
         "Authors": "松本直也",
         "Publisher": "SHONEN JUMP",
         "Date": "02/25/2025",
-        "Cover": "https://covers.openlibrary.org/b/id/15133093-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15133093-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-5512-7",
@@ -677,7 +761,8 @@
         "Authors": "松本直也",
         "Publisher": "SHONEN JUMP",
         "Date": "06/03/2025",
-        "Cover": "https://covers.openlibrary.org/b/id/15133092-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15133092-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-5839-5",
@@ -685,7 +770,8 @@
         "Authors": "Naoya Matsumoto",
         "Publisher": "VIZ Media LLC",
         "Date": "Unknown",
-        "Cover": "https://m.media-amazon.com/images/I/81YFaiB8QzL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81YFaiB8QzL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64609-032-7",
@@ -693,7 +779,8 @@
         "Authors": "福田 晋一",
         "Publisher": "Square Enix",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/12780420-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12780420-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64609-033-4",
@@ -701,7 +788,8 @@
         "Authors": "福田 晋一",
         "Publisher": "Square Enix",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/12780419-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12780419-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64609-034-1",
@@ -709,7 +797,8 @@
         "Authors": "福田 晋一",
         "Publisher": "Square Enix",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/12780418-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12780418-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64609-051-8",
@@ -717,7 +806,8 @@
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2021",
-        "Cover": "https://covers.openlibrary.org/b/id/12780417-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12780417-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64609-113-3",
@@ -725,7 +815,8 @@
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2022",
-        "Cover": "https://covers.openlibrary.org/b/id/12748277-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12748277-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64609-128-7",
@@ -733,7 +824,8 @@
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2022",
-        "Cover": "https://covers.openlibrary.org/b/id/13349280-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/13349280-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64609-164-5",
@@ -741,7 +833,8 @@
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2023",
-        "Cover": "https://covers.openlibrary.org/b/id/13349483-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/13349483-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64609-165-2",
@@ -749,7 +842,8 @@
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2023",
-        "Cover": "https://covers.openlibrary.org/b/id/15098064-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15098064-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64609-195-9",
@@ -757,7 +851,8 @@
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2023",
-        "Cover": "https://m.media-amazon.com/images/I/81r1Gq-e9iL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81r1Gq-e9iL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64609-228-4",
@@ -765,7 +860,8 @@
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2023",
-        "Cover": "https://m.media-amazon.com/images/I/81JlSkai7nL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81JlSkai7nL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64609-247-5",
@@ -773,7 +869,8 @@
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2024",
-        "Cover": "https://m.media-amazon.com/images/I/81-S5uhrFqL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81-S5uhrFqL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64609-303-8",
@@ -781,7 +878,8 @@
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2024",
-        "Cover": "https://m.media-amazon.com/images/I/81FhxPQd8dL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81FhxPQd8dL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64609-365-6",
@@ -789,7 +887,8 @@
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2025",
-        "Cover": "https://m.media-amazon.com/images/I/81hY2aauZkL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81hY2aauZkL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-64609-432-5",
@@ -797,7 +896,8 @@
         "Authors": "Shinichi Fukuda",
         "Publisher": "Square Enix",
         "Date": "2025",
-        "Cover": "https://m.media-amazon.com/images/I/81vNHSWNNXL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81vNHSWNNXL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0701-0",
@@ -805,7 +905,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2019",
-        "Cover": "https://covers.openlibrary.org/b/id/15108128-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108128-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1015-7",
@@ -813,7 +914,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2019",
-        "Cover": "https://covers.openlibrary.org/b/id/15108130-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108130-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1255-7",
@@ -821,7 +923,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/15108131-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108131-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1537-4",
@@ -829,7 +932,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/15108132-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108132-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1813-9",
@@ -837,7 +941,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/15108129-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108129-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-1999-0",
@@ -845,7 +950,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media, VIZ Media LLC",
         "Date": "2021",
-        "Cover": "https://covers.openlibrary.org/b/id/13503197-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/13503197-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2289-1",
@@ -853,7 +959,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "08/03/2021",
-        "Cover": "https://covers.openlibrary.org/b/id/10872552-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/10872552-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2519-9",
@@ -861,7 +968,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "12/07/2021",
-        "Cover": "https://covers.openlibrary.org/b/id/15108142-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108142-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2900-5",
@@ -869,7 +977,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "05/03/2022",
-        "Cover": "https://covers.openlibrary.org/b/id/15108144-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108144-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-3217-3",
@@ -877,7 +986,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "08/02/2022",
-        "Cover": "https://covers.openlibrary.org/b/id/13199794-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/13199794-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-3420-7",
@@ -885,7 +995,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "12/06/2022",
-        "Cover": "https://covers.openlibrary.org/b/id/14768909-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14768909-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-3655-3",
@@ -893,7 +1004,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "04/04/2023",
-        "Cover": "https://covers.openlibrary.org/b/id/14601956-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14601956-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-3870-0",
@@ -901,7 +1013,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "07/04/2023",
-        "Cover": "https://covers.openlibrary.org/b/id/14385308-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14385308-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4129-8",
@@ -909,7 +1022,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "11/07/2023",
-        "Cover": "https://covers.openlibrary.org/b/id/14541562-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14541562-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4327-8",
@@ -917,7 +1031,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "03/12/2024",
-        "Cover": "https://covers.openlibrary.org/b/id/14564421-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14564421-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4586-9",
@@ -925,7 +1040,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "07/02/2024",
-        "Cover": "https://covers.openlibrary.org/b/id/14601953-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14601953-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4979-9",
@@ -933,7 +1049,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "11/12/2024",
-        "Cover": "https://covers.openlibrary.org/b/id/14650280-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14650280-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-5222-5",
@@ -941,7 +1058,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "03/04/2025",
-        "Cover": "https://covers.openlibrary.org/b/id/14840739-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14840739-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-5590-5",
@@ -949,7 +1067,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "07/01/2025",
-        "Cover": "https://covers.openlibrary.org/b/id/14849265-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14849265-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9753-1943-4",
@@ -957,7 +1076,8 @@
         "Authors": "추공, Dubu",
         "Publisher": "Yen Press",
         "Date": "03/02/2021",
-        "Cover": "https://covers.openlibrary.org/b/id/10839422-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/10839422-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9753-1945-8",
@@ -965,7 +1085,8 @@
         "Authors": "Dubu, 추공",
         "Publisher": "Yen Press",
         "Date": "07/20/2021",
-        "Cover": "https://covers.openlibrary.org/b/id/11307679-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/11307679-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9753-3651-6",
@@ -973,7 +1094,8 @@
         "Authors": "Dubu, 추공",
         "Publisher": "Yen Press",
         "Date": "09/21/2021",
-        "Cover": "https://covers.openlibrary.org/b/id/12749793-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12749793-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9753-3724-7",
@@ -981,7 +1103,8 @@
         "Authors": "추공, Dubu",
         "Publisher": "Yen Press LLC",
         "Date": "2022",
-        "Cover": "https://covers.openlibrary.org/b/id/12749798-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12749798-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9753-4438-2",
@@ -989,7 +1112,8 @@
         "Authors": "추공, Dubu",
         "Publisher": "Yen Press LLC, Yen Press",
         "Date": "2022",
-        "Cover": "https://covers.openlibrary.org/b/id/13716950-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/13716950-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-4009-0026-6",
@@ -997,7 +1121,8 @@
         "Authors": "추공, Dubu, 임혜영, J. Torres, Abigail Blackman",
         "Publisher": "Yen Press LLC",
         "Date": "2023",
-        "Cover": "https://static.wikia.nocookie.net/solo-leveling/images/f/f5/Manhwa_Webtoon_Volume_6_Cover.jpg"
+        "Cover": "https://static.wikia.nocookie.net/solo-leveling/images/f/f5/Manhwa_Webtoon_Volume_6_Cover.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-4009-0048-8",
@@ -1005,7 +1130,8 @@
         "Authors": "추공, DUBU(REDICE STUDIO), 임혜영, J. Torres, Abigail Blackman",
         "Publisher": "Ize Press",
         "Date": "2023",
-        "Cover": "https://static.wikia.nocookie.net/solo-leveling/images/1/16/Manhwa_Webtoon_Volume_7_Cover.jpg"
+        "Cover": "https://static.wikia.nocookie.net/solo-leveling/images/1/16/Manhwa_Webtoon_Volume_7_Cover.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-4009-0107-2",
@@ -1013,7 +1139,8 @@
         "Authors": "추공, DUBU(REDICE STUDIO), h-goon, 임혜영, J. Torres",
         "Publisher": "Yen Press LLC",
         "Date": "2024",
-        "Cover": "https://static.wikia.nocookie.net/solo-leveling/images/4/4f/Manhwa_Webtoon_Volume_8_Cover.jpg"
+        "Cover": "https://static.wikia.nocookie.net/solo-leveling/images/4/4f/Manhwa_Webtoon_Volume_8_Cover.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-4009-0193-5",
@@ -1021,7 +1148,8 @@
         "Authors": "추공, Dubu, 임혜영, h-goon, J. Torres",
         "Publisher": "Ize Press",
         "Date": "2024",
-        "Cover": "https://static.wikia.nocookie.net/solo-leveling/images/0/0f/Manhwa_Webtoon_Volume_9_Cover.jpg"
+        "Cover": "https://static.wikia.nocookie.net/solo-leveling/images/0/0f/Manhwa_Webtoon_Volume_9_Cover.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-4009-0253-6",
@@ -1029,7 +1157,8 @@
         "Authors": "추공, Dubu, h-goon, 임혜영, J. Torres",
         "Publisher": "Ize Press",
         "Date": "2024",
-        "Cover": "https://static.wikia.nocookie.net/solo-leveling/images/a/a3/Manhwa_Webtoon_Volume_10_Cover.jpg"
+        "Cover": "https://static.wikia.nocookie.net/solo-leveling/images/a/a3/Manhwa_Webtoon_Volume_10_Cover.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-4009-0370-0",
@@ -1037,7 +1166,8 @@
         "Authors": "Abigail Blackman",
         "Publisher": "Unknown",
         "Date": "Unknown",
-        "Cover": "https://store.crunchyroll.com/dw/image/v2/BDGC_PRD/on/demandware.static/-/Sites-crunchyroll-master-catalog/default/dw896c2a23/images/9798400903700_solo-leveling-variant-cover-manhwa-volume-11-crunchyroll-exclusive_1.jpg"
+        "Cover": "https://store.crunchyroll.com/dw/image/v2/BDGC_PRD/on/demandware.static/-/Sites-crunchyroll-master-catalog/default/dw896c2a23/images/9798400903700_solo-leveling-variant-cover-manhwa-volume-11-crunchyroll-exclusive_1.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-4009-0257-4",
@@ -1045,7 +1175,8 @@
         "Authors": "추공, h-goon, Dubu, J. Torres, 임혜영",
         "Publisher": "Yen Press LLC",
         "Date": "2025",
-        "Cover": "https://covers.openlibrary.org/b/id/15101746-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15101746-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "979-8-4009-0259-8",
@@ -1053,7 +1184,8 @@
         "Authors": "Chugong, DUBU(REDICE STUDIO), Abigail Blackman, J. Torres",
         "Publisher": "Ize Press",
         "Date": "Unknown",
-        "Cover": "https://static.wikia.nocookie.net/solo-leveling/images/5/5e/Manhwa_Webtoon_Volume_13_Cover.jpg"
+        "Cover": "https://static.wikia.nocookie.net/solo-leveling/images/5/5e/Manhwa_Webtoon_Volume_13_Cover.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-4034-5",
@@ -1061,7 +1193,8 @@
         "Authors": "Taizan5",
         "Publisher": "Viz Media",
         "Date": "2023",
-        "Cover": "https://covers.openlibrary.org/b/id/14617793-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14617793-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8036-4",
@@ -1069,7 +1202,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media LLC",
         "Date": "2015",
-        "Cover": "https://covers.openlibrary.org/b/id/9359099-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/9359099-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8037-1",
@@ -1077,7 +1211,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2015",
-        "Cover": "https://covers.openlibrary.org/b/id/9324211-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/9324211-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8038-8",
@@ -1085,7 +1220,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "Viz Media, LLC",
         "Date": "2015",
-        "Cover": "https://covers.openlibrary.org/b/id/12656357-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12656357-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8039-5",
@@ -1093,7 +1229,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2015",
-        "Cover": "https://covers.openlibrary.org/b/id/12656358-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12656358-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8040-1",
@@ -1101,7 +1238,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2016",
-        "Cover": "https://covers.openlibrary.org/b/id/12656361-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12656361-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8041-8",
@@ -1109,7 +1247,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2016",
-        "Cover": "https://covers.openlibrary.org/b/id/12656362-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12656362-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8042-5",
@@ -1117,7 +1256,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2016",
-        "Cover": "https://covers.openlibrary.org/b/id/12656363-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12656363-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8043-2",
@@ -1125,7 +1265,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2016",
-        "Cover": "https://covers.openlibrary.org/b/id/12656365-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12656365-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8044-9",
@@ -1133,7 +1274,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2016",
-        "Cover": "https://covers.openlibrary.org/b/id/12656366-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12656366-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8045-6",
@@ -1141,7 +1283,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC, VIZ Media LLC",
         "Date": "2016",
-        "Cover": "https://covers.openlibrary.org/b/id/12656367-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12656367-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8046-3",
@@ -1149,7 +1292,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2017",
-        "Cover": "https://covers.openlibrary.org/b/id/12656368-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12656368-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8047-0",
@@ -1157,7 +1301,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2017",
-        "Cover": "https://covers.openlibrary.org/b/id/12656369-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12656369-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9042-4",
@@ -1165,7 +1310,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2017",
-        "Cover": "https://covers.openlibrary.org/b/id/12656371-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12656371-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9043-1",
@@ -1173,7 +1319,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2017",
-        "Cover": "https://covers.openlibrary.org/b/id/12656372-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/12656372-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9496-5",
@@ -1181,7 +1328,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2017",
-        "Cover": "https://covers.openlibrary.org/b/id/14626812-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14626812-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9497-2",
@@ -1189,7 +1337,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media LLC",
         "Date": "12/19/2017",
-        "Cover": "https://covers.openlibrary.org/b/id/8866477-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8866477-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9498-9",
@@ -1197,7 +1346,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media LLC",
         "Date": "2018",
-        "Cover": "https://covers.openlibrary.org/b/id/14626814-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14626814-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9499-6",
@@ -1205,7 +1355,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media LLC",
         "Date": "2018",
-        "Cover": "https://m.media-amazon.com/images/I/81lT0AHRhOL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81lT0AHRhOL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9500-9",
@@ -1213,7 +1364,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media LLC",
         "Date": "2018",
-        "Cover": "https://covers.openlibrary.org/b/id/9281317-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/9281317-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9501-6",
@@ -1221,7 +1373,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media LLC",
         "Date": "2018",
-        "Cover": "https://covers.openlibrary.org/b/id/9281315-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/9281315-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9502-3",
@@ -1229,7 +1382,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media LLC",
         "Date": "10/16/2018",
-        "Cover": "https://covers.openlibrary.org/b/id/8843487-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8843487-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9503-0",
@@ -1237,7 +1391,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media LLC",
         "Date": "2018",
-        "Cover": "https://covers.openlibrary.org/b/id/9281311-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/9281311-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9824-6",
@@ -1245,7 +1400,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media LLC",
         "Date": "02/19/2019",
-        "Cover": "https://covers.openlibrary.org/b/id/8805051-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8805051-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9825-3",
@@ -1253,7 +1409,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media LLC",
         "Date": "04/16/2019",
-        "Cover": "https://covers.openlibrary.org/b/id/8805155-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8805155-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0038-7",
@@ -1261,7 +1418,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2019",
-        "Cover": "https://covers.openlibrary.org/b/id/8783016-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8783016-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0037-0",
@@ -1269,7 +1427,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2019",
-        "Cover": "https://covers.openlibrary.org/b/id/8794140-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8794140-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0153-7",
@@ -1277,7 +1436,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "Viz Media",
         "Date": "2019",
-        "Cover": "https://covers.openlibrary.org/b/id/9145791-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/9145791-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0445-3",
@@ -1285,7 +1445,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2019",
-        "Cover": "https://covers.openlibrary.org/b/id/9255193-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/9255193-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0456-9",
@@ -1293,7 +1454,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media, LLC",
         "Date": "2020",
-        "Cover": "https://covers.openlibrary.org/b/id/9282678-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/9282678-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0742-3",
@@ -1301,7 +1463,8 @@
         "Authors": "Sui Ishida",
         "Publisher": "VIZ Media LLC",
         "Date": "04/21/2020",
-        "Cover": "https://covers.openlibrary.org/b/id/9334444-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/9334444-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-56931-901-7",
@@ -1309,7 +1472,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "SHONEN JUMP",
         "Date": "2003",
-        "Cover": "https://covers.openlibrary.org/b/isbn/9781569319017-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/isbn/9781569319017-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-59116-057-1",
@@ -1317,7 +1481,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "SHONEN JUMP",
         "Date": "12/16/2003",
-        "Cover": "https://covers.openlibrary.org/b/id/15133835-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15133835-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-59116-184-4",
@@ -1325,7 +1490,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz",
         "Date": "06/08/2004",
-        "Cover": "https://covers.openlibrary.org/b/id/14845660-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14845660-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-59116-337-4",
@@ -1333,7 +1499,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz",
         "Date": "08/17/2004",
-        "Cover": "https://covers.openlibrary.org/b/id/14845654-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14845654-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-59116-615-3",
@@ -1341,7 +1508,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz",
         "Date": "11/17/2004",
-        "Cover": "https://covers.openlibrary.org/b/id/14845648-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14845648-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-59116-723-5",
@@ -1349,7 +1517,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz",
         "Date": "2005",
-        "Cover": "https://covers.openlibrary.org/b/id/14626242-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14626242-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-59116-852-2",
@@ -1357,7 +1526,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "07/06/2005",
-        "Cover": "https://covers.openlibrary.org/b/id/863616-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/863616-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-0075-1",
@@ -1365,7 +1535,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "10/10/2005",
-        "Cover": "https://covers.openlibrary.org/b/id/764840-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/764840-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-0191-8",
@@ -1373,7 +1544,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2005",
-        "Cover": "https://m.media-amazon.com/images/I/A1XL3BJFVRL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/A1XL3BJFVRL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-0406-3",
@@ -1381,7 +1553,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2006",
-        "Cover": "https://m.media-amazon.com/images/I/A11W8QldkdL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/A11W8QldkdL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-0663-0",
@@ -1389,7 +1562,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2006",
-        "Cover": "https://covers.openlibrary.org/b/id/15108235-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108235-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-0664-7",
@@ -1397,7 +1571,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "10/03/2006",
-        "Cover": "https://covers.openlibrary.org/b/id/765274-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/765274-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-0665-4",
@@ -1405,7 +1580,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2007",
-        "Cover": "https://m.media-amazon.com/images/I/91NNbH3H1iL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/91NNbH3H1iL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-1091-0",
@@ -1413,7 +1589,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2007",
-        "Cover": "https://covers.openlibrary.org/b/id/8791602-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8791602-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-1092-7",
@@ -1421,7 +1598,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "08/07/2007",
-        "Cover": "https://covers.openlibrary.org/b/id/765502-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/765502-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-1093-4",
@@ -1429,7 +1607,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "11/06/2007",
-        "Cover": "https://covers.openlibrary.org/b/id/1813379-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/1813379-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-1511-3",
@@ -1437,7 +1616,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "03/04/2008",
-        "Cover": "https://covers.openlibrary.org/b/id/2806195-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/2806195-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-1512-0",
@@ -1445,7 +1625,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "06/03/2008",
-        "Cover": "https://m.media-amazon.com/images/I/91xJ+s8W1+L._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/91xJ+s8W1+L._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-1513-7",
@@ -1453,7 +1634,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2008",
-        "Cover": "https://m.media-amazon.com/images/I/91OdKuj1cUL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/91OdKuj1cUL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-1514-4",
@@ -1461,7 +1643,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2009",
-        "Cover": "https://covers.openlibrary.org/b/id/8998358-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8998358-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-2429-0",
@@ -1469,7 +1652,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz",
         "Date": "2009",
-        "Cover": "https://covers.openlibrary.org/b/id/8998359-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8998359-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-2430-6",
@@ -1477,7 +1661,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2009",
-        "Cover": "https://covers.openlibrary.org/b/id/8998357-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8998357-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-2844-1",
@@ -1485,7 +1670,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media, VIZ Media LLC",
         "Date": "2009",
-        "Cover": "https://m.media-amazon.com/images/I/81Tn85ecLnL._SL1500_.jpg"
+        "Cover": "https://m.media-amazon.com/images/I/81Tn85ecLnL._SL1500_.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-2845-8",
@@ -1493,7 +1679,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "01/05/2010",
-        "Cover": "https://covers.openlibrary.org/b/id/7801753-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/7801753-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-2846-5",
@@ -1501,7 +1688,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108220-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108220-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3442-8",
@@ -1509,7 +1697,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108223-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108223-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3443-5",
@@ -1517,7 +1706,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108221-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108221-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3444-2",
@@ -1525,7 +1715,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108222-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108222-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3445-9",
@@ -1533,7 +1724,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108225-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108225-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3446-6",
@@ -1541,7 +1733,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108218-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108218-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3447-3",
@@ -1549,7 +1742,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108215-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108215-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3448-0",
@@ -1557,7 +1751,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108213-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108213-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3449-7",
@@ -1565,7 +1760,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108214-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108214-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3450-3",
@@ -1573,7 +1769,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108217-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108217-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3451-0",
@@ -1581,7 +1778,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108216-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108216-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3452-7",
@@ -1589,7 +1787,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108211-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108211-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3453-4",
@@ -1597,7 +1796,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108236-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108236-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3454-1",
@@ -1605,7 +1805,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/7570730-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/7570730-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3455-8",
@@ -1613,7 +1814,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/14357041-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14357041-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3456-5",
@@ -1621,7 +1823,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media, VIZ Media LLC",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/14174066-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14174066-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3457-2",
@@ -1629,7 +1832,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/13007851-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/13007851-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3458-9",
@@ -1637,7 +1841,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108208-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108208-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3459-6",
@@ -1645,7 +1850,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/14358842-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/14358842-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3460-2",
@@ -1653,7 +1859,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108206-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108206-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3461-9",
@@ -1661,7 +1868,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108203-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108203-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3462-6",
@@ -1669,7 +1877,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media LLC",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/8750533-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8750533-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3463-3",
@@ -1677,7 +1886,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108200-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108200-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3464-0",
@@ -1685,7 +1895,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108202-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108202-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3465-7",
@@ -1693,7 +1904,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108204-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108204-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3466-4",
@@ -1701,7 +1913,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108205-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108205-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3467-1",
@@ -1709,7 +1922,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108195-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108195-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3468-8",
@@ -1717,7 +1931,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108198-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108198-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3469-5",
@@ -1725,7 +1940,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108190-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108190-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3470-1",
@@ -1733,7 +1949,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2010",
-        "Cover": "https://covers.openlibrary.org/b/id/15108238-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108238-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3471-8",
@@ -1741,7 +1958,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "10/05/2010",
-        "Cover": "https://covers.openlibrary.org/b/id/6607826-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/6607826-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3850-1",
@@ -1749,7 +1967,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2011",
-        "Cover": "https://covers.openlibrary.org/b/id/15108199-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108199-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3851-8",
@@ -1757,7 +1976,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2011",
-        "Cover": "https://covers.openlibrary.org/b/id/15108192-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108192-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3926-3",
@@ -1765,7 +1985,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2011",
-        "Cover": "https://covers.openlibrary.org/b/id/15108191-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108191-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-3959-1",
@@ -1773,7 +1994,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2011",
-        "Cover": "https://covers.openlibrary.org/b/id/15108194-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108194-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-4085-6",
@@ -1781,7 +2003,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2012",
-        "Cover": "https://covers.openlibrary.org/b/id/15108193-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108193-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-4144-0",
@@ -1789,7 +2012,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2012",
-        "Cover": "https://covers.openlibrary.org/b/id/15108175-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108175-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-4196-9",
@@ -1797,7 +2021,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2012",
-        "Cover": "https://covers.openlibrary.org/b/id/15108180-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108180-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-4307-9",
@@ -1805,7 +2030,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2012",
-        "Cover": "https://covers.openlibrary.org/b/id/15108176-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108176-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-4329-1",
@@ -1813,7 +2039,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2012",
-        "Cover": "https://covers.openlibrary.org/b/id/15108177-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108177-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-4979-8",
@@ -1821,7 +2048,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "11/06/2012",
-        "Cover": "https://covers.openlibrary.org/b/id/15108174-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108174-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-5237-8",
@@ -1829,7 +2057,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2013",
-        "Cover": "https://covers.openlibrary.org/b/id/15108185-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108185-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-5371-9",
@@ -1837,7 +2066,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "06/04/2013",
-        "Cover": "https://covers.openlibrary.org/b/id/10100122-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/10100122-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-5881-3",
@@ -1845,7 +2075,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2013",
-        "Cover": "https://covers.openlibrary.org/b/id/15108178-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108178-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-6143-1",
@@ -1853,7 +2084,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media",
         "Date": "2013",
-        "Cover": "https://covers.openlibrary.org/b/id/15108186-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108186-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-6460-9",
@@ -1861,7 +2093,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "2014",
-        "Cover": "https://covers.openlibrary.org/b/id/15108184-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108184-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-6945-1",
@@ -1869,7 +2102,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "06/03/2014",
-        "Cover": "https://covers.openlibrary.org/b/id/15108181-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108181-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-7344-1",
@@ -1877,7 +2111,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "2014",
-        "Cover": "https://covers.openlibrary.org/b/id/15108171-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108171-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-7683-1",
@@ -1885,7 +2120,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "2015",
-        "Cover": "https://covers.openlibrary.org/b/id/15108172-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108172-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-7867-5",
@@ -1893,7 +2129,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "04/07/2015",
-        "Cover": "https://covers.openlibrary.org/b/id/15108167-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108167-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8029-6",
@@ -1901,7 +2138,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "08/04/2015",
-        "Cover": "https://covers.openlibrary.org/b/id/15108164-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108164-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8260-3",
@@ -1909,7 +2147,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "11/03/2015",
-        "Cover": "https://covers.openlibrary.org/b/id/15108159-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108159-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8514-7",
@@ -1917,7 +2156,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "02/02/2016",
-        "Cover": "https://covers.openlibrary.org/b/id/15108152-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108152-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8584-0",
@@ -1925,7 +2165,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "05/03/2016",
-        "Cover": "https://covers.openlibrary.org/b/id/15108154-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108154-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-8815-5",
@@ -1933,7 +2174,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "08/02/2016",
-        "Cover": "https://covers.openlibrary.org/b/id/15108162-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108162-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9024-0",
@@ -1941,7 +2183,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "2016",
-        "Cover": "https://covers.openlibrary.org/b/id/13824211-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/13824211-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9159-9",
@@ -1949,7 +2192,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "2017",
-        "Cover": "https://covers.openlibrary.org/b/id/15108123-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108123-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9269-5",
@@ -1957,7 +2201,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "2017",
-        "Cover": "https://covers.openlibrary.org/b/id/15108124-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108124-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9433-0",
@@ -1965,7 +2210,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "2017",
-        "Cover": "https://covers.openlibrary.org/b/id/15108121-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108121-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9700-3",
@@ -1973,7 +2219,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "2017",
-        "Cover": "https://covers.openlibrary.org/b/id/15108119-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108119-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-4215-9820-8",
@@ -1981,7 +2228,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "2018",
-        "Cover": "https://covers.openlibrary.org/b/id/15108133-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108133-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0042-4",
@@ -1989,7 +2237,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "2018",
-        "Cover": "https://covers.openlibrary.org/b/id/15108125-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108125-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0141-4",
@@ -1997,7 +2246,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "2018",
-        "Cover": "https://covers.openlibrary.org/b/id/15108126-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108126-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0378-4",
@@ -2005,7 +2255,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "Viz Media",
         "Date": "2018",
-        "Cover": "https://covers.openlibrary.org/b/id/15108138-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/15108138-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0521-4",
@@ -2013,7 +2264,8 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "02/05/2019",
-        "Cover": "https://covers.openlibrary.org/b/id/8798250-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8798250-L.jpg",
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-0700-3",
@@ -2021,6 +2273,7 @@
         "Authors": "尾田栄一郎",
         "Publisher": "VIZ Media LLC",
         "Date": "05/07/2019",
-        "Cover": "https://covers.openlibrary.org/b/id/8798659-L.jpg"
+        "Cover": "https://covers.openlibrary.org/b/id/8798659-L.jpg",
+        "Read": false
     }
 ]
