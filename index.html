@@ -61,6 +61,12 @@ h1 {
 .card:hover {
     transform: scale(1.05);
 }
+
+.card.read {
+    background: #3A503A;
+    box-shadow: 0 0 10px rgba(50,205,50,0.4);
+}
+
 .card img {
     width: 100%;
     height: auto;
@@ -185,6 +191,9 @@ function showPopup(book) {
     if(book.Date && book.Date !== 'Unknown') meta += book.Date + '<br>';
     document.getElementById('popupMeta').innerHTML = meta;
     document.getElementById('popupISBN').innerHTML = book.ISBN || '';
+    if (book.Read) {
+        document.getElementById('popupMeta').innerHTML += '<br><span style="color:#6fcf97;">✔ Read</span>';
+    }
 }
 
 // Close popup
@@ -213,7 +222,7 @@ fetch('lib.json')
           return cmp !== 0 ? cmp : aP.vol - bP.vol;
       }).forEach(b => {
           let card = document.createElement('div');
-          card.className = 'card';
+          card.className = 'card' + (b.Read ? ' read' : '');
           card.innerHTML = `
             <img src="${b.Cover||'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
             <div class="title">${b.Title||''}</div>
