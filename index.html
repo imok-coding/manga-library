@@ -84,7 +84,7 @@ h1 {
 }
 .card .isbn {
     font-size: 10px;
-    color: #888; /* darker gray */
+    color: #888;
     margin-top: 4px;
 }
 @media (max-width: 600px) {
@@ -95,6 +95,51 @@ h1 {
         max-width: 130px;
     }
 }
+
+/* Popup styles */
+#popupOverlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+#popupContent {
+    background: #23272A;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    text-align: center;
+    color: #FFF;
+}
+#popupContent img {
+    max-width: 200px;
+    height: auto;
+    margin-bottom: 12px;
+}
+#popupContent .title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+#popupContent .meta {
+    font-size: 14px;
+    color: #CCC;
+}
+#popupClose {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #FFF;
+    cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -104,6 +149,17 @@ h1 {
 <input type="text" id="searchInput" onkeyup="searchLibrary()" placeholder="Search by title, author, publisher, ISBN...">
 <div class="grid" id="bookGrid"></div>
 <div id="bookCountBottom"></div>
+</div>
+
+<!-- Popup overlay -->
+<div id="popupOverlay">
+    <div id="popupContent">
+        <div id="popupClose">&times;</div>
+        <img id="popupImage" src="" alt="Cover">
+        <div class="title" id="popupTitle"></div>
+        <div class="meta" id="popupMeta"></div>
+        <div class="isbn" id="popupISBN"></div>
+    </div>
 </div>
 
 <script>
@@ -118,49 +174,56 @@ function searchLibrary() {
     }
 }
 
-// Fetch and render books from lib.json
+// Show popup
+function showPopup(book) {
+    document.getElementById('popupOverlay').style.display = 'flex';
+    document.getElementById('popupImage').src = book.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
+    document.getElementById('popupTitle').innerHTML = book.Title || '';
+    let meta = '';
+    if(book.Authors && book.Authors !== 'Unknown') meta += book.Authors + '<br>';
+    if(book.Publisher && book.Publisher !== 'Unknown') meta += book.Publisher + '<br>';
+    if(book.Date && book.Date !== 'Unknown') meta += book.Date + '<br>';
+    document.getElementById('popupMeta').innerHTML = meta;
+    document.getElementById('popupISBN').innerHTML = book.ISBN || '';
+}
+
+// Close popup
+document.getElementById('popupClose').onclick = () => {
+    document.getElementById('popupOverlay').style.display = 'none';
+}
+
+// Fetch and render books
 fetch('lib.json')
   .then(res => res.json())
   .then(books => {
       const grid = document.getElementById('bookGrid');
       const countTop = document.getElementById('bookCountTop');
       const countBottom = document.getElementById('bookCountBottom');
-      
-      books.sort((a, b) => {
-          function parseTitle(t) {
-              t = (t || '').trim();
-              let m = t.match(/^(.*?),?\s*(?:Vol\.|Volume)\s*(\d+)\b/i);
-              if (!m) return { name: t.toLowerCase(), vol: 0 };
-              let name = m[1].trim().toLowerCase();
-              let vol = parseInt(m[2] || "0", 10);
-              return { name, vol };
-          }
-          let aParsed = parseTitle(a.Title);
-          let bParsed = parseTitle(b.Title);
-          let cmp = aParsed.name.localeCompare(bParsed.name);
-          if (cmp !== 0) return cmp;
-          return aParsed.vol - bParsed.vol;
-      }).forEach(b => {
-          let cover = b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
-          let title = b.Title || '';
-          let authors = b.Authors && b.Authors !== 'Unknown' ? b.Authors+'<br>' : '';
-          let publisher = b.Publisher && b.Publisher !== 'Unknown' ? b.Publisher+'<br>' : '';
-          let date = b.Date && b.Date !== 'Unknown' ? b.Date+'<br>' : '';
-          let isbn = b.ISBN && b.ISBN !== 'Unknown' ? b.ISBN : '';
 
+      books.sort((a,b) => {
+          function parseTitle(t) {
+              t = (t||'').trim();
+              let m = t.match(/^(.*?),?\s*(?:Vol\.|Volume)\s*(\d+)\b/i);
+              if(!m) return {name: t.toLowerCase(), vol:0};
+              return {name:m[1].trim().toLowerCase(), vol:parseInt(m[2]||"0",10)};
+          }
+          let aP = parseTitle(a.Title);
+          let bP = parseTitle(b.Title);
+          let cmp = aP.name.localeCompare(bP.name);
+          return cmp !== 0 ? cmp : aP.vol - bP.vol;
+      }).forEach(b => {
           let card = document.createElement('div');
           card.className = 'card';
-          card.title = title;
           card.innerHTML = `
-            <img src="${cover}" alt="Cover">
-            <div class="title">${title}</div>
-            <div class="meta">${authors}${publisher}${date}</div>
-            <div class="isbn">${isbn}</div>
+            <img src="${b.Cover||'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
+            <div class="title">${b.Title||''}</div>
+            <div class="meta">${(b.Authors && b.Authors!=='Unknown'?b.Authors+'<br>':'') + (b.Publisher && b.Publisher!=='Unknown'?b.Publisher+'<br>':'') + (b.Date && b.Date!=='Unknown'?b.Date+'<br>':'')}</div>
+            <div class="isbn">${b.ISBN||''}</div>
           `;
+          card.onclick = () => showPopup(b);
           grid.appendChild(card);
       });
 
-      // Update book count
       countTop.innerText = `Total Books: ${books.length}`;
       countBottom.innerText = `Total Books: ${books.length}`;
   })
