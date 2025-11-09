@@ -122,10 +122,12 @@ h1 {
 }
 @media (max-width: 600px) {
     .grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        padding: 10px;
     }
     .card {
-        max-width: 130px;
+        max-width: 100%;
     }
 }
 
@@ -188,6 +190,33 @@ h1 {
 #popupClose:hover {
     background: rgba(255,255,255,0.15);
     transform: scale(1.1);
+}
+#backToTop {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #23272A;
+    color: #00FF84;
+    border: 2px solid #00FF84;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    box-shadow: 0 0 12px rgba(0, 255, 132, 0.4);
+    transition: opacity 0.3s, visibility 0.3s, transform 0.15s;
+    z-index: 10000;
+}
+#backToTop:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 16px rgba(0, 255, 132, 0.6);
+}
+#backToTop.show {
+    opacity: 1;
+    visibility: visible;
 }
 </style>
 </head>
@@ -302,6 +331,19 @@ fetch('lib.json')
       countBottom.innerText = `Total Books: ${books.length}`;
   })
   .catch(err => console.error('Failed to load lib.json', err));
+  // Back to top button behavior
+    const backToTopBtn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 250) {
+            backToTopBtn.classList.add('show');
+        } else {
+            backToTopBtn.classList.remove('show');
+        }
+    });
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 </script>
+<button id="backToTop" title="Back to Top">⬆</button>
 </body>
 </html>
