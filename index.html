@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Tyler's Manga Library</title>
 <style>
+/* ===== BODY & BASE ===== */
 body {
-    background: #2C2F33;
-    color: #FFF;
+    background: #1e0d14; /* dark plum/pinkish base */
+    color: #fff;
     font-family: Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -22,30 +23,34 @@ html {
 }
 h1 {
     text-align: center;
-    color: #7289DA;
+    color: #ffb6c1; /* soft pink */
     margin-top: 10px;
+    text-shadow: 0 0 6px rgba(255,182,193,0.7);
 }
-/* Book counters */
+
+/* ===== COUNTERS ===== */
 .counter {
     display: flex;
     justify-content: center;
     gap: 20px;
     font-size: 14px;
-    color: #CCC;
+    color: #f8f0f4;
     margin: 10px 0;
 }
 .counter span {
-    padding: 3px 10px;
-    border-radius: 8px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    background: rgba(255,182,193,0.1);
+    color: #ffb6c1;
+    transition: 0.2s;
 }
-.counter .total {
-    background: rgba(114,137,218,0.2);
-    color: #7289DA;
+.counter span:hover {
+    background: rgba(255,182,193,0.25);
+    cursor: pointer;
 }
-.counter .read {
-    background: rgba(50,205,50,0.15);
-    color: #32CD32;
-}
+
+/* ===== SEARCH INPUT ===== */
 #searchInput {
     width: 90%;
     max-width: 500px;
@@ -53,11 +58,14 @@ h1 {
     display: block;
     padding: 10px;
     font-size: 14px;
-    border-radius: 6px;
-    border: 1px solid #444;
-    background: #23272A;
-    color: #FFF;
+    border-radius: 8px;
+    border: 1px solid #bb7f8f;
+    background: #2b0f1d;
+    color: #fff;
+    box-shadow: 0 0 6px rgba(255,182,193,0.3) inset;
 }
+
+/* ===== GRID & CARDS ===== */
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -66,27 +74,28 @@ h1 {
     padding: 20px;
 }
 .card {
-    background: #23272A;
-    border-radius: 8px;
+    background: #2b0f1d;
+    border-radius: 12px;
     overflow: hidden;
     text-align: center;
-    transition: transform 0.12s, box-shadow 0.25s ease;
+    transition: transform 0.15s, box-shadow 0.25s ease;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    box-shadow: 0 2px 8px rgba(255,182,193,0.2);
     width: 100%;
     max-width: 150px;
 }
 .card:hover {
     transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255,182,193,0.6);
 }
 .card.read {
-    background: #23272A;
-    box-shadow: 0 0 12px rgba(80, 255, 80, 0.5), 0 0 6px rgba(50, 205, 50, 0.3);
-    border: 1px solid rgba(50, 205, 50, 0.3);
+    background: #2b0f1d;
+    box-shadow: 0 0 12px rgba(255,105,180,0.5), 0 0 6px rgba(255,182,193,0.3);
+    border: 1px solid rgba(255,105,180,0.3);
 }
 .card.read:hover {
     transform: scale(1.07);
-    box-shadow: 0 0 20px rgba(80, 255, 80, 0.7);
+    box-shadow: 0 0 20px rgba(255,105,180,0.7);
 }
 .card img {
     width: 100%;
@@ -95,32 +104,39 @@ h1 {
     object-fit: cover;
     display: block;
     margin: 0 auto;
-    background: #ddd;
+    background: #3b1a28;
+    border-radius: 6px;
 }
 .card .title {
     font-weight: bold;
     margin: 6px 8px;
     font-size: 13px;
     min-height: 36px;
+    color: #ffc0cb;
 }
 .card .meta {
     font-size: 11px;
     margin: 2px;
-    color: #BBB;
+    color: #f8d1d8;
     padding-bottom: 8px;
 }
 .card .isbn {
     font-size: 10px;
-    color: #888;
+    color: #eea4b7;
     margin-top: 4px;
 }
-/* Popup styles */
-#popupOverlay {
+
+/* ===== GRADIENT ANIMATIONS FOR REZE THEME ===== */
+@keyframes gradientGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(5px);
+    background: rgba(30,13,20,0.95);
+    backdrop-filter: blur(6px);
     display: none;
     justify-content: center;
     align-items: center;
@@ -132,52 +148,59 @@ h1 {
     to {opacity: 1;}
 }
 #popupContent {
-    background: #23272A;
+    background: #2b0f1d;
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 16px;
     max-width: 700px;
     width: 90%;
-    color: #FFF;
+    color: #fff;
     position: relative;
     display: flex;
-    gap: 20px; /* space between image and info */
-    align-items: center; /* vertically center info relative to image */
+    gap: 20px;
+    align-items: center;
     animation: slideUp 0.25s ease;
+    box-shadow: 0 0 25px rgba(255,182,193,0.5);
+}
+@keyframes slideUp {
+    from {transform: translateY(15px); opacity: 0;}
+    to {transform: translateY(0); opacity: 1;}
 }
 #popupContent img {
     max-width: 200px;
     height: auto;
-    border-radius: 6px;
+    border-radius: 8px;
     flex-shrink: 0;
+    box-shadow: 0 0 12px rgba(255,182,193,0.6);
 }
-#popupContent .popup-info .title {
-    font-size: 20px;
-    font-weight: bold;
-    color: #7289DA;
-}
-#popupContent .popup-info .meta {
-    font-size: 14px;
-    color: #CCC;
-    line-height: 1.4;
-}
-#popupContent .popup-info {
+.popup-info {
     display: flex;
     flex-direction: column;
-    justify-content: center; /* vertical centering */
-    align-items: center;     /* horizontal centering within remaining space */
-    gap: 10px;               /* space between text blocks */
-    flex: 1;                 /* take remaining space next to image */
-    padding-left: 10px;      /* optional small spacing from image */
-    padding-right: 10px;     /* optional spacing from right edge */
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    padding-left: 10px;
+    padding-right: 10px;
     text-align: center;
 }
-#popupContent .popup-info .isbn {
+.popup-info .title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffb6c1;
+    text-shadow: 0 0 6px rgba(255,182,193,0.7);
+}
+.popup-info .meta {
+    font-size: 14px;
+    color: #f8d1d8;
+    line-height: 1.4;
+}
+.popup-info .isbn {
     font-size: 12px;
-    color: #888;
+    color: #eea4b7;
 }
 #popupContent.read {
-    border: 1px solid rgba(80,255,80,0.3);
-    box-shadow: 0 0 20px rgba(80,255,80,0.5);
+    border: 1px solid rgba(255,105,180,0.3);
+    box-shadow: 0 0 25px rgba(255,105,180,0.5);
 }
 #popupClose {
     position: absolute;
@@ -185,7 +208,7 @@ h1 {
     right: 12px;
     background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.15);
-    color: #FFF;
+    color: #fff;
     font-size: 20px;
     font-weight: bold;
     border-radius: 6px;
@@ -195,24 +218,25 @@ h1 {
     transition: background 0.2s, transform 0.1s;
 }
 #popupClose:hover {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,182,193,0.3);
     transform: scale(1.1);
 }
-/* Back-to-top button */
+
+/* ===== BACK TO TOP ===== */
 #backToTop {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    background: #23272A;
-    color: #00FF84;
-    border: 2px solid #00FF84;
+    background: #2b0f1d;
+    color: #ff69b4;
+    border: 2px solid #ff69b4;
     border-radius: 50%;
     width: 48px;
     height: 48px;
     cursor: pointer;
     opacity: 0;
     visibility: hidden;
-    box-shadow: 0 0 12px rgba(0, 255, 132, 0.4);
+    box-shadow: 0 0 12px rgba(255,182,193,0.4);
     transition: opacity 0.3s, visibility 0.3s, transform 0.15s;
     z-index: 10000;
     display: flex;
@@ -224,17 +248,18 @@ h1 {
     display: inline-block;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
-    border-bottom: 12px solid #00FF84; /* arrow color */
-    transform: rotate(0deg);
-}
-#backToTop:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 16px rgba(0, 255, 132, 0.6);
+    border-bottom: 12px solid #ff69b4;
 }
 #backToTop.show {
     opacity: 1;
     visibility: visible;
 }
+#backToTop:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255,182,193,0.6);
+}
+
+/* ===== MOBILE ===== */
 @media (max-width: 600px) {
     .grid {
         grid-template-columns: repeat(3, 1fr);
@@ -253,12 +278,10 @@ h1 {
     #popupContent img {
         max-width: 150px;
     }
-    #popupContent .popup-info {
-        justify-content: center;
-        align-items: center;
+    .popup-info {
         padding-left: 0;
         padding-right: 0;
-    }}
+    }
 }
 </style>
 </head>
