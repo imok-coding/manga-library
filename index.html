@@ -163,10 +163,13 @@ h1 {
 #popupContent .popup-info {
     display: flex;
     flex-direction: column;
-    gap: 10px; /* space between text blocks */
     justify-content: center; /* vertical centering */
-    padding-right: 20px; /* space to right edge of popup */
-    flex: 1; /* take remaining space */
+    align-items: center;     /* horizontal centering within remaining space */
+    gap: 10px;               /* space between text blocks */
+    flex: 1;                 /* take remaining space next to image */
+    padding-left: 10px;      /* optional small spacing from image */
+    padding-right: 10px;     /* optional spacing from right edge */
+    text-align: center;
 }
 #popupContent .popup-info .isbn {
     font-size: 12px;
@@ -252,6 +255,8 @@ h1 {
     }
     #popupContent .popup-info {
         justify-content: center;
+        align-items: center;
+        padding-left: 0;
         padding-right: 0;
     }
 }
