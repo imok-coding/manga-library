@@ -263,10 +263,14 @@ h1 {
 <script>
 function searchLibrary() {
     let input = document.getElementById('searchInput').value.toLowerCase();
-    let cards = document.getElementsByClassName('card');
-    for (let i=0;i<cards.length;i++){
-        let card = cards[i];
+    const cards = document.getElementsByClassName('card');
+
+    for (let card of cards) {
+        // Only search among cards that are currently visible due to sorting
+        if (card.style.display === 'none') continue;
+
         let text = card.innerText.toLowerCase();
+        // Hide card if it doesn't match search input
         card.style.display = text.includes(input) ? '' : 'none';
     }
 }
