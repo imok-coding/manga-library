@@ -149,6 +149,7 @@ h1 {
     width: 90%;
     text-align: center;
     color: #FFF;
+    position: relative;
 }
 #popupContent img {
     max-width: 200px;
@@ -171,12 +172,22 @@ h1 {
 }
 #popupClose {
     position: absolute;
-    top: 20px;
-    right: 30px;
-    font-size: 24px;
-    font-weight: bold;
+    top: 12px;
+    right: 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
     color: #FFF;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 6px;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+#popupClose:hover {
+    background: rgba(255,255,255,0.15);
+    transform: scale(1.1);
 }
 </style>
 </head>
@@ -198,7 +209,7 @@ h1 {
 <!-- Popup overlay -->
 <div id="popupOverlay">
     <div id="popupContent">
-        <div id="popupClose">&times;</div>
+        <button id="popupClose" title="Close">&times;</button>
         <img id="popupImage" src="" alt="Cover">
         <div class="title" id="popupTitle"></div>
         <div class="meta" id="popupMeta"></div>
