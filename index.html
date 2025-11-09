@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tyler's Manga Library</title>
+<title>Manga Library</title>
 <style>
 body {
     background: #2C2F33;
@@ -19,29 +19,8 @@ body {
 }
 h1 {
     text-align: center;
-    color: #7289DA;
+    color: #00FF84;
     margin-top: 10px;
-}
-/* Book counters */
-.counter {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    font-size: 14px;
-    color: #CCC;
-    margin: 10px 0;
-}
-.counter span {
-    padding: 3px 10px;
-    border-radius: 8px;
-}
-.counter .total {
-    background: rgba(114,137,218,0.2);
-    color: #7289DA;
-}
-.counter .read {
-    background: rgba(50,205,50,0.15);
-    color: #32CD32;
 }
 #bookCountTop, #bookCountBottom {
     text-align: center;
@@ -73,7 +52,7 @@ h1 {
     border-radius: 8px;
     overflow: hidden;
     text-align: center;
-    transition: transform 0.12s;
+    transition: transform 0.12s, box-shadow 0.3s;
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     width: 100%;
@@ -82,18 +61,9 @@ h1 {
 .card:hover {
     transform: scale(1.05);
 }
-
 .card.read {
-    background: #23272A; /* keep base card color */
-    box-shadow: 0 0 12px rgba(80, 255, 80, 0.5), 0 0 6px rgba(50, 205, 50, 0.3);
-    border: 1px solid rgba(50, 205, 50, 0.3);
+    box-shadow: 0 0 10px 2px rgba(0,255,132,0.7);
 }
-
-.card.read:hover {
-    transform: scale(1.07);
-    box-shadow: 0 0 20px rgba(80, 255, 80, 0.7);
-}
-
 .card img {
     width: 100%;
     height: auto;
@@ -133,6 +103,7 @@ h1 {
     z-index: 9999;
 }
 #popupContent {
+    position: relative;
     background: #23272A;
     padding: 20px;
     border-radius: 12px;
@@ -140,7 +111,10 @@ h1 {
     width: 90%;
     text-align: center;
     color: #FFF;
-    position: relative;
+    box-shadow: 0 0 16px rgba(0,0,0,0.4);
+}
+#popupContent.read {
+    box-shadow: 0 0 16px 4px rgba(0,255,132,0.7);
 }
 #popupContent img {
     max-width: 200px;
@@ -156,30 +130,30 @@ h1 {
     font-size: 14px;
     color: #CCC;
 }
-/* Popup styling when viewed for read books */
-#popupContent.read {
-    border: 1px solid rgba(80,255,80,0.3);
-    box-shadow: 0 0 20px rgba(80,255,80,0.5);
+#popupContent .isbn {
+    font-size: 12px;
+    color: #888;
+    margin-top: 8px;
 }
 #popupClose {
     position: absolute;
     top: 12px;
     right: 12px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    color: #FFF;
-    font-size: 20px;
+    background: #00FF84;
+    color: #23272A;
     font-weight: bold;
-    border-radius: 6px;
-    width: 30px;
-    height: 30px;
+    font-size: 16px;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+    transition: transform 0.15s;
 }
 #popupClose:hover {
-    background: rgba(255,255,255,0.15);
-    transform: scale(1.1);
+    transform: scale(1.15);
 }
+
 /* Back-to-top button */
 #backToTop {
     position: fixed;
@@ -208,6 +182,8 @@ h1 {
     opacity: 1;
     visibility: visible;
 }
+
+/* Mobile optimization */
 @media (max-width: 600px) {
     .grid {
         grid-template-columns: repeat(3, 1fr);
@@ -222,29 +198,25 @@ h1 {
 </head>
 <body>
 <div class="container">
-<h1>Tyler's Manga Library</h1>
-<div class="counter" id="bookCountTop">
-    <span class="total" id="totalBooksTop"></span>
-    <span class="read" id="readBooksTop"></span>
-</div>
+<h1>Manga Library</h1>
+<div id="bookCountTop"></div>
 <input type="text" id="searchInput" onkeyup="searchLibrary()" placeholder="Search by title, author, publisher, ISBN...">
 <div class="grid" id="bookGrid"></div>
-<div class="counter" id="bookCountBottom">
-    <span class="total" id="totalBooksBottom"></span>
-    <span class="read" id="readBooksBottom"></span>
-</div>
+<div id="bookCountBottom"></div>
 </div>
 
 <!-- Popup overlay -->
 <div id="popupOverlay">
     <div id="popupContent">
-        <button id="popupClose" title="Close">&times;</button>
+        <button id="popupClose">&times;</button>
         <img id="popupImage" src="" alt="Cover">
         <div class="title" id="popupTitle"></div>
         <div class="meta" id="popupMeta"></div>
         <div class="isbn" id="popupISBN"></div>
     </div>
 </div>
+
+<button id="backToTop" title="Back to Top">⬆</button>
 
 <script>
 // Search filter
@@ -260,13 +232,9 @@ function searchLibrary() {
 
 // Show popup
 function showPopup(book) {
-    document.getElementById('popupOverlay').style.display = 'flex';
-    const popup = document.getElementById('popupContent');
-    if (book.Read === true || book.Read === "true") {
-        popup.classList.add('read');
-    } else {
-        popup.classList.remove('read');
-    }
+    const overlay = document.getElementById('popupOverlay');
+    const content = document.getElementById('popupContent');
+    overlay.style.display = 'flex';
     document.getElementById('popupImage').src = book.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
     document.getElementById('popupTitle').innerHTML = book.Title || '';
     let meta = '';
@@ -275,8 +243,10 @@ function showPopup(book) {
     if(book.Date && book.Date !== 'Unknown') meta += book.Date + '<br>';
     document.getElementById('popupMeta').innerHTML = meta;
     document.getElementById('popupISBN').innerHTML = book.ISBN || '';
-    if (book.Read) {
-        document.getElementById('popupMeta').innerHTML += '<br><span style="color:#6fcf97;">✔ Read</span>';
+    if (book.Read && book.Read.toLowerCase() === "yes") {
+        content.classList.add("read");
+    } else {
+        content.classList.remove("read");
     }
 }
 
@@ -290,18 +260,9 @@ fetch('lib.json')
   .then(res => res.json())
   .then(books => {
       const grid = document.getElementById('bookGrid');
-      const totalTop = document.getElementById('totalBooksTop');
-      const totalBottom = document.getElementById('totalBooksBottom');
-      const readTop = document.getElementById('readBooksTop');
-      const readBottom = document.getElementById('readBooksBottom');
-
-      let readCount = books.filter(b => b.Read === true || b.Read === "true").length;
-
-      totalTop.innerText = `Total Books: ${books.length}`;
-      totalBottom.innerText = `Total Books: ${books.length}`;
-      readTop.innerText = `Books Read: ${readCount}`;
-      readBottom.innerText = `Books Read: ${readCount}`;
-
+      const countTop = document.getElementById('bookCountTop');
+      const countBottom = document.getElementById('bookCountBottom');
+      let readCount = 0;
 
       books.sort((a,b) => {
           function parseTitle(t) {
@@ -315,8 +276,10 @@ fetch('lib.json')
           let cmp = aP.name.localeCompare(bP.name);
           return cmp !== 0 ? cmp : aP.vol - bP.vol;
       }).forEach(b => {
+          if (b.Read && b.Read.toLowerCase() === "yes") readCount++;
           let card = document.createElement('div');
-          card.className = 'card' + (b.Read ? ' read' : '');
+          card.className = 'card';
+          if (b.Read && b.Read.toLowerCase() === "yes") card.classList.add('read');
           card.innerHTML = `
             <img src="${b.Cover||'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
             <div class="title">${b.Title||''}</div>
@@ -327,10 +290,11 @@ fetch('lib.json')
           grid.appendChild(card);
       });
 
-      countTop.innerText = `Total Books: ${books.length}`;
-      countBottom.innerText = `Total Books: ${books.length}`;
+      countTop.innerHTML = `<b>Total Books:</b> ${books.length} &nbsp;&nbsp; <b style="color:#00FF84;">Read:</b> ${readCount}`;
+      countBottom.innerHTML = `<b>Total Books:</b> ${books.length} &nbsp;&nbsp; <b style="color:#00FF84;">Read:</b> ${readCount}`;
   })
   .catch(err => console.error('Failed to load lib.json', err));
+
 // Back-to-top button behavior
 const backToTopBtn = document.getElementById('backToTop');
 window.addEventListener('scroll', () => {
@@ -344,6 +308,5 @@ backToTopBtn.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 </script>
-<button id="backToTop" title="Back to Top">⬆</button>
 </body>
 </html>
