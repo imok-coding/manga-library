@@ -22,6 +22,27 @@ h1 {
     color: #7289DA;
     margin-top: 10px;
 }
+/* Book counters */
+.counter {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 14px;
+    color: #CCC;
+    margin: 10px 0;
+}
+.counter span {
+    padding: 3px 10px;
+    border-radius: 8px;
+}
+.counter .total {
+    background: rgba(114,137,218,0.2);
+    color: #7289DA;
+}
+.counter .read {
+    background: rgba(50,205,50,0.15);
+    color: #32CD32;
+}
 #bookCountTop, #bookCountBottom {
     text-align: center;
     margin: 10px 0;
@@ -63,9 +84,14 @@ h1 {
 }
 
 .card.read {
-    background: #23272A; /* keep default card color */
+    background: #23272A; /* keep base card color */
     box-shadow: 0 0 12px rgba(80, 255, 80, 0.5), 0 0 6px rgba(50, 205, 50, 0.3);
     border: 1px solid rgba(50, 205, 50, 0.3);
+}
+
+.card.read:hover {
+    transform: scale(1.07);
+    box-shadow: 0 0 20px rgba(80, 255, 80, 0.7);
 }
 
 .card img {
@@ -138,6 +164,11 @@ h1 {
     font-size: 14px;
     color: #CCC;
 }
+/* Popup styling when viewed for read books */
+#popupContent.read {
+    border: 1px solid rgba(80,255,80,0.3);
+    box-shadow: 0 0 20px rgba(80,255,80,0.5);
+}
 #popupClose {
     position: absolute;
     top: 20px;
@@ -152,10 +183,16 @@ h1 {
 <body>
 <div class="container">
 <h1>Tyler's Manga Library</h1>
-<div id="bookCountTop"></div>
+<div class="counter" id="bookCountTop">
+    <span class="total" id="totalBooksTop"></span>
+    <span class="read" id="readBooksTop"></span>
+</div>
 <input type="text" id="searchInput" onkeyup="searchLibrary()" placeholder="Search by title, author, publisher, ISBN...">
 <div class="grid" id="bookGrid"></div>
-<div id="bookCountBottom"></div>
+<div class="counter" id="bookCountBottom">
+    <span class="total" id="totalBooksBottom"></span>
+    <span class="read" id="readBooksBottom"></span>
+</div>
 </div>
 
 <!-- Popup overlay -->
@@ -184,6 +221,12 @@ function searchLibrary() {
 // Show popup
 function showPopup(book) {
     document.getElementById('popupOverlay').style.display = 'flex';
+    const popup = document.getElementById('popupContent');
+    if (book.Read === true || book.Read === "true") {
+        popup.classList.add('read');
+    } else {
+        popup.classList.remove('read');
+    }
     document.getElementById('popupImage').src = book.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
     document.getElementById('popupTitle').innerHTML = book.Title || '';
     let meta = '';
@@ -207,8 +250,18 @@ fetch('lib.json')
   .then(res => res.json())
   .then(books => {
       const grid = document.getElementById('bookGrid');
-      const countTop = document.getElementById('bookCountTop');
-      const countBottom = document.getElementById('bookCountBottom');
+      const totalTop = document.getElementById('totalBooksTop');
+      const totalBottom = document.getElementById('totalBooksBottom');
+      const readTop = document.getElementById('readBooksTop');
+      const readBottom = document.getElementById('readBooksBottom');
+
+      let readCount = books.filter(b => b.Read === true || b.Read === "true").length;
+
+      totalTop.innerText = `Total Books: ${books.length}`;
+      totalBottom.innerText = `Total Books: ${books.length}`;
+      readTop.innerText = `Books Read: ${readCount}`;
+      readBottom.innerText = `Books Read: ${readCount}`;
+
 
       books.sort((a,b) => {
           function parseTitle(t) {
