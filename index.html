@@ -265,29 +265,27 @@ function searchLibrary() {
     let input = document.getElementById('searchInput').value.toLowerCase();
     const cards = document.getElementsByClassName('card');
 
-    if (input === '') {
-        // If search input is empty, restore the current sorting filter
-        updateBookVisibilityAndText();
-        return;
-    }
-
     for (let card of cards) {
-        // Only search among cards that are currently visible due to sorting
-        if (readClickState !== 0) {
-            const isRead = card.classList.contains('read');
-            if (readClickState === 1 && !isRead) {
-                card.style.display = 'none';
-                continue;
-            }
-            if (readClickState === 2 && isRead) {
-                card.style.display = 'none';
-                continue;
-            }
+        const isRead = card.classList.contains('read');
+
+        // Determine if card should be visible according to the current sort
+        let visibleBySort = false;
+        if (readClickState === 0) visibleBySort = true;        // show all
+        else if (readClickState === 1 && isRead) visibleBySort = true;  // only read
+        else if (readClickState === 2 && !isRead) visibleBySort = true; // only unread
+
+        // If card is not visible by sorting, hide it regardless of search
+        if (!visibleBySort) {
+            card.style.display = 'none';
+            continue;
         }
 
-        let text = card.innerText.toLowerCase();
-        // Hide card if it doesn't match search input
-        card.style.display = text.includes(input) ? '' : 'none';
+        // If visible by sort, apply search filter
+        if (input === '' || card.innerText.toLowerCase().includes(input)) {
+            card.style.display = ''; // show
+        } else {
+            card.style.display = 'none'; // hide
+        }
     }
 }
 
