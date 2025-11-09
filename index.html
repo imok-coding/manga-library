@@ -194,14 +194,23 @@ h1 {
     border-radius: 50%;
     width: 48px;
     height: 48px;
-    font-size: 20px;
-    font-weight: bold;
     cursor: pointer;
     opacity: 0;
     visibility: hidden;
     box-shadow: 0 0 12px rgba(0, 255, 132, 0.4);
     transition: opacity 0.3s, visibility 0.3s, transform 0.15s;
     z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#backToTop::before {
+    content: '';
+    display: inline-block;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 12px solid #00FF84; /* arrow color */
+    transform: rotate(0deg);
 }
 #backToTop:hover {
     transform: scale(1.1);
@@ -249,7 +258,7 @@ h1 {
     </div>
 </div>
 
-<button id="backToTop" title="Back to Top">⬆</button>
+<button id="backToTop" title="Back to Top"></button>
 
 <script>
 function searchLibrary() {
