@@ -18,20 +18,30 @@ body::before {
     content: '';
     position: fixed;
     top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: url('https://4kwallpapers.com/images/wallpapers/chainsaw-man-the-3840x2160-22996.jpg') no-repeat center center fixed;
+    width: 110%; /* slightly zoomed in to avoid borders during movement */
+    height: 110%;
+    background: url('https://i.imgur.com/YOUR_REZE_IMAGE.jpg') no-repeat center center fixed;
     background-size: cover;
 
     /* Upside down */
     transform: rotate(180deg);
 
     /* Subtle movement */
-    animation: slowMove 60s infinite alternate;
+    animation: slowMove 120s infinite alternate;
 
-    /* CCTV overlay effect */
-    filter: grayscale(0.7) contrast(1.2) brightness(0.7);
+    /* CCTV / vintage TV look */
+    filter: grayscale(0.7) contrast(1.2) brightness(0.75);
     opacity: 0.6;
     z-index: -1;
+}
+
+/* Slow float movement */
+@keyframes slowMove {
+    0%   { transform: rotate(180deg) translate(0px, 0px); }
+    25%  { transform: rotate(180deg) translate(3px, -3px); }
+    50%  { transform: rotate(180deg) translate(-3px, 3px); }
+    75%  { transform: rotate(180deg) translate(2px, -2px); }
+    100% { transform: rotate(180deg) translate(0px, 0px); }
 }
 
 /* Subtle slow shake / float animation */
@@ -49,13 +59,11 @@ body::after {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: repeating-linear-gradient(
-        to bottom,
-        rgba(0,0,0,0) 0px,
-        rgba(0,0,0,0.03) 2px
-    );
+    background: url('https://i.imgur.com/7R2Oj3K.png'); /* subtle noise texture */
+    opacity: 0.08; /* very light, adjust to taste */
     pointer-events: none;
     z-index: -1;
+    mix-blend-mode: overlay; /* blends nicely without overpowering the image */
 }
 html {
     scroll-behavior: smooth;
