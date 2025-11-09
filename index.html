@@ -135,13 +135,13 @@ h1 {
     background: #23272A;
     padding: 20px;
     border-radius: 12px;
-    max-width: 700px; /* a bit wider for side-by-side layout */
+    max-width: 700px;
     width: 90%;
     color: #FFF;
     position: relative;
     display: flex;
     gap: 20px; /* space between image and info */
-    align-items: flex-start;
+    align-items: center; /* vertically center info relative to image */
     animation: slideUp 0.25s ease;
 }
 @keyframes slideUp {
@@ -167,7 +167,8 @@ h1 {
 #popupContent .popup-info {
     display: flex;
     flex-direction: column;
-    gap: 10px; /* space between each text block */
+    gap: 10px; /* space between text blocks */
+    justify-content: center; /* vertical centering within info column */
     flex: 1; /* take remaining space */
 }
 #popupContent .popup-info .isbn {
@@ -242,6 +243,18 @@ h1 {
     }
     .card {
         max-width: 100%;
+    }
+    #popupContent {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        text-align: center;
+    }
+    #popupContent img {
+        max-width: 150px;
+    }
+    #popupContent .popup-info {
+        justify-content: center;
     }
 }
 </style>
