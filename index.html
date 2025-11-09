@@ -144,10 +144,6 @@ h1 {
     align-items: center; /* vertically center info relative to image */
     animation: slideUp 0.25s ease;
 }
-@keyframes slideUp {
-    from {transform: translateY(15px); opacity: 0;}
-    to {transform: translateY(0); opacity: 1;}
-}
 #popupContent img {
     max-width: 200px;
     height: auto;
@@ -168,7 +164,8 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 10px; /* space between text blocks */
-    justify-content: center; /* vertical centering within info column */
+    justify-content: center; /* vertical centering */
+    padding-right: 20px; /* space to right edge of popup */
     flex: 1; /* take remaining space */
 }
 #popupContent .popup-info .isbn {
@@ -255,6 +252,7 @@ h1 {
     }
     #popupContent .popup-info {
         justify-content: center;
+        padding-right: 0;
     }
 }
 </style>
