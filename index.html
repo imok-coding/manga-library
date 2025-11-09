@@ -7,32 +7,39 @@
 <style>
 /* ===== BODY & BASE ===== */
 body {
-    margin: 0;
-    font-family: Helvetica, Arial, sans-serif;
-    color: #fff;
-    overflow-x: hidden;
+  background: #1e0d14;
+  overflow-x: hidden;
 }
 
-/* Reze Background with movement, upside down, and CCTV effect */
+/* Procedural TV static shimmer — no image */
 body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0;
-    width: 110%; /* slightly zoomed in to avoid borders during movement */
-    height: 110%;
-    background: url('https://4kwallpapers.com/images/wallpapers/chainsaw-man-the-3840x2160-22996.jpg') no-repeat center center fixed;
-    background-size: cover;
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,0.05) 0px,
+      rgba(255,255,255,0.05) 1px,
+      rgba(0,0,0,0.05) 2px,
+      rgba(0,0,0,0.05) 3px
+  ),
+  repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.02) 0px,
+      rgba(255,255,255,0.02) 1px,
+      rgba(0,0,0,0.02) 2px,
+      rgba(0,0,0,0.02) 3px
+  );
+  opacity: 0.04;
+  mix-blend-mode: screen;
+  z-index: -1;
+  animation: staticShift 0.8s steps(2, end) infinite;
+}
 
-    /* Upside down */
-    transform: rotate(180deg);
-
-    /* Subtle movement */
-    animation: slowMove 120s infinite alternate;
-
-    /* CCTV / vintage TV look */
-    filter: grayscale(0.7) contrast(1.2) brightness(0.75);
-    opacity: 0.6;
-    z-index: -1;
+@keyframes staticShift {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 100% 100%, 50% 50%; }
 }
 
 /* Slow float movement */
@@ -53,16 +60,29 @@ body::before {
     100% { transform: rotate(180deg) translate(0px, 0px); }
 }
 
-/* Optional: subtle TV scanline effect for CCTV vibe */
 body::after {
-    content: '';
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    opacity: 0.08; /* very light, adjust to taste */
-    pointer-events: none;
-    z-index: -1;
-    mix-blend-mode: overlay; /* blends nicely without overpowering the image */
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: url('https://4kwallpapers.com/images/walls/thumbs_3t/22996.jpg') no-repeat center center fixed;
+  background-size: cover;
+  transform: rotate(180deg);
+  animation: subtleMove 120s ease-in-out infinite alternate;
+  filter: brightness(0.8) contrast(1.1);
+  z-index: -2;
+}
+
+@keyframes subtleMove {
+  0%   { transform: rotate(180deg) translate(0, 0); }
+  50%  { transform: rotate(180deg) translate(6px, 4px); }
+  100% { transform: rotate(180deg) translate(-6px, -4px); }
+}
+
+@keyframes subtleMove {
+    0% { transform: rotate(180deg) translate(0px, 0px); }
+    50% { transform: rotate(180deg) translate(5px, 5px); }
+    100% { transform: rotate(180deg) translate(-5px, -5px); }
 }
 html {
     scroll-behavior: smooth;
