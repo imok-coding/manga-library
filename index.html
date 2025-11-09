@@ -140,15 +140,30 @@ h1 {
     color: #FFF;
     position: relative;
     display: flex;
-    gap: 20px; /* space between image and info */
-    align-items: center; /* vertically center info relative to image */
+    gap: 20px;
+    align-items: center;
     animation: slideUp 0.25s ease;
+}
+@keyframes slideUp {
+    from {transform: translateY(15px); opacity: 0;}
+    to {transform: translateY(0); opacity: 1;}
 }
 #popupContent img {
     max-width: 200px;
     height: auto;
     border-radius: 6px;
     flex-shrink: 0;
+}
+#popupContent .popup-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* vertical centering */
+    align-items: center;     /* horizontal centering in remaining space */
+    gap: 10px;
+    flex: 1;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: center;
 }
 #popupContent .popup-info .title {
     font-size: 20px;
@@ -159,17 +174,6 @@ h1 {
     font-size: 14px;
     color: #CCC;
     line-height: 1.4;
-}
-#popupContent .popup-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* vertical centering */
-    align-items: center;     /* horizontal centering within remaining space */
-    gap: 10px;               /* space between text blocks */
-    flex: 1;                 /* take remaining space next to image */
-    padding-left: 10px;      /* optional small spacing from image */
-    padding-right: 10px;     /* optional spacing from right edge */
-    text-align: center;
 }
 #popupContent .popup-info .isbn {
     font-size: 12px;
@@ -224,8 +228,7 @@ h1 {
     display: inline-block;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
-    border-bottom: 12px solid #00FF84; /* arrow color */
-    transform: rotate(0deg);
+    border-bottom: 12px solid #00FF84;
 }
 #backToTop:hover {
     transform: scale(1.1);
