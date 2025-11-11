@@ -93,15 +93,21 @@ h1 {
     box-shadow: 0 0 12px rgba(255,105,180,0.5), 0 0 6px rgba(255,182,193,0.3);
     border: 1px solid rgba(255,105,180,0.3);
 }
+/* Less intense glow for unread cards */
+.card:not(.read) {
+    box-shadow: 0 0 6px rgba(255,182,193,0.2);
+}
+.card:not(.read):hover {
+    box-shadow: 0 0 12px rgba(255,182,193,0.35);
+}
 .card.read:hover {
     transform: scale(1.07);
     box-shadow: 0 0 20px rgba(255,105,180,0.7);
 }
 .card img {
     width: 100%;
-    height: auto;
-    max-height: 220px;
-    object-fit: cover;
+    height: 220px;  /* fixed height for consistency */
+    object-fit: cover;  /* ensures image fills the area without distortion */
     display: block;
     margin: 0 auto;
     background: #3b1a28;
@@ -370,12 +376,20 @@ function updateBookVisibilityAndText() {
         bottomSpan.innerText = `Books Not Read: ${unreadCount}`;
         topSpan.style.color = '#FF5555';
         bottomSpan.style.color = '#FF5555';
-    } else {
+    } else if (readClickState === 1) {
+        // Show only read
         const readNum = readCount;
         topSpan.innerText = `Books Read: ${readNum}`;
         bottomSpan.innerText = `Books Read: ${readNum}`;
         topSpan.style.color = '#32CD32';
         bottomSpan.style.color = '#32CD32';
+    } else {
+        // State 0 (show all books)
+        const readNum = readCount;
+        topSpan.innerText = `Books Read: ${readNum}`;
+        bottomSpan.innerText = `Books Read: ${readNum}`;
+        topSpan.style.color = '';      // revert to normal inherited color
+        bottomSpan.style.color = '';
     }
 }
 
@@ -415,6 +429,13 @@ function updateCounters() {
             bottomSpan.innerText = `Books Not Read: ${unreadCount}`;
             topSpan.style.color = '#FF5555';
             bottomSpan.style.color = '#FF5555';
+        } else {
+            // default (show all)
+            const totalRead = Array.from(cards).filter(card => card.classList.contains('read')).length;
+            topSpan.innerText = `Books Read: ${totalRead}`;
+            bottomSpan.innerText = `Books Read: ${totalRead}`;
+            topSpan.style.color = '';      // reset color to default
+            bottomSpan.style.color = '';
         }
     }
 }
