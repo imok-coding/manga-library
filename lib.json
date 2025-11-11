@@ -2275,5 +2275,14 @@
         "Date": "05/07/2019",
         "Cover": "https://covers.openlibrary.org/b/id/8798659-L.jpg",
         "Read": true
+    },
+    {
+        "ISBN": "978-1-9747-4874-7",
+        "Title": "Chainsaw Man, Vol. 16",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz Media",
+        "Date": "2024",
+        "Cover": "https://covers.openlibrary.org/b/id/14650155-L.jpg",
+        "Read": false
     }
 ]
