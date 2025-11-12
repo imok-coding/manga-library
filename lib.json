@@ -645,7 +645,7 @@
         "Publisher": "Seven Seas Entertainment, LLC",
         "Date": "2019",
         "Cover": "https://covers.openlibrary.org/b/id/14568648-L.jpg",
-        "Read": true
+        "Read": false
     },
     {
         "ISBN": "978-1-9747-2598-4",
@@ -2285,4 +2285,5 @@
         "Cover": "https://covers.openlibrary.org/b/id/14650155-L.jpg",
         "Read": false
     }
+
 ]
