@@ -645,7 +645,7 @@
         "Publisher": "Seven Seas Entertainment, LLC",
         "Date": "2019",
         "Cover": "https://covers.openlibrary.org/b/id/14568648-L.jpg",
-        "Read": false
+        "Read": true
     },
     {
         "ISBN": "978-1-9747-2598-4",
@@ -2284,6 +2284,14 @@
         "Date": "2024",
         "Cover": "https://covers.openlibrary.org/b/id/14650155-L.jpg",
         "Read": false
+    },
+    {
+        "ISBN": "978-1-9747-5896-8",
+        "Title": "One Piece, Vol. 110",
+        "Authors": "Eiichiro Oda",
+        "Publisher": "VIZ Media LLC",
+        "Date": "11/11/2025",
+        "Cover": "https://covers.openlibrary.org/b/id/15095114-L.jpg",
+        "Read": false
     }
-
 ]
