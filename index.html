@@ -2,411 +2,695 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=no">
 <title>Tyler's Manga Library</title>
 <style>
 /* ===== BODY & BASE ===== */
-:root {
-    --bg: #1e0d14;
-    --card-bg: #2b0f1d;
-    --accent: #ffb6c1;
-    --accent-strong: #ff69b4;
-    --muted: rgba(255,182,193,0.15);
-    --read-glow: rgba(255,105,180,0.5);
-    --unread-glow: rgba(255,182,193,0.12);
-    --text: #fff;
-}
-* { box-sizing: border-box; }
 body {
-    background: var(--bg);
-    color: var(--text);
+    background: #1e0d14;
+    color: #fff;
     font-family: Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
 }
-html { scroll-behavior: smooth; }
-.container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
-header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:10px; }
-h1 { text-align: left; color: var(--accent); margin:0; font-size:20px; text-shadow: 0 0 6px rgba(255,182,193,0.7); }
+html {
+    scroll-behavior: smooth;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+}
+h1 {
+    text-align: center;
+    color: #ffb6c1;
+    margin-top: 10px;
+    text-shadow: 0 0 6px rgba(255,182,193,0.7);
+}
+
+/* ===== HAMBURGER MENU ===== */
+.menu-toggle {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    width: 32px;
+    height: 26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: 11000;
+}
+.menu-toggle span {
+    display: block;
+    height: 4px;
+    border-radius: 4px;
+    background: #ffb6c1;
+    transition: transform 0.2s, opacity 0.2s;
+}
+.menu-toggle.active span:nth-child(1) {
+    transform: translateY(10px) rotate(45deg);
+}
+.menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+.menu-toggle.active span:nth-child(3) {
+    transform: translateY(-10px) rotate(-45deg);
+}
+
+/* On mobile, move menu to the right */
+@media (max-width: 600px) {
+    .menu-toggle {
+        left: auto;
+        right: 16px;
+    }
+}
+
+/* Dropdown panel */
+.menu-panel {
+    position: fixed;
+    top: 52px;
+    left: 16px;
+    background: #2b0f1d;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+    padding: 8px 0;
+    min-width: 140px;
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 10999;
+}
+.menu-panel.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+.menu-item {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #ffb6c1;
+    padding: 8px 16px;
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+}
+.menu-item:hover {
+    background: rgba(255,182,193,0.18);
+}
+
+/* For mobile, align panel under right-side button */
+@media (max-width: 600px) {
+    .menu-panel {
+        left: auto;
+        right: 16px;
+    }
+}
 
 /* ===== COUNTERS ===== */
-.counter { display:flex; gap:12px; align-items:center; justify-content:center; margin:8px 0 12px 0; }
-.counter span { padding:6px 12px; border-radius:12px; background:transparent; color: #f8f0f4; font-weight:600; cursor:pointer; }
-.counter .total { color: var(--accent); border:1px solid rgba(255,182,193,0.06); padding:6px 12px; border-radius:12px; }
-.counter .read { color: #ccc; }
+.counter {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 14px;
+    color: #f8f0f4;
+    margin: 10px 0;
+}
+.counter span {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    background: rgba(255,182,193,0.1);
+    color: #ffb6c1;
+    transition: 0.2s;
+}
+.counter span:hover {
+    background: rgba(255,182,193,0.25);
+    cursor: pointer;
+}
 
 /* ===== SEARCH INPUT ===== */
-#searchInput { width: 90%; max-width: 520px; margin: 6px auto; display:block; padding:10px; font-size:14px; border-radius:10px; border:1px solid rgba(255,182,193,0.08); background:#2b0f1d; color:#fff; box-shadow: 0 0 6px rgba(255,182,193,0.06) inset; }
+#searchInput {
+    width: 90%;
+    max-width: 500px;
+    margin: 12px auto;
+    display: block;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #bb7f8f;
+    background: #2b0f1d;
+    color: #fff;
+    box-shadow: 0 0 6px rgba(255,182,193,0.3) inset;
+}
 
 /* ===== GRID & CARDS ===== */
-.grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:20px; justify-items:center; padding: 18px 0; transition: all 0.25s ease; }
-.card { background: var(--card-bg); border-radius:12px; overflow:hidden; text-align:center; transition: transform 0.15s, box-shadow 0.25s ease; cursor:pointer; box-shadow: 0 2px 8px rgba(255,182,193,0.08); width:100%; max-width:150px; }
-.card:hover { transform: scale(1.04); box-shadow: 0 0 15px rgba(255,182,193,0.18); }
-.card.read { box-shadow: 0 0 10px var(--read-glow), 0 0 6px rgba(255,182,193,0.18); border:1px solid rgba(255,105,180,0.14); }
-.card:not(.read) { box-shadow: 0 0 6px var(--unread-glow); } /* subtle unread glow */
-.card:not(.read):hover { box-shadow: 0 0 10px rgba(255,182,193,0.2); }
-.card img { width:100%; height:220px; object-fit:cover; display:block; margin:0 auto; background:#3b1a28; border-radius:6px; }
-.card .title { font-weight:700; margin:6px 8px; font-size:13px; min-height:36px; color:var(--accent); }
-.card .meta { font-size:11px; margin:4px 6px; color:#f0cfd6; padding-bottom:8px; }
-.card .isbn { font-size:10px; color:#eaa4b7; margin-top:4px; }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 20px;
+    justify-items: center;
+    padding: 20px;
+}
+.card {
+    background: #2b0f1d;
+    border-radius: 12px;
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.15s, box-shadow 0.25s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(255,182,193,0.2);
+    width: 100%;
+    max-width: 150px;
+}
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255,182,193,0.6);
+}
+.card.read {
+    background: #2b0f1d;
+    box-shadow: 0 0 12px rgba(255,105,180,0.5), 0 0 6px rgba(255,182,193,0.3);
+    border: 1px solid rgba(255,105,180,0.3);
+}
+/* Softer glow for unread cards */
+.card:not(.read) {
+    box-shadow: 0 0 6px rgba(255,182,193,0.2);
+}
+.card:not(.read):hover {
+    box-shadow: 0 0 12px rgba(255,182,193,0.35);
+}
+.card.read:hover {
+    transform: scale(1.07);
+    box-shadow: 0 0 20px rgba(255,105,180,0.7);
+}
+.card img {
+    width: 100%;
+    height: 220px;   /* uniform height */
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+    background: #3b1a28;
+    border-radius: 6px;
+}
+.card .title {
+    font-weight: bold;
+    margin: 6px 8px;
+    font-size: 13px;
+    min-height: 36px;
+    color: #ffc0cb;
+}
+.card .meta {
+    font-size: 11px;
+    margin: 2px;
+    color: #f8d1d8;
+    padding-bottom: 8px;
+}
+.card .isbn {
+    font-size: 10px;
+    color: #eea4b7;
+    margin-top: 4px;
+}
+
+/* ===== PAGE SECTIONS (LIBRARY vs WISHLIST) ===== */
+.page-section {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.page-section.hidden {
+    opacity: 0;
+    transform: translateX(-20px);
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+.page-section.active {
+    opacity: 1;
+    transform: translateX(0);
+    position: relative;
+    pointer-events: auto;
+}
 
 /* ===== POPUP ===== */
-#popupOverlay { position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(30,13,20,0.95); backdrop-filter: blur(6px); display:none; justify-content:center; align-items:center; z-index:9999; }
-#popupContent { background: var(--card-bg); padding:20px; border-radius:16px; max-width:900px; width:92%; color:var(--text); position:relative; display:flex; gap:20px; align-items:center; box-shadow: 0 0 25px rgba(255,182,193,0.15); }
-#popupContent img { max-width:220px; height:auto; border-radius:8px; flex-shrink:0; box-shadow: 0 0 12px rgba(255,182,193,0.12); }
-.popup-info { display:flex; flex-direction:column; gap:10px; flex:1; text-align:center; padding-left:8px; padding-right:8px; }
-.popup-info .title { font-size:18px; font-weight:800; color:var(--accent); }
-.popup-info .meta { font-size:14px; color:#f0d6dd; line-height:1.4; }
-.popup-info .isbn { font-size:12px; color:#eea4b7; }
-#popupContent.read { border:1px solid rgba(255,105,180,0.14); box-shadow: 0 0 30px rgba(255,105,180,0.18); }
-#popupClose { position:absolute; top:12px; right:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); color:#fff; font-size:18px; font-weight:700; border-radius:8px; width:36px; height:36px; cursor:pointer; transition:background 0.2s, transform 0.1s; }
-#popupClose:hover { background: rgba(255,182,193,0.14); transform:scale(1.06); }
-
-/* BUY BUTTON */
-.buy-btn { display:inline-block; margin-top:6px; padding:8px 14px; border-radius:8px; text-decoration:none; font-weight:700; background:linear-gradient(180deg,var(--accent-strong),#ff84b2); color:#fff; box-shadow:0 6px 12px rgba(255,105,180,0.12); }
-
-/* ===== HAMBURGER + RIGHT PANEL (Wishlist) ===== */
-.hamburger { width:44px; height:44px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; background:transparent; border:1px solid rgba(255,182,193,0.04); }
-.hamburger .bar { width:20px; height:2px; background:var(--accent); transition: transform 0.25s, opacity 0.2s; display:block; position:relative; }
-.hamburger .bar::before, .hamburger .bar::after { content:''; position:absolute; left:0; width:20px; height:2px; background:var(--accent); transition: transform 0.25s, top 0.25s, bottom 0.25s; }
-.hamburger .bar::before { top:-6px; }
-.hamburger .bar::after { bottom:-6px; }
-.hamburger.open .bar { background:transparent; }
-.hamburger.open .bar::before { transform: rotate(45deg); top:0; }
-.hamburger.open .bar::after { transform: rotate(-45deg); bottom:0; }
-
-/* right panel */
-.right-panel { position:fixed; top:0; right:-100%; width:100%; max-width:420px; height:100%; background: #1a0710; box-shadow: -8px 0 30px rgba(0,0,0,0.6); transition: right 0.35s cubic-bezier(.2,.9,.2,1); z-index: 10001; padding:18px 14px; overflow:auto; }
-.right-panel.open { right:0; }
-.right-panel header { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
-
-/* panel content */
-.panel-title { color:var(--accent); font-weight:800; font-size:18px; }
-
-/* small helper buttons */
-.panel-btn { display:inline-block; padding:8px 12px; border-radius:8px; border:1px solid rgba(255,182,193,0.06); color:#f6dfe6; background:transparent; cursor:pointer; margin-right:8px; }
-
-/* slide containers */
-.view-wrap { position:relative; overflow:hidden; }
-.view { min-height:20px; transition: transform 0.35s ease; }
-.view.hidden-left { transform: translateX(-100%); }
-.view.hidden-right { transform: translateX(100%); }
-.view.visible { transform: translateX(0); }
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+@keyframes slideUp {
+    from {transform: translateY(15px); opacity: 0;}
+    to {transform: translateY(0); opacity: 1;}
+}
+#popupOverlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(30,13,20,0.95);
+    backdrop-filter: blur(6px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.25s ease;
+}
+#popupContent {
+    background: #2b0f1d;
+    padding: 20px;
+    border-radius: 16px;
+    max-width: 700px;
+    width: 90%;
+    color: #fff;
+    position: relative;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    animation: slideUp 0.25s ease;
+    box-shadow: 0 0 25px rgba(255,182,193,0.5);
+}
+#popupContent img {
+    max-width: 200px;
+    height: auto;
+    border-radius: 8px;
+    flex-shrink: 0;
+    box-shadow: 0 0 12px rgba(255,182,193,0.6);
+}
+.popup-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: center;
+}
+.popup-info .title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffb6c1;
+    text-shadow: 0 0 6px rgba(255,182,193,0.7);
+}
+.popup-info .meta {
+    font-size: 14px;
+    color: #f8d1d8;
+    line-height: 1.4;
+}
+.popup-info .isbn {
+    font-size: 12px;
+    color: #eea4b7;
+}
+#popupContent.read {
+    border: 1px solid rgba(255,105,180,0.3);
+    box-shadow: 0 0 25px rgba(255,105,180,0.5);
+}
+#popupClose {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 6px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+#popupClose:hover {
+    background: rgba(255,182,193,0.3);
+    transform: scale(1.1);
+}
+#popupBuy {
+    margin-top: 6px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    border: none;
+    background: #ff69b4;
+    color: #1e0d14;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255,105,180,0.6);
+    display: none;
+}
+#popupBuy:hover {
+    background: #ffc0cb;
+}
 
 /* ===== BACK TO TOP ===== */
-#backToTop { position:fixed; bottom:24px; right:24px; background:var(--card-bg); color:var(--accent-strong); border:2px solid var(--accent-strong); border-radius:50%; width:48px; height:48px; cursor:pointer; opacity:0; visibility:hidden; box-shadow:0 0 12px rgba(255,182,193,0.18); transition:opacity 0.3s,visibility 0.3s, transform 0.12s; z-index:10002; display:flex; align-items:center; justify-content:center; }
-#backToTop::before { content:''; display:inline-block; border-left:8px solid transparent; border-right:8px solid transparent; border-bottom:12px solid var(--accent-strong); transform: translateY(-2px); }
-#backToTop.show { opacity:1; visibility:visible; transform: translateY(0); }
+#backToTop {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #2b0f1d;
+    color: #ff69b4;
+    border: 2px solid #ff69b4;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    box-shadow: 0 0 12px rgba(255,182,193,0.4);
+    transition: opacity 0.3s, visibility 0.3s, transform 0.15s;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#backToTop::before {
+    content: '';
+    display: inline-block;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 12px solid #ff69b4;
+}
+#backToTop.show {
+    opacity: 1;
+    visibility: visible;
+}
+#backToTop:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255,182,193,0.6);
+}
 
 /* ===== MOBILE ===== */
 @media (max-width: 600px) {
-    .grid { grid-template-columns: repeat(3, 1fr); gap:12px; padding:12px; }
-    .card img { height:160px; }
-    #popupContent { flex-direction:column; align-items:center; gap:12px; text-align:center; }
-    #popupContent img { max-width:160px; }
-    .right-panel { max-width:100%; width:100%; }
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        padding: 10px;
+    }
+    .card {
+        max-width: 100%;
+    }
+    #popupContent {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        text-align: center;
+    }
+    #popupContent img {
+        max-width: 150px;
+    }
+    .popup-info {
+        padding-left: 0;
+        padding-right: 0;
+    }
 }
-
-/* small tweaks */
-a { color: inherit; }
 </style>
 </head>
 <body>
+<button id="menuToggle" class="menu-toggle" aria-label="Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+<div id="menuPanel" class="menu-panel">
+    <button class="menu-item" data-target="library">Library</button>
+    <button class="menu-item" data-target="wishlist">Wishlist</button>
+</div>
+
 <div class="container">
-    <header>
-        <div style="display:flex; align-items:center; gap:12px;">
-            <h1>Tyler's Manga Library</h1>
-        </div>
-        <div style="display:flex; align-items:center; gap:12px;">
-            <div class="counter" style="margin:0 12px 0 0;">
-                <span class="total" id="totalBooksTop"></span>
-                <span class="read" id="readBooksTop" title="Click to filter read/unread"></span>
-            </div>
-            <div id="hamburgerBtn" class="hamburger" title="Open menu" aria-label="Open menu">
-                <span class="bar"></span>
-            </div>
-        </div>
-    </header>
+<h1 id="pageTitle">Tyler's Manga Library</h1>
 
-    <input type="text" id="searchInput" onkeyup="searchLibrary()" placeholder="Search by title, author, publisher, ISBN..." />
-
-    <div class="view-wrap" style="margin-top:6px;">
-        <div id="libraryView" class="view visible">
-            <div class="grid" id="bookGrid"></div>
-        </div>
-        <div id="wishlistView" class="view hidden-right" style="display:none;">
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-                <div style="font-weight:800; color:var(--accent); margin-bottom:8px;">My Wishlist</div>
-                <div>
-                    <button class="panel-btn" onclick="refreshWishlist()">Refresh</button>
-                    <button class="panel-btn" onclick="closePanel()">Close</button>
-                </div>
-            </div>
-            <div class="grid" id="wishlistGrid"></div>
-        </div>
+<!-- LIBRARY SECTION -->
+<div id="librarySection" class="page-section active">
+    <div class="counter" id="bookCountTop">
+        <span class="total" id="totalBooksTop"></span>
+        <span class="read" id="readBooksTop"></span>
     </div>
-
-    <div class="counter" id="bookCountBottom" style="margin-top:6px;">
+    <input type="text" id="searchInput" onkeyup="searchLibrary()" placeholder="Search by title, author, publisher, ISBN...">
+    <div class="grid" id="bookGrid"></div>
+    <div class="counter" id="bookCountBottom">
         <span class="total" id="totalBooksBottom"></span>
-        <span class="read" id="readBooksBottom" title="Click to filter read/unread"></span>
+        <span class="read" id="readBooksBottom"></span>
     </div>
+</div>
+
+<!-- WISHLIST SECTION -->
+<div id="wishlistSection" class="page-section hidden">
+    <div class="counter">
+        <span class="total" id="wishlistCount"></span>
+    </div>
+    <div class="grid" id="wishlistGrid"></div>
+</div>
 </div>
 
 <!-- Popup overlay -->
 <div id="popupOverlay">
-    <div id="popupContent" role="dialog" aria-modal="true">
+    <div id="popupContent">
         <button id="popupClose" title="Close">&times;</button>
         <img id="popupImage" src="" alt="Cover">
         <div class="popup-info">
             <div class="title" id="popupTitle"></div>
             <div class="meta" id="popupMeta"></div>
             <div class="isbn" id="popupISBN"></div>
-            <div id="popupActions" style="margin-top:6px;"></div>
+            <button id="popupBuy">Buy on Amazon</button>
         </div>
     </div>
 </div>
 
-<!-- Right panel (sliding) -->
-<div id="rightPanel" class="right-panel" aria-hidden="true">
-    <header>
-        <div class="panel-title">Menu</div>
-        <div><button onclick="closePanel()" class="panel-btn">Close</button></div>
-    </header>
-    <div style="padding-bottom:12px;">
-        <button class="panel-btn" onclick="showLibrary()">Library</button>
-        <button class="panel-btn" onclick="showWishlist()">Wishlist</button>
-        <button class="panel-btn" onclick="toggleReadFilter()">Toggle Read Filter</button>
-        <button class="panel-btn" onclick="location.reload()">Reload</button>
-    </div>
-    <hr style="border:none;border-top:1px solid rgba(255,182,193,0.04);margin:12px 0;">
-    <div style="font-size:13px;color:#f3dfe6;margin-bottom:6px;">Wishlist actions</div>
-    <div>
-        <div style="color:#f0ced6;font-size:13px;margin-bottom:6px;">Use the app to add a wishlist item (Add to Wishlist).</div>
-        <div style="font-size:12px;color:#e9d3db;">Wishlist items are managed by the desktop app and saved to wishlist.json</div>
-    </div>
-</div>
-
-<button id="backToTop" title="Back to Top" aria-label="Back to top"></button>
+<button id="backToTop" title="Back to Top"></button>
 
 <script>
-/* Helper: load JSON files */
-async function loadJSON(path) {
-    try {
-        const res = await fetch(path, {cache:"no-store"});
-        if (!res.ok) return [];
-        const data = await res.json();
-        return data || [];
-    } catch (e) {
-        console.error("Failed to load", path, e);
-        return [];
-    }
-}
+let readClickState = 0; // 0 = default, 1 = only read, 2 = only unread
 
-/* Global state */
-let booksLib = [];
-let booksWish = [];
-let readClickState = 0; // 0=all(default),1=only read,2=only unread
+/* ===== HAMBURGER MENU LOGIC ===== */
+const menuToggle = document.getElementById('menuToggle');
+const menuPanel = document.getElementById('menuPanel');
+const pageTitle = document.getElementById('pageTitle');
+const librarySection = document.getElementById('librarySection');
+const wishlistSection = document.getElementById('wishlistSection');
 
-function renderCounters() {
-    const totalTop = document.getElementById('totalBooksTop');
-    const totalBottom = document.getElementById('totalBooksBottom');
-    const readTop = document.getElementById('readBooksTop');
-    const readBottom = document.getElementById('readBooksBottom');
-    totalTop.innerText = `Total Books: ${booksLib.length}`;
-    totalBottom.innerText = `Total Books: ${booksLib.length}`;
-    // default color is inherited; only color when filtered
-    const totalRead = booksLib.filter(b => b.Read === true || b.Read === "true").length;
-    if (readClickState === 0) {
-        readTop.style.color = ''; readBottom.style.color = '';
-        readTop.innerText = `Books Read: ${totalRead}`;
-        readBottom.innerText = `Books Read: ${totalRead}`;
-    } else if (readClickState === 1) {
-        readTop.style.color = '#32CD32'; readBottom.style.color = '#32CD32';
-        const visibleRead = booksLib.filter(b => (b.Read === true || b.Read === "true")).length;
-        readTop.innerText = `Books Read: ${visibleRead}`;
-        readBottom.innerText = `Books Read: ${visibleRead}`;
+menuToggle.addEventListener('click', () => {
+    menuToggle.classList.toggle('active');
+    menuPanel.classList.toggle('open');
+});
+
+function switchSection(target) {
+    if (target === 'library') {
+        pageTitle.textContent = "Tyler's Manga Library";
+        librarySection.classList.add('active');
+        librarySection.classList.remove('hidden');
+        wishlistSection.classList.remove('active');
+        wishlistSection.classList.add('hidden');
     } else {
-        readTop.style.color = '#FF5555'; readBottom.style.color = '#FF5555';
-        const visibleUnread = booksLib.filter(b => !(b.Read === true || b.Read === "true")).length;
-        readTop.innerText = `Books Not Read: ${visibleUnread}`;
-        readBottom.innerText = `Books Not Read: ${visibleUnread}`;
+        pageTitle.textContent = "Wishlist";
+        librarySection.classList.remove('active');
+        librarySection.classList.add('hidden');
+        wishlistSection.classList.add('active');
+        wishlistSection.classList.remove('hidden');
     }
+    menuToggle.classList.remove('active');
+    menuPanel.classList.remove('open');
 }
 
-/* Render library grid */
-function renderLibrary() {
-    const grid = document.getElementById('bookGrid');
-    grid.innerHTML = '';
-    // sort similarly to python
-    booksLib.sort((a,b)=> {
-        function parseTitle(t) {
-            t = (t||'').trim();
-            let m = t.match(/^(.*?),?\s*(?:Vol\.|Volume)\s*(\d+)\b/i);
-            if(!m) return {name:t.toLowerCase(), vol:0};
-            return {name:m[1].trim().toLowerCase(), vol: parseInt(m[2]||"0",10)};
-        }
-        let aP = parseTitle(a.Title), bP = parseTitle(b.Title);
-        let cmp = aP.name.localeCompare(bP.name);
-        return cmp !== 0 ? cmp : aP.vol - bP.vol;
+document.querySelectorAll('.menu-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-target');
+        switchSection(target);
     });
-    for (let b of booksLib) {
-        let card = document.createElement('div');
-        card.className = 'card' + (b.Read ? ' read' : '');
-        card.innerHTML = `
-            <img src="${b.Cover||'${PLACEHOLDER_IMAGE}'}" alt="Cover">
-            <div class="title">${b.Title||''}</div>
-            <div class="meta">${(b.Authors && b.Authors!=='Unknown'?b.Authors+'<br>':'') + (b.Publisher && b.Publisher!=='Unknown'?b.Publisher+'<br>':'') + (b.Date && b.Date!=='Unknown'?b.Date+'<br>':'')}</div>
-            <div class="isbn">${b.ISBN||''}</div>
-        `;
-        card.onclick = () => showPopup(b, false);
-        grid.appendChild(card);
-    }
-    renderCounters();
-}
+});
 
-/* Render wishlist grid */
-function renderWishlist() {
-    const grid = document.getElementById('wishlistGrid');
-    grid.innerHTML = '';
-    // simple render, newest last
-    booksWish.forEach(b => {
-        let card = document.createElement('div');
-        card.className = 'card' + (b.Read ? ' read' : '');
-        card.innerHTML = `
-            <img src="${b.Cover||'${PLACEHOLDER_IMAGE}'}" alt="Cover">
-            <div class="title">${b.Title||''}</div>
-            <div class="meta">${(b.Authors && b.Authors!=='Unknown'?b.Authors+'<br>':'') + (b.Date && b.Date!=='Unknown'?b.Date+'<br>':'')}</div>
-            <div class="isbn">Wishlist</div>
-        `;
-        card.onclick = () => showPopup(b, true); // wishlist popup shows buy button
-        grid.appendChild(card);
-    });
-}
-
-/* Search + filter */
+/* ===== LIBRARY FILTER & COUNTERS ===== */
 function searchLibrary() {
     let input = document.getElementById('searchInput').value.toLowerCase();
     const cards = document.getElementsByClassName('card');
+
     for (let card of cards) {
         const isRead = card.classList.contains('read');
+
         let visibleBySort = false;
         if (readClickState === 0) visibleBySort = true;
         else if (readClickState === 1 && isRead) visibleBySort = true;
         else if (readClickState === 2 && !isRead) visibleBySort = true;
+
         let visibleBySearch = input === '' || card.innerText.toLowerCase().includes(input);
+
         card.style.display = (visibleBySort && visibleBySearch) ? '' : 'none';
     }
-    renderCounters();
+
+    updateCounters();
 }
 
-/* Toggle read filter cycle */
+function updateCounters() {
+    const cards = Array.from(document.getElementsByClassName('card'));
+    const topSpan = document.getElementById('readBooksTop');
+    const bottomSpan = document.getElementById('readBooksBottom');
+
+    if (!topSpan || !bottomSpan) return;
+
+    if (readClickState === 0) {
+        const totalRead = cards.filter(card => card.classList.contains('read')).length;
+        topSpan.innerText = `Books Read: ${totalRead}`;
+        bottomSpan.innerText = `Books Read: ${totalRead}`;
+        // reset to default color (inherit from CSS)
+        topSpan.style.color = '';
+        bottomSpan.style.color = '';
+    } else {
+        let readCount = 0;
+        let unreadCount = 0;
+
+        for (let card of cards) {
+            if (card.style.display !== 'none') {
+                if (card.classList.contains('read')) readCount++;
+                else unreadCount++;
+            }
+        }
+
+        if (readClickState === 1) {
+            topSpan.innerText = `Books Read: ${readCount}`;
+            bottomSpan.innerText = `Books Read: ${readCount}`;
+            topSpan.style.color = '#32CD32';
+            bottomSpan.style.color = '#32CD32';
+        } else if (readClickState === 2) {
+            topSpan.innerText = `Books Not Read: ${unreadCount}`;
+            bottomSpan.innerText = `Books Not Read: ${unreadCount}`;
+            topSpan.style.color = '#FF5555';
+            bottomSpan.style.color = '#FF5555';
+        }
+    }
+}
+
 function toggleReadFilter() {
     readClickState = (readClickState + 1) % 3;
-    // visually update counters + reapply search
     searchLibrary();
 }
 
-/* Popup show */
-function showPopup(book, isWishlist) {
+document.getElementById('readBooksTop').addEventListener('click', toggleReadFilter);
+document.getElementById('readBooksBottom').addEventListener('click', toggleReadFilter);
+
+/* ===== POPUP ===== */
+function showPopup(book) {
     document.getElementById('popupOverlay').style.display = 'flex';
     const popup = document.getElementById('popupContent');
+    const buyBtn = document.getElementById('popupBuy');
+
     if (book.Read === true || book.Read === "true") {
         popup.classList.add('read');
     } else {
         popup.classList.remove('read');
     }
-    document.getElementById('popupImage').src = book.Cover || '${PLACEHOLDER_IMAGE}';
+
+    document.getElementById('popupImage').src = book.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
     document.getElementById('popupTitle').innerHTML = book.Title || '';
     let meta = '';
-    if(book.Authors && book.Authors !== 'Unknown') meta += book.Authors + '<br>';
-    if(book.Publisher && book.Publisher !== 'Unknown') meta += book.Publisher + '<br>';
-    if(book.Date && book.Date !== 'Unknown') meta += book.Date + '<br>';
+    if (book.Authors && book.Authors !== 'Unknown') meta += book.Authors + '<br>';
+    if (book.Publisher && book.Publisher !== 'Unknown') meta += book.Publisher + '<br>';
+    if (book.Date && book.Date !== 'Unknown') meta += book.Date + '<br>';
     document.getElementById('popupMeta').innerHTML = meta;
-    document.getElementById('popupISBN').innerHTML = (book.ISBN || '') + (isWishlist ? ' (Wishlist)' : '');
-    const actions = document.getElementById('popupActions');
-    actions.innerHTML = '';
-    if (isWishlist && book.BuyLink) {
-        const a = document.createElement('a');
-        a.href = book.BuyLink;
-        a.target = '_blank';
-        a.className = 'buy-btn';
-        a.innerText = 'Buy on Amazon';
-        actions.appendChild(a);
-    } else {
-        // For library books optionally show add-to-wishlist text
-        const info = document.createElement('div');
-        info.style.fontSize = '12px';
-        info.style.color = '#e8ced6';
-        info.innerText = isWishlist ? '' : 'Manage read status from the desktop app.';
-        actions.appendChild(info);
-    }
+    document.getElementById('popupISBN').innerHTML = book.ISBN || '';
+
     if (book.Read) {
         document.getElementById('popupMeta').innerHTML += '<br><span style="color:#6fcf97;">✔ Read</span>';
     }
+
+    if (book.AmazonURL) {
+        buyBtn.style.display = 'inline-block';
+        buyBtn.onclick = () => window.open(book.AmazonURL, '_blank');
+    } else {
+        buyBtn.style.display = 'none';
+        buyBtn.onclick = null;
+    }
 }
 
-/* Close popup */
 document.getElementById('popupClose').onclick = () => {
     document.getElementById('popupOverlay').style.display = 'none';
-}
+};
 
-/* Hamburger + right panel behavior */
-const hamburger = document.getElementById('hamburgerBtn');
-const rightPanel = document.getElementById('rightPanel');
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('open');
-    const open = hamburger.classList.contains('open');
-    if (open) {
-        rightPanel.classList.add('open');
-        rightPanel.setAttribute('aria-hidden','false');
-    } else {
-        rightPanel.classList.remove('open');
-        rightPanel.setAttribute('aria-hidden','true');
-    }
-});
-function closePanel() {
-    hamburger.classList.remove('open');
-    rightPanel.classList.remove('open');
-    rightPanel.setAttribute('aria-hidden','true');
-}
-function showWishlist() {
-    // slide view to wishlist
-    document.getElementById('libraryView').style.display = 'none';
-    const wv = document.getElementById('wishlistView');
-    wv.style.display = '';
-    setTimeout(()=> { wv.classList.remove('hidden-right'); wv.classList.add('visible'); }, 10);
-    closePanel();
-    refreshWishlist();
-}
-function showLibrary() {
-    const wv = document.getElementById('wishlistView');
-    if (wv) { wv.classList.add('hidden-right'); wv.classList.remove('visible'); setTimeout(()=> { wv.style.display='none'; document.getElementById('libraryView').style.display=''; }, 250); }
-    closePanel();
-}
+/* ===== LOAD LIBRARY BOOKS ===== */
+fetch('lib.json')
+  .then(res => res.json())
+  .then(books => {
+      const grid = document.getElementById('bookGrid');
+      const totalTop = document.getElementById('totalBooksTop');
+      const totalBottom = document.getElementById('totalBooksBottom');
+      const readTop = document.getElementById('readBooksTop');
+      const readBottom = document.getElementById('readBooksBottom');
 
-/* back to top */
+      let readCount = books.filter(b => b.Read === true || b.Read === "true").length;
+      totalTop.innerText = `Total Books: ${books.length}`;
+      totalBottom.innerText = `Total Books: ${books.length}`;
+      readTop.innerText = `Books Read: ${readCount}`;
+      readBottom.innerText = `Books Read: ${readCount}`;
+
+      books.sort((a,b) => {
+          function parseTitle(t) {
+              t = (t||'').trim();
+              let m = t.match(/^(.*?),?\s*(?:Vol\.|Volume)\s*(\d+)\b/i);
+              if(!m) return {name: t.toLowerCase(), vol:0};
+              return {name:m[1].trim().toLowerCase(), vol:parseInt(m[2]||"0",10)};
+          }
+          let aP = parseTitle(a.Title);
+          let bP = parseTitle(b.Title);
+          let cmp = aP.name.localeCompare(bP.name);
+          return cmp !== 0 ? cmp : aP.vol - bP.vol;
+      }).forEach(b => {
+          let card = document.createElement('div');
+          card.className = 'card' + (b.Read ? ' read' : '');
+          card.innerHTML = `
+            <img src="${b.Cover||'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
+            <div class="title">${b.Title||''}</div>
+            <div class="meta">${(b.Authors && b.Authors!=='Unknown'?b.Authors+'<br>':'') + (b.Publisher && b.Publisher!=='Unknown'?b.Publisher+'<br>':'') + (b.Date && b.Date!=='Unknown'?b.Date+'<br>':'')}</div>
+            <div class="isbn">${b.ISBN||''}</div>
+          `;
+          card.onclick = () => showPopup(b);
+          grid.appendChild(card);
+      });
+
+      // Ensure state 0 styling is correct
+      updateCounters();
+  })
+  .catch(err => console.error('Failed to load lib.json', err));
+
+/* ===== LOAD WISHLIST BOOKS ===== */
+fetch('wishlist.json')
+  .then(res => res.json())
+  .then(items => {
+      const wishlistGrid = document.getElementById('wishlistGrid');
+      const wishlistCount = document.getElementById('wishlistCount');
+      if (!Array.isArray(items)) items = [];
+      wishlistCount.innerText = `Wishlist Items: ${items.length}`;
+
+      items.forEach(b => {
+          let card = document.createElement('div');
+          card.className = 'card'; // no "read" class for wishlist
+          card.innerHTML = `
+            <img src="${b.Cover||'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
+            <div class="title">${b.Title||''}</div>
+            <div class="meta">${(b.Authors && b.Authors!=='Unknown'?b.Authors+'<br>':'') + (b.Publisher && b.Publisher!=='Unknown'?b.Publisher+'<br>':'') + (b.Date && b.Date!=='Unknown'?b.Date+'<br>':'')}</div>
+          `;
+          card.onclick = () => showPopup(b);
+          wishlistGrid.appendChild(card);
+      });
+  })
+  .catch(err => {
+      console.warn('No wishlist.json found yet (that is fine until you add items).', err);
+  });
+
+/* ===== BACK TO TOP BUTTON ===== */
 const backToTopBtn = document.getElementById('backToTop');
 window.addEventListener('scroll', () => {
-    if (window.scrollY > 250) { backToTopBtn.classList.add('show'); } else { backToTopBtn.classList.remove('show'); }
+    if (window.scrollY > 250) {
+        backToTopBtn.classList.add('show');
+    } else {
+        backToTopBtn.classList.remove('show');
+    }
 });
-backToTopBtn.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
-
-/* Load both JSON files and render */
-async function loadAll() {
-    booksLib = await loadJSON('lib.json');
-    // ensure Read field exists
-    booksLib = booksLib.map(b => { if (b.Read === undefined) b.Read = false; return b; });
-    booksWish = await loadJSON('wishlist.json');
-    renderLibrary();
-    renderWishlist();
-}
-loadAll();
-
-function refreshWishlist() {
-    loadJSON('wishlist.json').then(d=> { booksWish = d || []; renderWishlist(); });
-}
-
-/* small utility for python-created BuyLink to work */
+backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+    });
+});
 </script>
 </body>
 </html>
