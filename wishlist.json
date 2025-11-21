@@ -1,12 +1,11 @@
 [
-  {
-    "ISBN": "",
-    "Title": "Amazon.com",
-    "Authors": "Unknown",
-    "Publisher": "Unknown",
-    "Date": "Unknown",
-    "Cover": "https://via.placeholder.com/150x220?text=No+Cover",
-    "BuyLink": "https://www.amazon.com/dp/1974762238/?coliid=I1G0X5JBPJ9FMJ&colid=1N8NTHC0SQUD4&psc=1",
-    "Read": false
-  }
+    {
+        "Title": "Chainsaw Man, Vol. 20",
+        "Authors": "Tatsuki Fujimoto",
+        "Publisher": "Viz",
+        "Date": "Unknown",
+        "Cover": "https://m.media-amazon.com/images/I/71f6K4b7MCL._SL1500_.jpg",
+        "ISBN": "",
+        "AmazonURL": "https://www.amazon.com/dp/1974762238/?coliid=I1G0X5JBPJ9FMJ&colid=1N8NTHC0SQUD4&psc=1"
+    }
 ]
