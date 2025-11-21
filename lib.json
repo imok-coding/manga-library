@@ -2293,5 +2293,122 @@
         "Date": "11/11/2025",
         "Cover": "https://covers.openlibrary.org/b/id/15095114-L.jpg",
         "Read": true
+    },
+    {
+        "ISBN": "978-1-9747-1320-2",
+        "Title": "Hell's Paradise: Jigokuraku, Vol. 1",
+        "Authors": "Yuji Kaku",
+        "Publisher": "Viz Media",
+        "Date": "3/17/2020",
+        "Cover": "https://m.media-amazon.com/images/I/81keV50g-yL._SL1500_.jpg",
+        "Read": false
+    },
+    {
+        "ISBN": "978-1-9747-1321-9",
+        "Title": "Hell's Paradise: Jigokuraku, Vol. 2",
+        "Authors": "Yuji Kaku",
+        "Publisher": "Viz Media",
+        "Date": "5/19/2020",
+        "Cover": "https://m.media-amazon.com/images/I/81uqY2PZQ0L._SL1500_.jpg",
+        "Read": false
+    },
+    {
+        "ISBN": "978-1-9747-1322-6",
+        "Title": "Hell's Paradise: Jigokuraku, Vol. 3",
+        "Authors": "Yuji Kaku",
+        "Publisher": "Viz Media",
+        "Date": "7/21/2020",
+        "Cover": "https://m.media-amazon.com/images/I/81fA6AryOoL._SL1500_.jpg",
+        "Read": false
+    },
+    {
+        "ISBN": "978-1-9747-1323-3",
+        "Title": "Hell's Paradise: Jigokuraku, Vol. 4",
+        "Authors": "Yuji Kaku",
+        "Publisher": "Viz Media",
+        "Date": "9/15/2020",
+        "Cover": "https://m.media-amazon.com/images/I/81b7K7jcFdL._SL1500_.jpg",
+        "Read": false
+    },
+    {
+        "ISBN": "978-1-9747-1324-0",
+        "Title": "Hell's Paradise: Jigokuraku, Vol. 5",
+        "Authors": "Yuji Kaku",
+        "Publisher": "Viz Media",
+        "Date": "11/17/2020",
+        "Cover": "https://m.media-amazon.com/images/I/818gSaOjCaL._SL1500_.jpg",
+        "Read": false
+    },
+    {
+        "ISBN": "978-1-9747-1325-7",
+        "Title": "Hell's Paradise: Jigokuraku, Vol. 6",
+        "Authors": "Yuji Kaku",
+        "Publisher": "Viz Media",
+        "Date": "1/19/2021",
+        "Cover": "https://m.media-amazon.com/images/I/81E+FavdGzL._SL1500_.jpg",
+        "Read": false
+    },
+    {
+        "ISBN": "978-1-9747-1877-1",
+        "Title": "Hell's Paradise: Jigokuraku, Vol. 7",
+        "Authors": "Yuji Kaku",
+        "Publisher": "Viz Media",
+        "Date": "3/16/2021",
+        "Cover": "https://m.media-amazon.com/images/I/815LfE8EQaL._SL1500_.jpg",
+        "Read": false
+    },
+    {
+        "ISBN": "978-1-9747-1878-8",
+        "Title": "Hell's Paradise: Jigokuraku, Vol. 8",
+        "Authors": "Yuji Kaku",
+        "Publisher": "Viz Media",
+        "Date": "5/18/2021",
+        "Cover": "https://m.media-amazon.com/images/I/814zqB4GXgL._SL1500_.jpg",
+        "Read": false
+    },
+    {
+        "ISBN": "978-1-9747-1530-5",
+        "Title": "Hell's Paradise: Jigokuraku, Vol. 9",
+        "Authors": "Yuji Kaku",
+        "Publisher": "Viz Media",
+        "Date": "7/20/2021",
+        "Cover": "https://m.media-amazon.com/images/I/81ljhKack5L._SL1500_.jpg",
+        "Read": false
+    },
+    {
+        "ISBN": "978-1-9747-2099-6",
+        "Title": "Hell's Paradise: Jigokuraku, Vol. 10",
+        "Authors": "Yuji Kaku",
+        "Publisher": "Viz Media",
+        "Date": "9/21/2021",
+        "Cover": "https://m.media-amazon.com/images/I/81Suib2Z0cS._SL1500_.jpg",
+        "Read": false
+    },
+    {
+        "ISBN": "978-1-9747-2282-2",
+        "Title": "Hell's Paradise: Jigokuraku, Vol. 11",
+        "Authors": "Yuji Kaku",
+        "Publisher": "Viz Media",
+        "Date": "11/16/2021",
+        "Cover": "https://m.media-amazon.com/images/I/81MXtM1CmCL._SL1500_.jpg",
+        "Read": false
+    },
+    {
+        "ISBN": "978-1-9747-2464-2",
+        "Title": "Hell's Paradise: Jigokuraku, Vol. 12",
+        "Authors": "Yuji Kaku",
+        "Publisher": "Viz Media",
+        "Date": "1/18/2022",
+        "Cover": "https://m.media-amazon.com/images/I/81vNtzL0gXL._SL1500_.jpg",
+        "Read": false
+    },
+    {
+        "ISBN": "978-1-9747-2851-0",
+        "Title": "Hell's Paradise: Jigokuraku, Vol. 13",
+        "Authors": "Yuji Kaku",
+        "Publisher": "Viz Media",
+        "Date": "3/15/2022",
+        "Cover": "https://m.media-amazon.com/images/I/81EbV6G03zL._SL1500_.jpg",
+        "Read": false
     }
 ]
