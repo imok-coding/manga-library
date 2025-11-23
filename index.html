@@ -411,6 +411,17 @@ h1 {
 </style>
 </head>
 <body>
+
+<div id="authBar" style="position:fixed; top:10px; right:10px; z-index:12000; font-size:12px;">
+  <span id="authStatus" style="margin-right:8px;"></span>
+  <button id="loginBtn" style="padding:4px 8px; border-radius:6px; border:none; cursor:pointer; font-size:12px;">
+    Sign in
+  </button>
+  <button id="logoutBtn" style="padding:4px 8px; border-radius:6px; border:none; cursor:pointer; font-size:12px; display:none;">
+    Sign out
+  </button>
+</div>
+
 <button id="menuToggle" class="menu-toggle" aria-label="Menu">
     <span></span>
     <span></span>
@@ -462,6 +473,86 @@ h1 {
 </div>
 
 <button id="backToTop" title="Back to Top"></button>
+
+<!-- Firebase SDKs (v9 modular, loaded via CDN) -->
+<script type="module">
+  // TODO: replace this config with your real one from Firebase console
+  const firebaseConfig = {
+    apiKey: "AIzaSyCOOnlmEcAcJywsS93LLfLSywy9ENqnppM",
+    authDomain: "tyler-manga-library.firebaseapp.com",
+    projectId: "tyler-manga-library",
+    storageBucket: "tyler-manga-library.firebasestorage.app",
+    messagingSenderId: "307412068362",
+    appId: "1:307412068362:web:6cfe5666187439dfa757f3"
+  };
+
+  // Import from CDN
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
+    from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+  const db = getFirestore(app);
+
+  // --- Simple auth UI bindings ---
+  const authStatus = document.getElementById('authStatus');
+  const loginBtn = document.getElementById('loginBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  // Your email that is allowed to "admin" (you can hardcode this)
+  const ADMIN_EMAIL = "imokissick@gmail.com";
+
+  // Track if current user is admin (we’ll use this for edit controls later)
+  window.isAdmin = false;
+
+  loginBtn.addEventListener('click', async () => {
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (err) {
+      console.error(err);
+      alert("Login failed: " + err.message);
+    }
+  });
+
+  logoutBtn.addEventListener('click', async () => {
+    try {
+      await signOut(auth);
+    } catch (err) {
+      console.error(err);
+      alert("Logout failed: " + err.message);
+    }
+  });
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      authStatus.textContent = `Signed in as ${user.email}`;
+      loginBtn.style.display = 'none';
+      logoutBtn.style.display = 'inline-block';
+
+      // Mark admin if email matches
+      window.isAdmin = (user.email === ADMIN_EMAIL);
+
+      // Later we’ll call a function to show admin-only controls
+      if (window.onAdminStateChanged) {
+        window.onAdminStateChanged(window.isAdmin);
+      }
+
+    } else {
+      authStatus.textContent = "Not signed in";
+      loginBtn.style.display = 'inline-block';
+      logoutBtn.style.display = 'none';
+      window.isAdmin = false;
+      if (window.onAdminStateChanged) {
+        window.onAdminStateChanged(false);
+      }
+    }
+  });
+
+</script>
 
 <script>
 let readClickState = 0; // 0 = default, 1 = only read, 2 = only unread
