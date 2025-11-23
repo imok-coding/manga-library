@@ -21,12 +21,29 @@ html {
     margin: 0 auto;
     padding: 20px;
     position: relative;
+    overflow: hidden;
 }
 h1 {
     text-align: center;
     color: #ffb6c1;
     margin-top: 10px;
     text-shadow: 0 0 6px rgba(255,182,193,0.7);
+}
+
+/* ===== AUTH BAR ===== */
+#authBar {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 12000;
+    font-size: 12px;
+}
+#authBar button {
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
 }
 
 /* ===== HAMBURGER MENU ===== */
@@ -104,7 +121,7 @@ h1 {
     background: rgba(255,182,193,0.18);
 }
 
-/* Mobile: slide in from right */
+/* For mobile, slide in from the right instead */
 @media (max-width: 600px) {
     .menu-panel {
         left: auto;
@@ -115,22 +132,6 @@ h1 {
     .menu-panel.open {
         transform: translateX(0);
     }
-}
-
-/* ===== AUTH BAR ===== */
-#authBar {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    z-index: 12000;
-    font-size: 12px;
-}
-#authBar button {
-    padding: 4px 8px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    font-size: 12px;
 }
 
 /* ===== COUNTERS ===== */
@@ -444,29 +445,29 @@ h1 {
 </div>
 
 <div class="container">
-    <h1 id="pageTitle">Tyler's Manga Library</h1>
+  <h1 id="pageTitle">Tyler's Manga Library</h1>
 
-    <!-- LIBRARY SECTION -->
-    <div id="librarySection" class="page-section active">
-        <div class="counter" id="bookCountTop">
-            <span class="total" id="totalBooksTop"></span>
-            <span class="read" id="readBooksTop"></span>
-        </div>
-        <input type="text" id="searchInput" onkeyup="searchLibrary()" placeholder="Search by title, author, publisher, ISBN...">
-        <div class="grid" id="bookGrid"></div>
-        <div class="counter" id="bookCountBottom">
-            <span class="total" id="totalBooksBottom"></span>
-            <span class="read" id="readBooksBottom"></span>
-        </div>
-    </div>
+  <!-- LIBRARY SECTION -->
+  <div id="librarySection" class="page-section active">
+      <div class="counter" id="bookCountTop">
+          <span class="total" id="totalBooksTop"></span>
+          <span class="read" id="readBooksTop"></span>
+      </div>
+      <input type="text" id="searchInput" onkeyup="searchLibrary()" placeholder="Search by title, author, publisher, ISBN...">
+      <div class="grid" id="bookGrid"></div>
+      <div class="counter" id="bookCountBottom">
+          <span class="total" id="totalBooksBottom"></span>
+          <span class="read" id="readBooksBottom"></span>
+      </div>
+  </div>
 
-    <!-- WISHLIST SECTION -->
-    <div id="wishlistSection" class="page-section hidden">
-        <div class="counter">
-            <span class="total" id="wishlistCount"></span>
-        </div>
-        <div class="grid" id="wishlistGrid"></div>
-    </div>
+  <!-- WISHLIST SECTION -->
+  <div id="wishlistSection" class="page-section hidden">
+      <div class="counter">
+          <span class="total" id="wishlistCount"></span>
+      </div>
+      <div class="grid" id="wishlistGrid"></div>
+  </div>
 </div>
 
 <!-- Popup overlay -->
@@ -485,11 +486,180 @@ h1 {
 
 <button id="backToTop" title="Back to Top"></button>
 
-<!-- Firebase + App Logic -->
+<!-- NON-MODULE SCRIPT: UI / POPUP / SEARCH / MENU -->
+<script>
+let readClickState = 0; // 0 = default, 1 = only read, 2 = only unread
+
+// ===== HAMBURGER MENU LOGIC =====
+const menuToggle = document.getElementById('menuToggle');
+const menuPanel = document.getElementById('menuPanel');
+const pageTitle = document.getElementById('pageTitle');
+const librarySection = document.getElementById('librarySection');
+const wishlistSection = document.getElementById('wishlistSection');
+
+menuToggle.addEventListener('click', () => {
+    menuToggle.classList.toggle('active');
+    menuPanel.classList.toggle('open');
+});
+
+function switchSection(target) {
+    if (target === 'library') {
+        pageTitle.textContent = "Tyler's Manga Library";
+        librarySection.classList.add('active');
+        librarySection.classList.remove('hidden');
+        wishlistSection.classList.remove('active');
+        wishlistSection.classList.add('hidden');
+    } else {
+        pageTitle.textContent = "Wishlist";
+        librarySection.classList.remove('active');
+        librarySection.classList.add('hidden');
+        wishlistSection.classList.add('active');
+        wishlistSection.classList.remove('hidden');
+    }
+    menuToggle.classList.remove('active');
+    menuPanel.classList.remove('open');
+}
+
+document.querySelectorAll('.menu-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-target');
+        switchSection(target);
+    });
+});
+
+// ===== LIBRARY FILTER & COUNTERS (search only affects Library) =====
+function searchLibrary() {
+    let input = document.getElementById('searchInput').value.toLowerCase();
+    const grid = document.getElementById('bookGrid');
+    const cards = grid.getElementsByClassName('card');
+
+    for (let card of cards) {
+        const isRead = card.classList.contains('read');
+
+        let visibleBySort = false;
+        if (readClickState === 0) visibleBySort = true;
+        else if (readClickState === 1 && isRead) visibleBySort = true;
+        else if (readClickState === 2 && !isRead) visibleBySort = true;
+
+        let visibleBySearch = input === '' || card.innerText.toLowerCase().includes(input);
+
+        card.style.display = (visibleBySort && visibleBySearch) ? '' : 'none';
+    }
+
+    updateCounters();
+}
+
+function updateCounters() {
+    const cards = Array.from(document.querySelectorAll('#bookGrid .card'));
+    const topSpan = document.getElementById('readBooksTop');
+    const bottomSpan = document.getElementById('readBooksBottom');
+
+    if (!topSpan || !bottomSpan) return;
+
+    if (readClickState === 0) {
+        const totalRead = cards.filter(card => card.classList.contains('read')).length;
+        topSpan.innerText = `Books Read: ${totalRead}`;
+        bottomSpan.innerText = `Books Read: ${totalRead}`;
+        topSpan.style.color = '';
+        bottomSpan.style.color = '';
+    } else {
+        let readCount = 0;
+        let unreadCount = 0;
+
+        for (let card of cards) {
+            if (card.style.display !== 'none') {
+                if (card.classList.contains('read')) readCount++;
+                else unreadCount++;
+            }
+        }
+
+        if (readClickState === 1) {
+            topSpan.innerText = `Books Read: ${readCount}`;
+            bottomSpan.innerText = `Books Read: ${readCount}`;
+            topSpan.style.color = '#32CD32';
+            bottomSpan.style.color = '#32CD32';
+        } else if (readClickState === 2) {
+            topSpan.innerText = `Books Not Read: ${unreadCount}`;
+            bottomSpan.innerText = `Books Not Read: ${unreadCount}`;
+            topSpan.style.color = '#FF5555';
+            bottomSpan.style.color = '#FF5555';
+        }
+    }
+}
+
+function toggleReadFilter() {
+    readClickState = (readClickState + 1) % 3;
+    searchLibrary();
+}
+
+document.getElementById('readBooksTop').addEventListener('click', toggleReadFilter);
+document.getElementById('readBooksBottom').addEventListener('click', toggleReadFilter);
+
+// ===== POPUP =====
+function showPopup(book) {
+    document.getElementById('popupOverlay').style.display = 'flex';
+    const popup = document.getElementById('popupContent');
+    const buyBtn = document.getElementById('popupBuy');
+
+    if (book.Read === true || book.Read === "true") {
+        popup.classList.add('read');
+    } else {
+        popup.classList.remove('read');
+    }
+
+    document.getElementById('popupImage').src = book.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
+    document.getElementById('popupTitle').innerHTML = book.Title || '';
+    let meta = '';
+    if (book.Authors && book.Authors !== 'Unknown') meta += book.Authors + '<br>';
+    if (book.Publisher && book.Publisher !== 'Unknown') meta += book.Publisher + '<br>';
+    if (book.Date && book.Date !== 'Unknown') meta += book.Date + '<br>';
+    document.getElementById('popupMeta').innerHTML = meta;
+    document.getElementById('popupISBN').innerHTML = book.ISBN || '';
+
+    if (book.Read) {
+        document.getElementById('popupMeta').innerHTML += '<br><span style="color:#6fcf97;">✔ Read</span>';
+    }
+
+    if (book.AmazonURL) {
+        buyBtn.style.display = 'inline-block';
+        buyBtn.onclick = () => window.open(book.AmazonURL, '_blank');
+    } else {
+        buyBtn.style.display = 'none';
+        buyBtn.onclick = null;
+    }
+}
+
+document.getElementById('popupClose').onclick = () => {
+    document.getElementById('popupOverlay').style.display = 'none';
+};
+
+// ===== BACK TO TOP BUTTON =====
+const backToTopBtn = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 250) {
+        backToTopBtn.classList.add('show');
+    } else {
+        backToTopBtn.classList.remove('show');
+    }
+});
+backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+    });
+});
+</script>
+
+<!-- FIREBASE + FIRESTORE: LOAD LIBRARY & WISHLIST -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
   import { 
-    getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged 
+    getAuth, 
+    GoogleAuthProvider, 
+    signInWithPopup, 
+    signOut, 
+    onAuthStateChanged 
   } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
   import {
     getFirestore,
@@ -497,29 +667,27 @@ h1 {
     getDocs
   } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
-  // Your web app's Firebase configuration
+  // Your Firebase config (project: tyler-manga-library)
   const firebaseConfig = {
     apiKey: "AIzaSyCOOnlmEcAcJywsS93LLfLSywy9ENqnppM",
     authDomain: "tyler-manga-library.firebaseapp.com",
     projectId: "tyler-manga-library",
-    storageBucket: "tyler-manga-library.appspot.com",
+    storageBucket: "tyler-manga-library.firebasestorage.app",
     messagingSenderId: "307412068362",
     appId: "1:307412068362:web:6cfe5666187439dfa757f3"
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
   const db = getFirestore(app);
 
-  // Admin email (for future editing controls)
-  const ADMIN_EMAIL = "imokissick@gmail.com";
-  window.isAdmin = false;
-
   const authStatus = document.getElementById('authStatus');
   const loginBtn = document.getElementById('loginBtn');
   const logoutBtn = document.getElementById('logoutBtn');
+
+  const ADMIN_EMAIL = "imokissick@gmail.com";
+  window.isAdmin = false;
 
   loginBtn.addEventListener('click', async () => {
     try {
@@ -551,12 +719,9 @@ h1 {
       logoutBtn.style.display = 'none';
       window.isAdmin = false;
     }
-    if (window.onAdminStateChanged) {
-      window.onAdminStateChanged(window.isAdmin);
-    }
   });
 
-  /* ========= TITLE PARSE (same as Python sort) ========= */
+  // ===== Title parsing for sorting (same for library & wishlist) =====
   function parseTitleForSort(t) {
     t = (t || "").trim();
     let m = t.match(/^(.*?),?\s*(?:Vol\.|Volume)\s*(\d+)\b/i);
@@ -564,155 +729,7 @@ h1 {
     return { name: m[1].trim().toLowerCase(), vol: parseInt(m[2] || "0", 10) };
   }
 
-  /* ========= POPUP ========= */
-  function showPopup(book) {
-    const overlay = document.getElementById('popupOverlay');
-    const popup   = document.getElementById('popupContent');
-    const buyBtn  = document.getElementById('popupBuy');
-
-    overlay.style.display = 'flex';
-
-    if (book.Read === true || book.Read === "true") {
-      popup.classList.add('read');
-    } else {
-      popup.classList.remove('read');
-    }
-
-    document.getElementById('popupImage').src   = book.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
-    document.getElementById('popupTitle').innerHTML = book.Title || '';
-
-    let meta = '';
-    if (book.Authors && book.Authors !== 'Unknown') meta += book.Authors + '<br>';
-    if (book.Publisher && book.Publisher !== 'Unknown') meta += book.Publisher + '<br>';
-    if (book.Date && book.Date !== 'Unknown') meta += book.Date + '<br>';
-    document.getElementById('popupMeta').innerHTML = meta;
-    document.getElementById('popupISBN').innerHTML = book.ISBN || '';
-
-    if (book.Read) {
-      document.getElementById('popupMeta').innerHTML += '<br><span style="color:#6fcf97;">✔ Read</span>';
-    }
-
-    if (book.AmazonURL) {
-      buyBtn.style.display = 'inline-block';
-      buyBtn.onclick = () => window.open(book.AmazonURL, '_blank');
-    } else {
-      buyBtn.style.display = 'none';
-      buyBtn.onclick = null;
-    }
-  }
-  window.showPopup = showPopup;
-
-  document.getElementById('popupClose').onclick = () => {
-    document.getElementById('popupOverlay').style.display = 'none';
-  };
-
-  /* ========= LIBRARY FILTER / SEARCH ========= */
-  let readClickState = 0; // 0 = default, 1 = only read, 2 = only unread
-
-  function updateCounters() {
-    const cards = Array.from(document.querySelectorAll('#bookGrid .card'));
-    const topSpan = document.getElementById('readBooksTop');
-    const bottomSpan = document.getElementById('readBooksBottom');
-    if (!topSpan || !bottomSpan) return;
-
-    if (readClickState === 0) {
-      const totalRead = cards.filter(card => card.classList.contains('read')).length;
-      topSpan.innerText = `Books Read: ${totalRead}`;
-      bottomSpan.innerText = `Books Read: ${totalRead}`;
-      topSpan.style.color = '';
-      bottomSpan.style.color = '';
-    } else {
-      let readCount = 0;
-      let unreadCount = 0;
-      for (let card of cards) {
-        if (card.style.display !== 'none') {
-          if (card.classList.contains('read')) readCount++;
-          else unreadCount++;
-        }
-      }
-      if (readClickState === 1) {
-        topSpan.innerText = `Books Read: ${readCount}`;
-        bottomSpan.innerText = `Books Read: ${readCount}`;
-        topSpan.style.color = '#32CD32';
-        bottomSpan.style.color = '#32CD32';
-      } else if (readClickState === 2) {
-        topSpan.innerText = `Books Not Read: ${unreadCount}`;
-        bottomSpan.innerText = `Books Not Read: ${unreadCount}`;
-        topSpan.style.color = '#FF5555';
-        bottomSpan.style.color = '#FF5555';
-      }
-    }
-  }
-
-  function searchLibrary() {
-    const inputVal = document.getElementById('searchInput').value.toLowerCase();
-    const grid = document.getElementById('bookGrid');
-    const cards = grid.getElementsByClassName('card');
-
-    for (let card of cards) {
-      const isRead = card.classList.contains('read');
-
-      let visibleBySort = false;
-      if (readClickState === 0) visibleBySort = true;
-      else if (readClickState === 1 && isRead) visibleBySort = true;
-      else if (readClickState === 2 && !isRead) visibleBySort = true;
-
-      let visibleBySearch = inputVal === '' || card.innerText.toLowerCase().includes(inputVal);
-
-      card.style.display = (visibleBySort && visibleBySearch) ? '' : 'none';
-    }
-
-    updateCounters();
-  }
-  // expose for inline onkeyup
-  window.searchLibrary = searchLibrary;
-
-  function toggleReadFilter() {
-    readClickState = (readClickState + 1) % 3;
-    searchLibrary();
-  }
-
-  document.getElementById('readBooksTop').addEventListener('click', toggleReadFilter);
-  document.getElementById('readBooksBottom').addEventListener('click', toggleReadFilter);
-
-  /* ========= HAMBURGER MENU / SECTIONS ========= */
-  const menuToggle = document.getElementById('menuToggle');
-  const menuPanel = document.getElementById('menuPanel');
-  const pageTitle = document.getElementById('pageTitle');
-  const librarySection = document.getElementById('librarySection');
-  const wishlistSection = document.getElementById('wishlistSection');
-
-  menuToggle.addEventListener('click', () => {
-    menuToggle.classList.toggle('active');
-    menuPanel.classList.toggle('open');
-  });
-
-  function switchSection(target) {
-    if (target === 'library') {
-      pageTitle.textContent = "Tyler's Manga Library";
-      librarySection.classList.add('active');
-      librarySection.classList.remove('hidden');
-      wishlistSection.classList.remove('active');
-      wishlistSection.classList.add('hidden');
-    } else {
-      pageTitle.textContent = "Wishlist";
-      librarySection.classList.remove('active');
-      librarySection.classList.add('hidden');
-      wishlistSection.classList.add('active');
-      wishlistSection.classList.remove('hidden');
-    }
-    menuToggle.classList.remove('active');
-    menuPanel.classList.remove('open');
-  }
-
-  document.querySelectorAll('.menu-item').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const target = btn.getAttribute('data-target');
-      switchSection(target);
-    });
-  });
-
-  /* ========= FIRESTORE LOADERS ========= */
+  // ===== LOAD LIBRARY =====
   async function loadLibraryFromFirestore() {
     const grid       = document.getElementById('bookGrid');
     const totalTop   = document.getElementById('totalBooksTop');
@@ -739,11 +756,10 @@ h1 {
       });
     });
 
-    // sort: series name, then volume
     books.sort((a, b) => {
-      const aP = parseTitleForSort(a.Title);
-      const bP = parseTitleForSort(b.Title);
-      const cmp = aP.name.localeCompare(bP.name);
+      let aP = parseTitleForSort(a.Title);
+      let bP = parseTitleForSort(b.Title);
+      let cmp = aP.name.localeCompare(bP.name);
       return cmp !== 0 ? cmp : aP.vol - bP.vol;
     });
 
@@ -760,19 +776,23 @@ h1 {
         <img src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
         <div class="title">${b.Title || ''}</div>
         <div class="meta">${
-            (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
-            (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
-            (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '')
+          (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
+          (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
+          (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '')
         }</div>
         <div class="isbn">${b.ISBN || ''}</div>
       `;
-      card.onclick = () => showPopup(b);
+      card.onclick = () => window.showPopup(b);
       grid.appendChild(card);
     });
 
-    updateCounters();
+    // ensure default counter state is correct
+    if (typeof window.updateCounters === "function") {
+      window.updateCounters();
+    }
   }
 
+  // ===== LOAD WISHLIST =====
   async function loadWishlistFromFirestore() {
     const wishlistGrid  = document.getElementById('wishlistGrid');
     const wishlistCount = document.getElementById('wishlistCount');
@@ -795,11 +815,10 @@ h1 {
       });
     });
 
-    // same sorting as library
     items.sort((a, b) => {
-      const aP = parseTitleForSort(a.Title);
-      const bP = parseTitleForSort(b.Title);
-      const cmp = aP.name.localeCompare(bP.name);
+      let aP = parseTitleForSort(a.Title);
+      let bP = parseTitleForSort(b.Title);
+      let cmp = aP.name.localeCompare(bP.name);
       return cmp !== 0 ? cmp : aP.vol - bP.vol;
     });
 
@@ -812,33 +831,23 @@ h1 {
         <img src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
         <div class="title">${b.Title || ''}</div>
         <div class="meta">${
-            (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
-            (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
-            (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '')
+          (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
+          (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
+          (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '')
         }</div>
       `;
-      card.onclick = () => showPopup(b);
+      card.onclick = () => window.showPopup(b);
       wishlistGrid.appendChild(card);
     });
   }
 
-  // Load data once at start
-  loadLibraryFromFirestore().catch(console.error);
-  loadWishlistFromFirestore().catch(console.error);
+  // Expose so we can call them again later if needed
+  window.loadLibraryFromFirestore = loadLibraryFromFirestore;
+  window.loadWishlistFromFirestore = loadWishlistFromFirestore;
 
-  /* ===== BACK TO TOP BUTTON ===== */
-  const backToTopBtn = document.getElementById('backToTop');
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 250) {
-      backToTopBtn.classList.add('show');
-    } else {
-      backToTopBtn.classList.remove('show');
-    }
-  });
-  backToTopBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-  });
-
+  // Initial load (read-only works even if not signed in, depending on your Firestore rules)
+  await loadLibraryFromFirestore();
+  await loadWishlistFromFirestore();
 </script>
 
 </body>
