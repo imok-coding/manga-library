@@ -660,12 +660,33 @@ fetch('wishlist.json')
       const wishlistCount = document.getElementById('wishlistCount');
       if (!Array.isArray(items)) items = [];
 
-      // Sort alphabetically by Title
-      items.sort((a, b) => {
-          const t1 = (a.Title || '').toLowerCase();
-          const t2 = (b.Title || '').toLowerCase();
-          return t1.localeCompare(t2);
-      });
+    // Sort wishlist with same system as library (Series Name alphabetical → Vol # numeric)
+    items.sort((a, b) => {
+        function parseTitle(t) {
+            t = (t || '').trim();
+
+            // Try to extract volume number
+            let m = t.match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*(\d+))/i);
+
+            if (!m) {
+                // No volume found → alphabetical only, vol = 0
+                return { name: t.toLowerCase(), vol: 0 };
+            }
+
+            return {
+                name: m[1].trim().toLowerCase(),
+                vol: parseInt(m[2] || "0", 10)
+            };
+        }
+
+        let A = parseTitle(a.Title);
+        let B = parseTitle(b.Title);
+
+        let alphabetical = A.name.localeCompare(B.name);
+        if (alphabetical !== 0) return alphabetical;
+
+        return A.vol - B.vol;
+    });
 
       wishlistCount.innerText = `Wishlist Items: ${items.length}`;
 
