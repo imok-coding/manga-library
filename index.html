@@ -83,7 +83,7 @@ h1 {
     padding: 60px 0 16px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     transform: translateX(-100%);
     transition: transform 0.25s ease;
     z-index: 10999;
@@ -190,16 +190,36 @@ h1 {
     box-shadow: 0 0 6px rgba(255,182,193,0.3) inset;
 }
 
-/* ===== ADMIN BAR ===== */
+/* ===== ADMIN PANEL (floating) ===== */
 #adminBar {
     display: none; /* shown only when isAdmin = true */
-    margin: 10px auto 0;
-    text-align: center;
+    position: fixed;
+    top: 84px;
+    right: 20px;
+    background: rgba(43, 15, 29, 0.95);
+    border-radius: 14px;
+    padding: 10px 12px;
     font-size: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7),
+                0 0 10px rgba(255, 105, 180, 0.4);
+    z-index: 9000;
+    display: none;
+    backdrop-filter: blur(6px);
 }
-#adminBar button {
+#adminBar span {
+    display: block;
+    margin-bottom: 6px;
+    color: #ffb6c1;
+    text-align: left;
+}
+#adminBarButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+}
+#adminBarButtons button {
     padding: 6px 10px;
-    margin: 4px;
     border-radius: 999px;
     border: none;
     background: #ff69b4;
@@ -207,9 +227,29 @@ h1 {
     font-weight: 600;
     cursor: pointer;
     box-shadow: 0 0 8px rgba(255,105,180,0.6);
+    font-size: 11px;
+    white-space: nowrap;
 }
-#adminBar button:hover {
+#adminBarButtons button:hover {
     background: #ffc0cb;
+}
+
+/* Mobile: pin it near bottom as a bar */
+@media (max-width: 600px) {
+    #adminBar {
+        top: auto;
+        bottom: 80px;
+        right: 10px;
+        left: 10px;
+        display: none;
+    }
+    #adminBar span {
+        margin-bottom: 4px;
+        text-align: center;
+    }
+    #adminBarButtons {
+        justify-content: center;
+    }
 }
 
 /* ===== GRID & CARDS ===== */
@@ -370,6 +410,113 @@ h1 {
     border: 1px solid rgba(255,105,180,0.3);
     box-shadow: 0 0 25px rgba(255,105,180,0.5);
 }
+/* ===== ADMIN FORM (add/edit) ===== */
+#adminFormOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,13,20,0.92);
+    backdrop-filter: blur(6px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10001;
+}
+#adminFormCard {
+    background: #2b0f1d;
+    border-radius: 16px;
+    padding: 18px;
+    max-width: 720px;
+    width: 90%;
+    display: flex;
+    gap: 18px;
+    box-shadow: 0 0 24px rgba(255,182,193,0.6);
+    position: relative;
+    animation: slideUp 0.25s ease;
+}
+#adminFormClose {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-size: 18px;
+}
+#adminFormImageWrap {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#adminCoverPreview {
+    width: 150px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 14px rgba(255,182,193,0.7);
+    background: #3b1a28;
+}
+#adminFormFields {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+#adminFormTitle {
+    margin: 0 0 6px;
+    color: #ffb6c1;
+    text-align: center;
+}
+#adminFormFields label {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    color: #f8d1d8;
+}
+#adminFormFields input[type="text"] {
+    margin-top: 3px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #bb7f8f;
+    background: #1e0d14;
+    color: #fff;
+    font-size: 12px;
+}
+#adminReadWrapper {
+    margin-top: 6px;
+    font-size: 12px;
+}
+#adminReadWrapper input {
+    margin-right: 6px;
+}
+#adminFormButtons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+#adminFormSave {
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: none;
+    background: #ff69b4;
+    color: #1e0d14;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255,105,180,0.6);
+}
+#adminFormSave:hover {
+    background: #ffc0cb;
+}
+
+@media (max-width: 600px) {
+    #adminFormCard {
+        flex-direction: column;
+        align-items: center;
+    }
+}
 #popupClose {
     position: absolute;
     top: 12px;
@@ -519,11 +666,13 @@ h1 {
 
     <!-- Admin bar (only shown for admin when signed in) -->
     <div id="adminBar">
-        <span style="margin-right:6px;">Admin tools:</span>
-        <button id="adminAddLibrary">Add Library Book</button>
-        <button id="adminAddWishlist">Add Wishlist Item</button>
+        <span>Admin tools</span>
+        <div id="adminBarButtons">
+            <button id="adminAddLibrary">Add Library Book</button>
+            <button id="adminAddWishlist">Add Wishlist Item</button>
+        </div>
     </div>
-
+    
     <!-- LIBRARY SECTION -->
     <div id="librarySection" class="page-section active">
         <div class="counter" id="bookCountTop">
@@ -547,6 +696,63 @@ h1 {
     </div>
 </div>
 
+<!-- Admin Add/Edit Form Overlay -->
+<div id="adminFormOverlay" style="display:none;">
+  <div id="adminFormCard">
+    <button id="adminFormClose" title="Close">&times;</button>
+    <div id="adminFormImageWrap">
+      <img id="adminCoverPreview" src="https://via.placeholder.com/150x220?text=No+Cover" alt="Cover">
+    </div>
+    <div id="adminFormFields">
+      <h2 id="adminFormTitle">Add Book</h2>
+
+      <label>
+        Title
+        <input type="text" id="adminTitleInput" autocomplete="off">
+      </label>
+
+      <label>
+        Authors
+        <input type="text" id="adminAuthorsInput" autocomplete="off">
+      </label>
+
+      <label>
+        Publisher
+        <input type="text" id="adminPublisherInput" autocomplete="off">
+      </label>
+
+      <label>
+        Date
+        <input type="text" id="adminDateInput" placeholder="e.g. 2022 or 01/15/2022" autocomplete="off">
+      </label>
+
+      <label>
+        ISBN
+        <input type="text" id="adminIsbnInput" autocomplete="off">
+      </label>
+
+      <label>
+        Cover URL
+        <input type="text" id="adminCoverInput" autocomplete="off" placeholder="Paste image URL here">
+      </label>
+
+      <label id="adminAmazonWrapper" style="display:none;">
+        Amazon URL (wishlist only)
+        <input type="text" id="adminAmazonInput" autocomplete="off" placeholder="https://www.amazon.com/...">
+      </label>
+
+      <label id="adminReadWrapper" style="display:none;">
+        <input type="checkbox" id="adminReadInput">
+        Mark as read (library only)
+      </label>
+
+      <div id="adminFormButtons">
+        <button id="adminFormSave">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Popup overlay -->
 <div id="popupOverlay">
     <div id="popupContent">
@@ -559,6 +765,7 @@ h1 {
             <button id="popupBuy">Buy on Amazon</button>
             <div id="popupAdminControls">
                 <button id="popupToggleRead">Toggle Read</button>
+                <button id="popupEdit">Edit</button>
                 <button id="popupDelete" class="delete">Delete</button>
             </div>
         </div>
@@ -653,7 +860,32 @@ h1 {
   const popupBuy        = document.getElementById('popupBuy');
   const popupAdmin      = document.getElementById('popupAdminControls');
   const popupToggleRead = document.getElementById('popupToggleRead');
+  const popupEdit       = document.getElementById('popupEdit');
   const popupDelete     = document.getElementById('popupDelete');
+
+// Admin form DOM refs
+  const adminFormOverlay   = document.getElementById('adminFormOverlay');
+  const adminFormCard      = document.getElementById('adminFormCard');
+  const adminFormClose     = document.getElementById('adminFormClose');
+  const adminFormTitle     = document.getElementById('adminFormTitle');
+  const adminCoverPreview  = document.getElementById('adminCoverPreview');
+
+  const adminTitleInput    = document.getElementById('adminTitleInput');
+  const adminAuthorsInput  = document.getElementById('adminAuthorsInput');
+  const adminPublisherInput= document.getElementById('adminPublisherInput');
+  const adminDateInput     = document.getElementById('adminDateInput');
+  const adminIsbnInput     = document.getElementById('adminIsbnInput');
+  const adminCoverInput    = document.getElementById('adminCoverInput');
+  const adminAmazonWrapper = document.getElementById('adminAmazonWrapper');
+  const adminAmazonInput   = document.getElementById('adminAmazonInput');
+  const adminReadWrapper   = document.getElementById('adminReadWrapper');
+  const adminReadInput     = document.getElementById('adminReadInput');
+  const adminFormSave      = document.getElementById('adminFormSave');
+
+  // state for current form usage
+  let adminFormMode = "add"; // "add" or "edit"
+  let adminFormCollection = "library"; // "library" or "wishlist"
+  let adminFormDocId = null;
 
   // ===== HAMBURGER MENU =====
   menuToggle.addEventListener('click', () => {
@@ -894,6 +1126,17 @@ h1 {
     } else {
       popupContent.classList.remove('read');
     }
+    if (popupEdit) {
+      popupEdit.addEventListener('click', () => {
+        if (!currentPopupBook) return;
+        const collection = currentPopupBook.kind === "wishlist" ? "wishlist" : "library";
+        openAdminForm({
+          mode: "edit",
+          collection,
+          book: currentPopupBook
+        });
+      });
+    }
 
     popupImage.src = book.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
     popupTitle.innerHTML = book.Title || '';
@@ -971,46 +1214,15 @@ h1 {
   popupToggleRead.addEventListener('click', adminToggleRead);
   popupDelete.addEventListener('click', adminDeleteCurrent);
 
-  // ===== ADMIN ADD (prompt-based) =====
-  async function adminAddLibraryHandler() {
-    const title = prompt("Library: Title (required)");
-    if (!title) return;
-    const authors   = prompt("Authors (optional)") || "Unknown";
-    const publisher = prompt("Publisher (optional)") || "Unknown";
-    const date      = prompt("Date (optional)") || "Unknown";
-    const cover     = prompt("Cover URL (optional)") || "";
-    const isbn      = prompt("ISBN (optional)") || "";
-
-    try {
-      await addDoc(collection(db, "library"), {
-        title, authors, publisher, date, cover, isbn, read: false
-      });
-      await loadLibraryFromFirestore();
-    } catch (err) {
-      console.error(err);
-      alert("Failed to add library book.");
-    }
+  if (adminAddLibrary) {
+    adminAddLibrary.addEventListener('click', () => {
+      openAdminForm({ mode: "add", collection: "library" });
+    });
   }
-
-  async function adminAddWishlistHandler() {
-    const title = prompt("Wishlist: Title (required)");
-    if (!title) return;
-    const authors   = prompt("Authors (optional)") || "Unknown";
-    const publisher = prompt("Publisher (optional)") || "Unknown";
-    const date      = prompt("Date (optional)") || "Unknown";
-    const cover     = prompt("Cover URL (optional)") || "";
-    const isbn      = prompt("ISBN (optional)") || "";
-    const amazonURL = prompt("Amazon URL (optional)") || "";
-
-    try {
-      await addDoc(collection(db, "wishlist"), {
-        title, authors, publisher, date, cover, isbn, amazonURL
-      });
-      await loadWishlistFromFirestore();
-    } catch (err) {
-      console.error(err);
-      alert("Failed to add wishlist item.");
-    }
+  if (adminAddWishlist) {
+    adminAddWishlist.addEventListener('click', () => {
+      openAdminForm({ mode: "add", collection: "wishlist" });
+    });
   }
 
   adminAddLibrary.addEventListener('click', adminAddLibraryHandler);
@@ -1072,6 +1284,146 @@ h1 {
 
   // ===== INITIAL LOAD =====
   reloadAll();
+
+    function resetAdminForm() {
+        adminTitleInput.value     = "";
+        adminAuthorsInput.value   = "";
+        adminPublisherInput.value = "";
+        adminDateInput.value      = "";
+        adminIsbnInput.value      = "";
+        adminCoverInput.value     = "";
+        adminAmazonInput.value    = "";
+        adminReadInput.checked    = false;
+        adminCoverPreview.src     = "https://via.placeholder.com/150x220?text=No+Cover";
+    }
+
+    function openAdminForm(options) {
+        const { mode, collection, book } = options;
+
+        adminFormMode       = mode || "add";
+        adminFormCollection = collection || "library";
+        adminFormDocId      = book ? book.id : null;
+
+        resetAdminForm();
+
+        // Configure labels & visibility
+        const isLibrary  = (adminFormCollection === "library");
+        const isWishlist = (adminFormCollection === "wishlist");
+
+        adminAmazonWrapper.style.display = isWishlist ? "flex" : "none";
+        adminReadWrapper.style.display   = isLibrary  ? "block" : "none";
+
+        if (adminFormMode === "add") {
+        adminFormTitle.textContent = isLibrary ? "Add Library Book" : "Add Wishlist Item";
+        } else {
+        adminFormTitle.textContent = isLibrary ? "Edit Library Book" : "Edit Wishlist Item";
+        }
+
+        // If editing, prefill
+        if (book) {
+        adminTitleInput.value     = book.Title || "";
+        adminAuthorsInput.value   = book.Authors || "";
+        adminPublisherInput.value = book.Publisher || "";
+        adminDateInput.value      = book.Date || "";
+        adminIsbnInput.value      = book.ISBN || "";
+        adminCoverInput.value     = book.Cover || "";
+        adminCoverPreview.src     = book.Cover || "https://via.placeholder.com/150x220?text=No+Cover";
+
+        if (isWishlist) {
+            adminAmazonInput.value = book.AmazonURL || "";
+        } else {
+            adminReadInput.checked = !!book.Read;
+        }
+        }
+
+        adminFormOverlay.style.display = "flex";
+    }
+
+    function closeAdminForm() {
+        adminFormOverlay.style.display = "none";
+    }
+
+    adminCoverInput.addEventListener('input', () => {
+        const url = adminCoverInput.value.trim();
+        if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
+        adminCoverPreview.src = url;
+        } else {
+        adminCoverPreview.src = "https://via.placeholder.com/150x220?text=No+Cover";
+        }
+    });
+
+        adminFormClose.addEventListener('click', closeAdminForm);
+        adminFormOverlay.addEventListener('click', (e) => {
+            if (e.target === adminFormOverlay) {
+            closeAdminForm();
+            }
+        });
+
+    adminFormSave.addEventListener('click', async () => {
+        const title     = adminTitleInput.value.trim();
+        const authors   = adminAuthorsInput.value.trim();
+        const publisher = adminPublisherInput.value.trim();
+        const date      = adminDateInput.value.trim();
+        const isbn      = adminIsbnInput.value.trim();
+        const cover     = adminCoverInput.value.trim();
+        const amazonURL = adminAmazonInput.value.trim();
+        const read      = adminReadInput.checked;
+
+        if (!title) {
+        alert("Title is required.");
+        return;
+        }
+
+        try {
+        if (adminFormMode === "add") {
+            if (adminFormCollection === "library") {
+            await addDoc(collection(db, "library"), {
+                title,
+                authors,
+                publisher,
+                date,
+                isbn,
+                cover,
+                read
+            });
+            } else {
+            await addDoc(collection(db, "wishlist"), {
+                title,
+                authors,
+                publisher,
+                date,
+                isbn,
+                cover,
+                amazonURL
+            });
+            }
+        } else if (adminFormMode === "edit" && adminFormDocId) {
+            const colName = adminFormCollection === "library" ? "library" : "wishlist";
+            const ref = doc(db, colName, adminFormDocId);
+            const payload = {
+            title,
+            authors,
+            publisher,
+            date,
+            isbn,
+            cover
+            };
+            if (colName === "library") {
+            payload.read = read;
+            } else {
+            payload.amazonURL = amazonURL;
+            }
+            await updateDoc(ref, payload);
+        }
+
+        closeAdminForm();
+        await reloadAll();
+        } catch (err) {
+        console.error(err);
+        alert("Failed to save. Check console for details.");
+        }
+    });
+
 
   // expose some helpers to global (for safety if you need console access)
   window.searchLibrary = searchLibrary;
