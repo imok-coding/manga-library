@@ -1129,13 +1129,14 @@ h1 {
     if (popupEdit) {
       popupEdit.addEventListener('click', () => {
         if (!currentPopupBook) return;
-        const collection = currentPopupBook.kind === "wishlist" ? "wishlist" : "library";
+
         openAdminForm({
-          mode: "edit",
-          collection,
-          book: currentPopupBook
-        });
-      });
+           mode: "edit",
+           collection: currentPopupBook.kind, // <-- always correct
+           book: currentPopupBook
+       });
+    });
+
     }
 
     popupImage.src = book.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
@@ -1224,9 +1225,6 @@ h1 {
       openAdminForm({ mode: "add", collection: "wishlist" });
     });
   }
-
-  adminAddLibrary.addEventListener('click', adminAddLibraryHandler);
-  adminAddWishlist.addEventListener('click', adminAddWishlistHandler);
 
   // ===== AUTH =====
   loginBtn.addEventListener('click', async () => {
