@@ -62,7 +62,7 @@ h1 {
     transform: translateY(-10px) rotate(-45deg);
 }
 
-/* On mobile, move menu to the right */
+/* On mobile, move button to the right */
 @media (max-width: 600px) {
     .menu-toggle {
         left: auto;
@@ -70,46 +70,50 @@ h1 {
     }
 }
 
-/* Dropdown panel */
+/* Slide-in side menu */
 .menu-panel {
     position: fixed;
-    top: 52px;
-    left: 16px;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 220px;
     background: #2b0f1d;
-    border-radius: 10px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
-    padding: 8px 0;
-    min-width: 140px;
-    opacity: 0;
-    transform: translateY(-6px);
-    pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    box-shadow: 4px 0 16px rgba(0,0,0,0.6);
+    padding: 60px 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
     z-index: 10999;
 }
 .menu-panel.open {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
+    transform: translateX(0);
 }
 .menu-item {
     width: 100%;
     background: transparent;
     border: none;
     color: #ffb6c1;
-    padding: 8px 16px;
+    padding: 10px 20px;
     text-align: left;
-    font-size: 14px;
+    font-size: 15px;
     cursor: pointer;
 }
 .menu-item:hover {
     background: rgba(255,182,193,0.18);
 }
 
-/* For mobile, align panel under right-side button */
+/* For mobile, slide in from the right instead */
 @media (max-width: 600px) {
     .menu-panel {
         left: auto;
-        right: 16px;
+        right: 0;
+        box-shadow: -4px 0 16px rgba(0,0,0,0.6);
+        transform: translateX(100%);
+    }
+    .menu-panel.open {
+        transform: translateX(0);
     }
 }
 
@@ -135,7 +139,7 @@ h1 {
     cursor: pointer;
 }
 
-/* ===== SEARCH INPUT ===== */
+/* ===== SEARCH INPUT (Library only) ===== */
 #searchInput {
     width: 90%;
     max-width: 500px;
@@ -191,7 +195,7 @@ h1 {
 }
 .card img {
     width: 100%;
-    height: 220px;   /* uniform height */
+    height: 220px;
     object-fit: cover;
     display: block;
     margin: 0 auto;
@@ -499,10 +503,10 @@ document.querySelectorAll('.menu-item').forEach(btn => {
     });
 });
 
-/* ===== LIBRARY FILTER & COUNTERS ===== */
+/* ===== LIBRARY FILTER & COUNTERS (search only affects Library) ===== */
 function searchLibrary() {
     let input = document.getElementById('searchInput').value.toLowerCase();
-    const cards = document.getElementsByClassName('card');
+    const cards = document.querySelectorAll('#bookGrid .card');
 
     for (let card of cards) {
         const isRead = card.classList.contains('read');
@@ -521,7 +525,7 @@ function searchLibrary() {
 }
 
 function updateCounters() {
-    const cards = Array.from(document.getElementsByClassName('card'));
+    const cards = Array.from(document.querySelectorAll('#bookGrid .card'));
     const topSpan = document.getElementById('readBooksTop');
     const bottomSpan = document.getElementById('readBooksBottom');
 
@@ -531,7 +535,6 @@ function updateCounters() {
         const totalRead = cards.filter(card => card.classList.contains('read')).length;
         topSpan.innerText = `Books Read: ${totalRead}`;
         bottomSpan.innerText = `Books Read: ${totalRead}`;
-        // reset to default color (inherit from CSS)
         topSpan.style.color = '';
         bottomSpan.style.color = '';
     } else {
@@ -645,23 +648,30 @@ fetch('lib.json')
           grid.appendChild(card);
       });
 
-      // Ensure state 0 styling is correct
       updateCounters();
   })
   .catch(err => console.error('Failed to load lib.json', err));
 
-/* ===== LOAD WISHLIST BOOKS ===== */
+/* ===== LOAD WISHLIST BOOKS (always sorted alphabetically by Title) ===== */
 fetch('wishlist.json')
   .then(res => res.json())
   .then(items => {
       const wishlistGrid = document.getElementById('wishlistGrid');
       const wishlistCount = document.getElementById('wishlistCount');
       if (!Array.isArray(items)) items = [];
+
+      // Sort alphabetically by Title
+      items.sort((a, b) => {
+          const t1 = (a.Title || '').toLowerCase();
+          const t2 = (b.Title || '').toLowerCase();
+          return t1.localeCompare(t2);
+      });
+
       wishlistCount.innerText = `Wishlist Items: ${items.length}`;
 
       items.forEach(b => {
           let card = document.createElement('div');
-          card.className = 'card'; // no "read" class for wishlist
+          card.className = 'card';
           card.innerHTML = `
             <img src="${b.Cover||'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
             <div class="title">${b.Title||''}</div>
