@@ -1150,6 +1150,7 @@ input[type="date"] {
   } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
   import {
     getFirestore,
+    enableIndexedDbPersistence,
     collection,
     getDocs,
     addDoc,
@@ -1187,6 +1188,16 @@ input[type="date"] {
   switchToSignIn.addEventListener('click', () => {
       emailSignInForm.style.display = 'block';
       signUpForm.style.display = 'none';
+  });
+
+    // Enable offline persistence
+  enableIndexedDbPersistence(db)
+     .catch((err) => {
+         if (err.code == 'failed-precondition') {
+             console.log("Persistence failed: Multiple tabs open");
+         } else if (err.code == 'unimplemented') {
+            console.log("Persistence is not available in this environment");
+         }
   });
 
   // Show the Sign-in Form initially
@@ -2441,3 +2452,4 @@ document.getElementById("multiEditorAddVolume").onclick = () => {
 </body>
 
 </html>
+
