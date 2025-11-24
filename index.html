@@ -1544,24 +1544,14 @@ function openMultiEditorFromSuggestion(s) {
         return;
     }
 
-    // Pass the suggestionVolumes INTO the multi-create panel
-    openMultiCreateFullscreenEditor({
-        baseName: s.baseName,
-        displayName: s.displayName,
-        author: s.author,
-        publisher: s.publisher,
-
-        // FULL SET OF VOLUMES
-        suggestionVolumes: computeFullVolumeList(s)
-    });
+    // Build full list FIRST (existing + missing + nextVol)
     const fullList = computeFullVolumeList(s);
 
+    // Open the fullscreen multi-editor with the correct full list
     openMultiCreateFullscreenEditor({
         ...s,
         fullList
-});
-
-    
+    });
 }
 
 function computeFullVolumeList(s) {
