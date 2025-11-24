@@ -772,6 +772,11 @@ h1 {
     box-shadow: 0 0 20px rgba(255,182,193,0.6);
 }
 
+#multiCreatePanel {
+    position: relative;
+    padding-bottom: 70px; /* makes space for + button */
+}
+
 /* Styled date picker */
 #adminDateInput {
     background: #1e0d14;
@@ -903,6 +908,26 @@ input[type="date"] {
 
         <!-- This must remain INSIDE adminFormFields -->
         <div id="multiCreatePanel" style="display:none; margin-top:10px;">
+            <button id="multiCreateAddButton"
+                style="
+                    position: absolute;
+                    bottom: 18px;
+                    right: 18px;
+                    width: 46px;
+                    height: 46px;
+                    background:#ff69b4;
+                    border:none;
+                    border-radius:50%;
+                    color:#1e0d14;
+                    font-size:26px;
+                    font-weight:900;
+                    cursor:pointer;
+                    box-shadow:0 0 16px rgba(255,105,180,0.7);
+                    display:none;
+                    z-index:20;
+                ">
+                +
+            </button>
             <h3 style="color:#ffb6c1; text-align:center;">Multi-Create Volumes</h3>
 
             <div id="multiCreateList"
@@ -1502,183 +1527,50 @@ function renderTitleSuggestions() {
     }
   }
 
-  function getSeriesDisplayNameFromSuggestion(s) {
-    if (!s) return "";
-    const raw = (s.displayName || s.baseName || "").trim();
-    return raw.replace(/,\s*$/, ''); // drop trailing comma, if any
-  }
+function openMultiCreateEditor(volumes) {
+    const wrap = document.getElementById("multiCreateList");
+    const panel = document.getElementById("multiCreatePanel");
+    const addBtn = document.getElementById("multiCreateAddButton");
 
-  function buildBaseItemForVolume(suggestion, volume) {
-    const baseName = getSeriesDisplayNameFromSuggestion(suggestion);
-    const title = `${baseName}, Vol. ${volume}`;
+    wrap.innerHTML = "";
+    panel.style.display = "block";
 
-    return {
-      volume,
-      title,
-      authors: adminAuthorsInput.value.trim() || (suggestion.author || ""),
-      publisher: adminPublisherInput.value.trim() || (suggestion.publisher || ""),
-      date: "",
-      isbn: "",
-      cover: "",
-      amazonURL: "",
-      read: false
-    };
-  }
+    // Show the + button
+    addBtn.style.display = "block";
 
-  function openMultiEditorFromSuggestion(suggestion) {
-    const vols = suggestion.suggestionVolumes || [];
-    if (!vols.length) {
-      alert("No missing or next volumes detected for this series.");
-      return;
+    const baseTitle = adminTitleInput.value.replace(/Vol\.\s*\d+/i, "").trim();
+
+    function addVolumeRow(volNum) {
+        const row = document.createElement("div");
+        row.style = "display:flex; gap:8px; align-items:center;";
+
+        row.innerHTML = `
+            <input type="text"
+                value="${baseTitle}, Vol. ${volNum}"
+                data-vol="${volNum}"
+                style="flex:1; padding:6px; background:#2b0f1d; border:1px solid #bb7f8f; color:#fff; border-radius:6px;">
+        `;
+
+        wrap.appendChild(row);
+        row.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
-    multiCreateActive  = true;
-    multiCreateVolumes = vols.slice();
-    multiCreateIndex   = 0;
-    multiCreateItems   = multiCreateVolumes.map(v => buildBaseItemForVolume(suggestion, v));
+    // Pre-generate suggested volumes
+    volumes.forEach(v => addVolumeRow(v));
 
-    // Configure wishlist vs library fields
-    const isWishlist = (adminFormCollection === "wishlist");
-    multiEditorAmazonWrapper.style.display = isWishlist ? "block" : "none";
-    multiEditorReadWrapper.style.display   = isWishlist ? "none"  : "block";
+    // Add new volumes when + pressed
+    addBtn.onclick = () => {
+        const nextVol = prompt("Enter new volume number:");
 
-    renderMultiEditor();
-    multiEditorOverlay.style.display = "flex";
-  }
-
-  function persistCurrentMultiEditorItem() {
-    if (!multiCreateActive) return;
-    const item = multiCreateItems[multiCreateIndex];
-    if (!item) return;
-
-    item.title     = multiEditorTitleInput.value.trim();
-    item.authors   = multiEditorAuthorsInput.value.trim();
-    item.publisher = multiEditorPublisherInput.value.trim();
-    item.date      = multiEditorDateInput.value;
-    item.isbn      = multiEditorIsbnInput.value.trim();
-    item.cover     = multiEditorCoverInput.value.trim();
-    if (adminFormCollection === "wishlist") {
-      item.amazonURL = multiEditorAmazonInput.value.trim();
-    } else {
-      item.read = multiEditorReadInput.checked;
-    }
-  }
-
-  function renderMultiEditor() {
-    if (!multiCreateActive) return;
-    const item = multiCreateItems[multiCreateIndex];
-    if (!item) return;
-
-    const baseName = getSeriesDisplayNameFromSuggestion(currentSeriesSuggestion);
-
-    multiEditorSeriesLabel.textContent = baseName || "Series";
-    multiEditorVolumeLabel.textContent = `Volume ${item.volume}`;
-    multiEditorPosition.textContent    = `${multiCreateIndex + 1} / ${multiCreateItems.length}`;
-
-    multiEditorTitleInput.value     = item.title;
-    multiEditorAuthorsInput.value   = item.authors;
-    multiEditorPublisherInput.value = item.publisher;
-    multiEditorDateInput.value      = item.date || "";
-    multiEditorIsbnInput.value      = item.isbn;
-    multiEditorCoverInput.value     = item.cover;
-    multiEditorAmazonInput.value    = item.amazonURL || "";
-    multiEditorReadInput.checked    = !!item.read;
-
-    const url = item.cover;
-    if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
-      multiEditorCoverPreview.src = url;
-    } else {
-      multiEditorCoverPreview.src = "https://via.placeholder.com/150x220?text=No+Cover";
-    }
-
-    multiEditorPrev.disabled = (multiCreateIndex === 0);
-    multiEditorNext.disabled = (multiCreateIndex === multiCreateItems.length - 1);
-  }
-
-  // Multi-editor events
-  if (multiEditorCoverInput) {
-    multiEditorCoverInput.addEventListener("input", () => {
-      const url = multiEditorCoverInput.value.trim();
-      if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
-        multiEditorCoverPreview.src = url;
-      } else {
-        multiEditorCoverPreview.src = "https://via.placeholder.com/150x220?text=No+Cover";
-      }
-    });
-  }
-
-  if (multiEditorPrev) {
-    multiEditorPrev.addEventListener("click", () => {
-      persistCurrentMultiEditorItem();
-      if (multiCreateIndex > 0) {
-        multiCreateIndex--;
-        renderMultiEditor();
-      }
-    });
-  }
-
-  if (multiEditorNext) {
-    multiEditorNext.addEventListener("click", () => {
-      persistCurrentMultiEditorItem();
-      if (multiCreateIndex < multiCreateItems.length - 1) {
-        multiCreateIndex++;
-        renderMultiEditor();
-      }
-    });
-  }
-
-  if (multiEditorSaveAll) {
-    multiEditorSaveAll.addEventListener("click", async () => {
-      if (!multiCreateActive || !multiCreateItems.length) return;
-
-      persistCurrentMultiEditorItem(); // save current view
-
-      const colName = adminFormCollection === "wishlist" ? "wishlist" : "library";
-
-      try {
-        for (const item of multiCreateItems) {
-          const payload = {
-            title:     item.title,
-            authors:   item.authors,
-            publisher: item.publisher,
-            date:      item.date,
-            isbn:      item.isbn,
-            cover:     item.cover
-          };
-          if (colName === "library") {
-            payload.read = !!item.read;
-          } else {
-            payload.amazonURL = item.amazonURL || "";
-          }
-          await addDoc(collection(db, colName), payload);
+        if (!nextVol || !/^\d+$/.test(nextVol)) {
+            alert("Please enter a valid number.");
+            return;
         }
 
-        alert("All volumes saved!");
-        multiCreateActive = false;
-        multiEditorOverlay.style.display = "none";
-        await reloadAll();
-      } catch (err) {
-        console.error(err);
-        alert("Failed to save multi-create volumes. See console for details.");
-      }
-    });
-  }
+        addVolumeRow(parseInt(nextVol, 10));
+    };
+}
 
-  if (multiEditorClose) {
-    multiEditorClose.addEventListener("click", () => {
-      multiCreateActive = false;
-      multiEditorOverlay.style.display = "none";
-    });
-  }
-
-  if (multiEditorOverlay) {
-    multiEditorOverlay.addEventListener("click", (e) => {
-      if (e.target === multiEditorOverlay) {
-        multiCreateActive = false;
-        multiEditorOverlay.style.display = "none";
-      }
-    });
-  }
 
   // ===== LOAD LIBRARY FROM FIRESTORE =====
   async function loadLibraryFromFirestore() {
