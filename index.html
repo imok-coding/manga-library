@@ -1296,39 +1296,6 @@ input[type="date"] {
     return currentSeriesSuggestion;
   }
 
-  function renderTitleSuggestions() {
-    if (!adminTitleSuggestions) return;
-    adminTitleSuggestions.innerHTML = "";
-    adminTitleSuggestions.style.display = "none";
-
-    const s = computeSeriesSuggestionFromTitleInput();
-    if (!s) return;
-
-    // only show after user started typing
-    if (!adminTitleInput.value.trim()) return;
-
-    const volsToShow = s.suggestionVolumes.slice(0, 10); // cap for cleanliness
-    if (!volsToShow.length) return;
-
-    adminTitleSuggestions.style.display = "flex";
-
-    volsToShow.forEach(v => {
-      const chip = document.createElement('button');
-      chip.type = 'button';
-      chip.className = 'suggestion-chip';
-
-      // use current typed title as template to preserve casing
-      const currentTitle = adminTitleInput.value.trim();
-      let newTitle = currentTitle;
-      if (/(Vol\.|Volume)\s*\d+/i.test(currentTitle)) {
-        newTitle = currentTitle.replace(/(Vol\.|Volume)\s*\d+/i, `Vol. ${v}`);
-      } else {
-        newTitle = `${currentTitle.replace(/,\s*$/, '')}, Vol. ${v}`;
-      }
-
-      chip.textContent = `${s.baseName.replace(/,\s*$/, '')}, Vol. ${v}`;
-
-
 function renderTitleSuggestions() {
     if (!adminTitleSuggestions) return;
     adminTitleSuggestions.innerHTML = "";
