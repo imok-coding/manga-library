@@ -1050,6 +1050,15 @@ input[type="date"] {
         <input type="checkbox" id="multiEditorReadInput">
         Mark as read (library only)
       </label>
+      
+      <button id="multiEditorAddVolume"
+          type="button"
+          style="margin-top:10px; padding:6px 12px; border-radius:999px;
+            border:none; background:#ff69b4; color:#1e0d14;
+            font-weight:600; cursor:pointer; box-shadow:0 0 8px rgba(255,105,180,0.6);">
+          + Add Volume
+      </button>
+
 
       <div id="multiEditorNavRow">
         <button id="multiEditorPrev" type="button">← Prev</button>
@@ -1536,7 +1545,35 @@ function openMultiEditorFromSuggestion(s) {
     }
 
     // Pass the suggestionVolumes INTO the multi-create panel
-    openMultiCreateFullscreenEditor(s);
+    openMultiCreateFullscreenEditor({
+        baseName: s.baseName,
+        displayName: s.displayName,
+        author: s.author,
+        publisher: s.publisher,
+
+        // FULL SET OF VOLUMES
+        suggestionVolumes: computeFullVolumeList(s)
+    });
+}
+
+function computeFullVolumeList(s) {
+    const allBooks = libraryBooks.concat(wishlistItems);
+
+    const vols = [];
+
+    allBooks.forEach(b => {
+        const parsed = parseTitleForSort(b.Title);
+        if (parsed.name === s.baseName && parsed.vol > 0) {
+            vols.push(parsed.vol);
+        }
+    });
+
+    // Add missing + next
+    const missing = s.suggestionVolumes.filter(v => !vols.includes(v));
+    const merged = vols.concat(missing);
+
+    // Unique & sorted
+    return [...new Set(merged)].sort((a,b)=>a-b);
 }
 
 function openMultiCreateFullscreenEditor(s) {
@@ -2087,6 +2124,50 @@ multiEditorSaveAll.onclick = async () => {
     await reloadAll();
 };
 
+multiEditorClose.onclick = () => {
+    multiEditorOverlay.style.display = "none";
+    multiCreateActive = false;
+};
+
+document.getElementById("multiEditorAddVolume").onclick = () => {
+    saveCurrentMultiCreateEntry();
+
+    const volStr = prompt("Enter new volume number:");
+    if (!volStr || !/^\d+$/.test(volStr)) {
+        alert("Please enter a valid number.");
+        return;
+    }
+
+    const newVol = parseInt(volStr, 10);
+
+    // prevent duplicates
+    if (multiCreateVolumes.includes(newVol)) {
+        alert("That volume is already in the list.");
+        return;
+    }
+
+    // push new volume
+    multiCreateVolumes.push(newVol);
+    multiCreateVolumes.sort((a,b)=>a-b);
+
+    multiCreateItems.splice(
+        multiCreateVolumes.indexOf(newVol),
+        0,
+        {
+            title: `${currentSeriesSuggestion.displayName || currentSeriesSuggestion.baseName}, Vol. ${newVol}`,
+            authors: currentSeriesSuggestion.author || "",
+            publisher: currentSeriesSuggestion.publisher || "",
+            date: "",
+            isbn: "",
+            cover: "",
+            amazonURL: "",
+            read: false
+        }
+    );
+
+    multiCreateIndex = multiCreateVolumes.indexOf(newVol);
+    loadCurrentMultiCreateEntry();
+};
 
     function closeAdminForm() {
         adminFormOverlay.style.display = "none";
