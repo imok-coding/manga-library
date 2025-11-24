@@ -839,6 +839,37 @@ input[type="date"] {
         <button class="menu-item" data-target="wishlist">Wishlist</button>
     </div>
     <div id="authSection" class="auth-section" style="display:none;">
+        <!-- Sign-in Form (inside the popup) -->
+<div id="authForm" style="display: none;">
+  <h2>Sign In</h2>
+  <div id="authButtons">
+    <button id="googleSignInBtn" class="auth-btn">Sign in with Google</button>
+    <div style="margin-top: 10px;">
+      <button id="createAccountBtn" class="auth-btn secondary">Create Account</button>
+    </div>
+  </div>
+
+  <div id="emailSignInForm" style="display: none;">
+    <h3>Email Sign-In</h3>
+    <input type="email" id="emailInput" placeholder="Email" />
+    <input type="password" id="passwordInput" placeholder="Password" />
+    <button id="emailSignInBtn" class="auth-btn">Sign In</button>
+    <div style="margin-top: 10px;">
+      <button id="switchToSignUp" class="auth-btn secondary">Create Account</button>
+    </div>
+  </div>
+
+  <div id="signUpForm" style="display: none;">
+    <h3>Create Account</h3>
+    <input type="email" id="signUpEmailInput" placeholder="Email" />
+    <input type="password" id="signUpPasswordInput" placeholder="Password" />
+    <button id="signUpBtn" class="auth-btn">Create Account</button>
+    <div style="margin-top: 10px;">
+      <button id="switchToSignIn" class="auth-btn secondary">Sign In</button>
+    </div>
+  </div>
+</div>
+
         <div id="authStatus" class="auth-section-status">Not signed in</div>
         <button id="loginBtn" class="auth-btn">Sign in</button>
         <button id="logoutBtn" class="auth-btn secondary" style="display:none;">Sign out</button>
@@ -1059,7 +1090,6 @@ input[type="date"] {
           + Add Volume
       </button>
 
-
       <div id="multiEditorNavRow">
         <button id="multiEditorPrev" type="button">← Prev</button>
         <button id="multiEditorNext" type="button">Next →</button>
@@ -1111,8 +1141,10 @@ input[type="date"] {
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
   import {
     getAuth,
-    GoogleAuthProvider,
     signInWithPopup,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    GoogleAuthProvider,
     signOut,
     onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
@@ -1131,7 +1163,83 @@ input[type="date"] {
   const auth  = getAuth(app);
   const db    = getFirestore(app);
   const provider = new GoogleAuthProvider();
+  // Form Display Logic
+  const authForm = document.getElementById('authForm');
+  const googleSignInBtn = document.getElementById('googleSignInBtn');
+  const createAccountBtn = document.getElementById('createAccountBtn');
+  const emailSignInForm = document.getElementById('emailSignInForm');
+  const signUpForm = document.getElementById('signUpForm');
+  const emailSignInBtn = document.getElementById('emailSignInBtn');
+  const signUpBtn = document.getElementById('signUpBtn');
+  const switchToSignUp = document.getElementById('switchToSignUp');
+  const switchToSignIn = document.getElementById('switchToSignIn');
 
+  createAccountBtn.addEventListener('click', () => {
+      emailSignInForm.style.display = 'none';
+      signUpForm.style.display = 'block';
+  });
+
+  switchToSignUp.addEventListener('click', () => {
+      emailSignInForm.style.display = 'none';
+      signUpForm.style.display = 'block';
+  });
+
+  switchToSignIn.addEventListener('click', () => {
+      emailSignInForm.style.display = 'block';
+      signUpForm.style.display = 'none';
+  });
+
+  // Show the Sign-in Form initially
+  function showAuthForm() {
+      authForm.style.display = 'block';
+  }
+
+// Google Sign-in Function
+googleSignInBtn.addEventListener('click', async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        console.log('User signed in with Google:', user);
+        showAuthForm(); // Close the form when signed in
+    } catch (error) {
+        console.error('Google Sign-In Error:', error);
+    }
+});
+
+// Email Sign-in Function
+emailSignInBtn.addEventListener('click', async () => {
+    const email = document.getElementById('emailInput').value;
+    const password = document.getElementById('passwordInput').value;
+    
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log('User signed in with email:', user);
+        showAuthForm(); // Close the form when signed in
+    } catch (error) {
+        console.error('Email Sign-In Error:', error);
+        alert(error.message);
+    }
+});
+
+// Sign-Up Function
+signUpBtn.addEventListener('click', async () => {
+    const email = document.getElementById('signUpEmailInput').value;
+    const password = document.getElementById('signUpPasswordInput').value;
+
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log('User created:', user);
+        showAuthForm(); // Close the form when account is created
+    } catch (error) {
+        console.error('Sign-Up Error:', error);
+        alert(error.message);
+    }
+});
+
+    
   // ===== GLOBAL STATE =====
   const ADMIN_EMAIL = "imokissick@gmail.com";
 
@@ -1535,6 +1643,28 @@ function renderTitleSuggestions() {
       }
     }
   }
+
+// Sign-Up Function (for new users)
+async function signUpWithEmailPassword(email, password) {
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        console.log('User signed up:', userCredential.user);
+    } catch (error) {
+        console.error('Error signing up:', error);
+        alert('Error signing up: ' + error.message);
+    }
+}
+
+// Sign-In Function (for existing users)
+async function signInWithEmailPassword(email, password) {
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log('User signed in:', userCredential.user);
+    } catch (error) {
+        console.error('Error signing in:', error);
+        alert('Error signing in: ' + error.message);
+    }
+}
 
 function openMultiEditorFromSuggestion(s) {
     // s = { baseName, displayName, suggestionVolumes, author, publisher }
@@ -2042,11 +2172,13 @@ function openMultiCreateEditor(volumes) {
       authStatus.textContent = `Signed in as ${user.email}`;
       loginBtn.style.display = 'none';
       logoutBtn.style.display = 'inline-block';
+      showAuthForm(); // Hide the auth form once logged in
       isAdmin = (user.email === ADMIN_EMAIL);
     } else {
       authStatus.textContent = "Not signed in";
       loginBtn.style.display = 'inline-block';
       logoutBtn.style.display = 'none';
+      showAuthForm(); // Display the form if user is not signed in
       isAdmin = false;
     }
     updateAdminUI();
@@ -2307,4 +2439,5 @@ document.getElementById("multiEditorAddVolume").onclick = () => {
   window.searchLibrary = searchLibrary;
 </script>
 </body>
+
 </html>
