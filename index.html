@@ -1329,39 +1329,47 @@ input[type="date"] {
       chip.textContent = `${s.baseName.replace(/,\s*$/, '')}, Vol. ${v}`;
 
 
-      chip.addEventListener('click', () => {
-          const cleanBase = s.baseName.replace(/,\s*$/, '');
-          adminTitleInput.value = `${cleanBase}, Vol. ${v}`;
+function renderTitleSuggestions() {
+    if (!adminTitleSuggestions) return;
+    adminTitleSuggestions.innerHTML = "";
+    adminTitleSuggestions.style.display = "none";
 
-          if (s.author && !adminAuthorsInput.value.trim())
-            adminAuthorsInput.value = s.author;
+    const s = computeSeriesSuggestionFromTitleInput();
+    if (!s) return;
 
-          if (s.publisher && !adminPublisherInput.value.trim())
-            adminPublisherInput.value = s.publisher;
+    // only show after user started typing
+    if (!adminTitleInput.value.trim()) return;
 
-          renderTitleSuggestions();
-          renderAuthorPublisherSuggestions();
-          updateMultiCreateVisibility();
-       });
+    const volsToShow = s.suggestionVolumes.slice(0, 10);
+    if (!volsToShow.length) return;
 
+    adminTitleSuggestions.style.display = "flex";
 
-        // auto-fill author/publisher if empty and we have suggestions
-        if (s.author && !adminAuthorsInput.value.trim()) {
-          adminAuthorsInput.value = s.author;
-        }
-        if (s.publisher && !adminPublisherInput.value.trim()) {
-          adminPublisherInput.value = s.publisher;
-        }
+    volsToShow.forEach(v => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'suggestion-chip';
 
-        // re-run to refresh UI
-        renderTitleSuggestions();
-        renderAuthorPublisherSuggestions();
-        updateMultiCreateVisibility();
-      });
+        const cleanBase = s.baseName.replace(/,\s*$/, '');
+        chip.textContent = `${cleanBase}, Vol. ${v}`;
 
-      adminTitleSuggestions.appendChild(chip);
+        chip.addEventListener('click', () => {
+            adminTitleInput.value = `${cleanBase}, Vol. ${v}`;
+
+            if (s.author && !adminAuthorsInput.value.trim())
+                adminAuthorsInput.value = s.author;
+
+            if (s.publisher && !adminPublisherInput.value.trim())
+                adminPublisherInput.value = s.publisher;
+
+            renderTitleSuggestions();
+            renderAuthorPublisherSuggestions();
+            updateMultiCreateVisibility();
+        });
+
+        adminTitleSuggestions.appendChild(chip);
     });
-  }
+}
 
   function renderAuthorPublisherSuggestions() {
     const s = currentSeriesSuggestion;
