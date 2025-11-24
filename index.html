@@ -1527,6 +1527,18 @@ function renderTitleSuggestions() {
     }
   }
 
+function openMultiEditorFromSuggestion(s) {
+    // s = { baseName, displayName, suggestionVolumes, author, publisher }
+
+    if (!s || !s.suggestionVolumes || !s.suggestionVolumes.length) {
+        alert("No volumes to create.");
+        return;
+    }
+
+    // Pass the suggestionVolumes INTO the multi-create panel
+    openMultiCreateEditor(s.suggestionVolumes);
+}
+
 function openMultiCreateEditor(volumes) {
     const wrap = document.getElementById("multiCreateList");
     const panel = document.getElementById("multiCreatePanel");
