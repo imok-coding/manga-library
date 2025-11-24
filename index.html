@@ -751,79 +751,81 @@ input[type="date"] {
       <img id="adminCoverPreview" src="https://via.placeholder.com/150x220?text=No+Cover" alt="Cover">
     </div>
     <div id="adminFormFields">
-      <h2 id="adminFormTitle">Add Book</h2>
+        <h2 id="adminFormTitle">Add Book</h2>
 
-      <label>
-        Title
-        <input type="text" id="adminTitleInput" autocomplete="off">
-      </label>
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
-        <div id="adminTitleSuggestions" class="suggestion-row"></div>
-        <button
-          type="button"
-          id="adminMultiCreateBtn"
-          style="display:none; margin-left:8px; padding:4px 10px; border-radius:999px; border:none; background:#ff69b4; color:#1e0d14; font-size:11px; font-weight:600; cursor:pointer; box-shadow:0 0 8px rgba(255,105,180,0.6); white-space:nowrap;">
-          Multi-Create Volumes
-        </button>
-      </div>
-        
-        <div id="multiCreatePanel" style="display:none; margin-top:10px;">
-            <h3 style="color:#ffb6c1; text-align:center;">Multi-Create Volumes</h3>
-            
-            <div id="multiCreateList" 
-                style="display:flex; flex-direction:column; gap:8px; padding:10px; 
-                        background:#1e0d14; border-radius:12px;">
-            </div>
-            
-            <button id="multiCreateSave"
-                    style="margin-top:10px; padding:6px 12px; border-radius:999px;
-                        background:#ff69b4; color:#1e0d14; border:none; 
-                        font-weight:600; cursor:pointer; box-shadow:0 0 10px rgba(255,105,180,0.6);">
-                Save All Volumes
+        <label>
+            Title
+            <input type="text" id="adminTitleInput" autocomplete="off">
+        </label>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
+            <div id="adminTitleSuggestions" class="suggestion-row"></div>
+            <button
+            type="button"
+            id="adminMultiCreateBtn"
+            style="display:none; margin-left:8px; padding:4px 10px; border-radius:999px; border:none; background:#ff69b4; color:#1e0d14; font-size:11px; font-weight:600; cursor:pointer; box-shadow:0 0 8px rgba(255,105,180,0.6); white-space:nowrap;">
+            Multi-Create Volumes
             </button>
         </div>
-      </div>
 
-      <label>
-        Authors
-        <input type="text" id="adminAuthorsInput" autocomplete="off">
-      </label>
-      <div id="adminAuthorSuggestions" class="suggestion-row"></div>
+        <!-- This must remain INSIDE adminFormFields -->
+        <div id="multiCreatePanel" style="display:none; margin-top:10px;">
+            <h3 style="color:#ffb6c1; text-align:center;">Multi-Create Volumes</h3>
 
-      <label>
-        Publisher
-        <input type="text" id="adminPublisherInput" autocomplete="off">
-      </label>
-      <div id="adminPublisherSuggestions" class="suggestion-row"></div>
+            <div id="multiCreateList"
+            style="display:flex; flex-direction:column; gap:8px; padding:10px;
+                    background:#1e0d14; border-radius:12px;">
+            </div>
 
-      <label>
-        Date
-        <input type="date" id="adminDateInput" autocomplete="off">
-      </label>
+            <button id="multiCreateSave"
+            style="margin-top:10px; padding:6px 12px; border-radius:999px;
+                    background:#ff69b4; color:#1e0d14; border:none;
+                    font-weight:600; cursor:pointer; box-shadow:0 0 10px rgba(255,105,180,0.6);">
+            Save All Volumes
+            </button>
+        </div>
 
-      <label>
-        ISBN
-        <input type="text" id="adminIsbnInput" autocomplete="off">
-      </label>
+        <!-- EVERYTHING BELOW WAS OUTSIDE — now inside -->
+        <label>
+            Authors
+            <input type="text" id="adminAuthorsInput" autocomplete="off">
+        </label>
+        <div id="adminAuthorSuggestions" class="suggestion-row"></div>
 
-      <label>
-        Cover URL
-        <input type="text" id="adminCoverInput" autocomplete="off" placeholder="Paste image URL here">
-      </label>
+        <label>
+            Publisher
+            <input type="text" id="adminPublisherInput" autocomplete="off">
+        </label>
+        <div id="adminPublisherSuggestions" class="suggestion-row"></div>
 
-      <label id="adminAmazonWrapper" style="display:none;">
-        Amazon URL (wishlist only)
-        <input type="text" id="adminAmazonInput" autocomplete="off" placeholder="https://www.amazon.com/...">
-      </label>
+        <label>
+            Date
+            <input type="date" id="adminDateInput" autocomplete="off">
+        </label>
 
-      <label id="adminReadWrapper" style="display:none;">
-        <input type="checkbox" id="adminReadInput">
-        Mark as read (library only)
-      </label>
+        <label>
+            ISBN
+            <input type="text" id="adminIsbnInput" autocomplete="off">
+        </label>
 
-      <div id="adminFormButtons">
-        <button id="adminFormSave">Save</button>
-      </div>
+        <label>
+            Cover URL
+            <input type="text" id="adminCoverInput" autocomplete="off" placeholder="Paste image URL here">
+        </label>
+
+        <label id="adminAmazonWrapper" style="display:none;">
+            Amazon URL (wishlist only)
+            <input type="text" id="adminAmazonInput" autocomplete="off" placeholder="https://www.amazon.com/...">
+        </label>
+
+        <label id="adminReadWrapper" style="display:none;">
+            <input type="checkbox" id="adminReadInput">
+            Mark as read (library only)
+        </label>
+
+        <div id="adminFormButtons">
+            <button id="adminFormSave">Save</button>
+        </div>
     </div>
   </div>
 </div>
