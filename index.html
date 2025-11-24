@@ -1554,46 +1554,86 @@ function openMultiEditorFromSuggestion(s) {
         // FULL SET OF VOLUMES
         suggestionVolumes: computeFullVolumeList(s)
     });
+    const fullList = computeFullVolumeList(s);
+
+    openMultiCreateFullscreenEditor({
+        ...s,
+        fullList
+});
+
+    
 }
 
 function computeFullVolumeList(s) {
     const allBooks = libraryBooks.concat(wishlistItems);
 
-    const vols = [];
+    const result = [];
 
+    // 1. First load already-existing volumes with full data
     allBooks.forEach(b => {
         const parsed = parseTitleForSort(b.Title);
         if (parsed.name === s.baseName && parsed.vol > 0) {
-            vols.push(parsed.vol);
+            result.push({
+                vol: parsed.vol,
+                title: b.Title,
+                authors: b.Authors,
+                publisher: b.Publisher,
+                date: b.Date,
+                isbn: b.ISBN,
+                cover: b.Cover,
+                amazonURL: b.AmazonURL || "",
+                read: !!b.Read,
+                existsAlready: true
+            });
         }
     });
 
-    // Add missing + next
-    const missing = s.suggestionVolumes.filter(v => !vols.includes(v));
-    const merged = vols.concat(missing);
+    // 2. Add volumes the user does NOT have yet (missing + next vol)
+    s.suggestionVolumes.forEach(v => {
+        if (!result.find(r => r.vol === v)) {
+            result.push({
+                vol: v,
+                title: `${s.displayName || s.baseName}, Vol. ${v}`,
+                authors: s.author || "",
+                publisher: s.publisher || "",
+                date: "",
+                isbn: "",
+                cover: "",
+                amazonURL: "",
+                read: false,
+                existsAlready: false
+            });
+        }
+    });
 
-    // Unique & sorted
-    return [...new Set(merged)].sort((a,b)=>a-b);
+    // Sort by volume number
+    result.sort((a, b) => a.vol - b.vol);
+
+    return result;
 }
 
 function openMultiCreateFullscreenEditor(s) {
     // s = { baseName, displayName, suggestionVolumes, author, publisher }
 
     multiCreateActive = true;
-    multiCreateVolumes = s.suggestionVolumes.slice(); // copy array
+    const fullList = s.fullList;  // passed from openMultiEditorFromSuggestion()
+
+    multiCreateItems = fullList.map(item => ({
+        title: item.title,
+        authors: item.authors,
+        publisher: item.publisher,
+        date: /^\d{4}-\d{2}-\d{2}$/.test(item.date) ? item.date : "",
+        isbn: item.isbn,
+        cover: item.cover,
+        amazonURL: item.amazonURL,
+        read: item.read,
+        vol: item.vol,
+        existsAlready: item.existsAlready
+    }));
+
+    multiCreateVolumes = fullList.map(item => item.vol);
     multiCreateIndex = 0;
 
-    // Build default multiCreateItems
-    multiCreateItems = multiCreateVolumes.map(v => ({
-        title: `${s.displayName || s.baseName}, Vol. ${v}`,
-        authors: s.author || "",
-        publisher: s.publisher || "",
-        date: "",
-        isbn: "",
-        cover: "",
-        amazonURL: "",
-        read: false
-    }));
 
     // Show the overlay
     multiEditorOverlay.style.display = "flex";
