@@ -1225,16 +1225,28 @@ input[type="date"] {
       if (!parsed.name || !parsed.vol) return;
       if (!parsed.name.startsWith(input)) return;
 
-      let entry = seriesMap.get(parsed.name);
-      if (!entry) {
-        entry = {
-          volumes: new Set(),
-          authors: new Map(),
-          publishers: new Map()
-        };
-        seriesMap.set(parsed.name, entry);
-      }
-      entry.volumes.add(parsed.vol);
+        let entry = seriesMap.get(parsed.name);
+        if (!entry) {
+            entry = {
+                volumes: new Set(),
+                authors: new Map(),
+                publishers: new Map(),
+                displayName: null  // ← NEW
+            };
+            seriesMap.set(parsed.name, entry);
+        }
+
+        // Capture proper capitalization from the first matching book.
+        if (!entry.displayName) {
+            // Extract series name part from actual Title
+            const titleMatch = (b.Title || "").match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*\d+)?$/i);
+            if (titleMatch) {
+                entry.displayName = titleMatch[1].trim();
+            }
+        }
+
+        entry.volumes.add(parsed.vol);
+
 
       if (b.Authors && b.Authors !== 'Unknown') {
         entry.authors.set(b.Authors, (entry.authors.get(b.Authors) || 0) + 1);
@@ -1288,10 +1300,11 @@ input[type="date"] {
     const suggestedPublisher = pickMostCommon(bestEntry.publishers) || "";
 
     currentSeriesSuggestion = {
-      baseName: bestName,
-      suggestionVolumes,
-      author: suggestedAuthor,
-      publisher: suggestedPublisher
+        baseName: bestName,
+        displayName: bestEntry.displayName,   // ← NEW
+        suggestionVolumes,
+        author: suggestedAuthor,
+        publisher: suggestedPublisher
     };
     return currentSeriesSuggestion;
   }
@@ -1317,11 +1330,12 @@ function renderTitleSuggestions() {
         chip.type = 'button';
         chip.className = 'suggestion-chip';
 
-        const cleanBase = s.baseName.replace(/,\s*$/, '');
+        const cleanBase = (s.displayName || s.baseName).replace(/,\s*$/, '');
         chip.textContent = `${cleanBase}, Vol. ${v}`;
 
         chip.addEventListener('click', () => {
-            adminTitleInput.value = `${cleanBase}, Vol. ${v}`;
+            const proper = (s.displayName || s.baseName).replace(/,\s*$/, '');
+            adminTitleInput.value = `${proper}, Vol. ${v}`;
 
             if (s.author && !adminAuthorsInput.value.trim())
                 adminAuthorsInput.value = s.author;
