@@ -485,6 +485,30 @@ h1 {
     color: #fff;
     font-size: 12px;
 }
+
+/* ===== SUGGESTION ROWS (Title / Authors / Publisher) ===== */
+.suggestion-row {
+    display: none;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.suggestion-chip {
+    border: none;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 11px;
+    background: rgba(255,182,193,0.18);
+    color: #ffb6c1;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.suggestion-chip:hover {
+    background: rgba(255,182,193,0.35);
+}
+
+
 #adminReadWrapper {
     margin-top: 6px;
     font-size: 12px;
@@ -711,20 +735,31 @@ h1 {
         Title
         <input type="text" id="adminTitleInput" autocomplete="off">
       </label>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
+        <div id="adminTitleSuggestions" class="suggestion-row"></div>
+        <button
+          type="button"
+          id="adminMultiCreateBtn"
+          style="display:none; margin-left:8px; padding:4px 10px; border-radius:999px; border:none; background:#ff69b4; color:#1e0d14; font-size:11px; font-weight:600; cursor:pointer; box-shadow:0 0 8px rgba(255,105,180,0.6); white-space:nowrap;">
+          Multi-create volumes
+        </button>
+      </div>
 
       <label>
         Authors
         <input type="text" id="adminAuthorsInput" autocomplete="off">
       </label>
+      <div id="adminAuthorSuggestions" class="suggestion-row"></div>
 
       <label>
         Publisher
         <input type="text" id="adminPublisherInput" autocomplete="off">
       </label>
+      <div id="adminPublisherSuggestions" class="suggestion-row"></div>
 
       <label>
         Date
-        <input type="text" id="adminDateInput" placeholder="e.g. 2022 or 01/15/2022" autocomplete="off">
+        <input type="date" id="adminDateInput" autocomplete="off">
       </label>
 
       <label>
@@ -821,6 +856,8 @@ h1 {
   let secretClickCount = 0;
   let secretTimer = null;
   let currentPopupBook = null;
+  let currentSeriesSuggestion = null; // { baseName, suggestionVolumes, author, publisher }
+
 
   // DOM refs
   const menuToggle      = document.getElementById('menuToggle');
@@ -864,7 +901,7 @@ h1 {
   const popupEdit       = document.getElementById('popupEdit');
   const popupDelete     = document.getElementById('popupDelete');
 
-// Admin form DOM refs
+  // Admin form DOM refs
   const adminFormOverlay   = document.getElementById('adminFormOverlay');
   const adminFormCard      = document.getElementById('adminFormCard');
   const adminFormClose     = document.getElementById('adminFormClose');
@@ -874,6 +911,10 @@ h1 {
   const adminTitleInput    = document.getElementById('adminTitleInput');
   const adminAuthorsInput  = document.getElementById('adminAuthorsInput');
   const adminPublisherInput= document.getElementById('adminPublisherInput');
+  const adminTitleSuggestions    = document.getElementById('adminTitleSuggestions');
+  const adminAuthorSuggestions   = document.getElementById('adminAuthorSuggestions');
+  const adminPublisherSuggestions= document.getElementById('adminPublisherSuggestions');
+  const adminMultiCreateBtn      = document.getElementById('adminMultiCreateBtn');
   const adminDateInput     = document.getElementById('adminDateInput');
   const adminIsbnInput     = document.getElementById('adminIsbnInput');
   const adminCoverInput    = document.getElementById('adminCoverInput');
@@ -893,6 +934,148 @@ h1 {
     menuToggle.classList.toggle('active');
     menuPanel.classList.toggle('open');
   });
+  
+    function handleTitleInputChange() {
+    renderTitleSuggestions();
+    renderAuthorPublisherSuggestions();
+    updateMultiCreateVisibility();
+  }
+
+  function handleAuthorsInputChange() {
+    renderAuthorPublisherSuggestions();
+  }
+
+  function handlePublisherInputChange() {
+    renderAuthorPublisherSuggestions();
+  }
+
+  if (adminTitleInput) {
+    adminTitleInput.addEventListener('input', handleTitleInputChange);
+  }
+  if (adminAuthorsInput) {
+    adminAuthorsInput.addEventListener('input', handleAuthorsInputChange);
+  }
+  if (adminPublisherInput) {
+    adminPublisherInput.addEventListener('input', handlePublisherInputChange);
+  }
+  
+  function updateMultiCreateVisibility() {
+    if (!adminMultiCreateBtn) return;
+    const t = adminTitleInput.value.trim();
+    if (/(Vol\.|Volume)\s*\d+/i.test(t)) {
+      adminMultiCreateBtn.style.display = 'inline-block';
+    } else {
+      adminMultiCreateBtn.style.display = 'none';
+    }
+  }
+
+  async function handleMultiCreateClick() {
+    const t = adminTitleInput.value.trim();
+    if (!t) {
+      alert("Enter a title with 'Vol. #' first.");
+      return;
+    }
+
+    const match = t.match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*(\d+)\b)/i);
+    if (!match) {
+      alert("Title must contain 'Vol. #' to use multi-create.");
+      return;
+    }
+
+    const baseInputTitle = match[0]; // part including Vol.X
+    const currentVol = parseInt(match[2], 10);
+
+    if (!currentVol || Number.isNaN(currentVol)) {
+      alert("Couldn't detect a valid volume number.");
+      return;
+    }
+
+    // Build a lowercased base key using parseTitleForSort for consistency
+    const parsed = parseTitleForSort(t);
+    if (!parsed.name) {
+      alert("Could not detect a series name.");
+      return;
+    }
+    const baseKey = parsed.name; // lowercased series key
+
+    // Collect existing volumes for this series (library + wishlist)
+    const existingVols = new Set();
+    libraryBooks.concat(wishlistItems).forEach(b => {
+      const p = parseTitleForSort(b.Title || "");
+      if (p.name === baseKey && p.vol) {
+        existingVols.add(p.vol);
+      }
+    });
+
+    const defaultSuggestion = (currentVol + 1).toString();
+    const answer = prompt(
+      "Enter additional volume numbers to create (comma-separated, e.g. 2,3,4,5):",
+      defaultSuggestion
+    );
+    if (!answer) return;
+
+    const nums = answer
+      .split(',')
+      .map(s => parseInt(s.trim(), 10))
+      .filter(v => v && v > 0);
+
+    if (!nums.length) {
+      alert("No valid volume numbers entered.");
+      return;
+    }
+
+    // Filter out volumes that already exist
+    const toCreate = nums.filter(v => !existingVols.has(v));
+    if (!toCreate.length) {
+      alert("All these volumes already exist in Library/Wishlist.");
+      return;
+    }
+
+    const authors   = adminAuthorsInput.value.trim();
+    const publisher = adminPublisherInput.value.trim();
+    const isbn      = adminIsbnInput.value.trim();
+
+    try {
+      const colName = (adminFormCollection === "wishlist") ? "wishlist" : "library";
+
+      for (const v of toCreate) {
+        // use current title as template so extra stuff (like "(Omnibus)") stays
+        let newTitle = t;
+        if (/(Vol\.|Volume)\s*\d+/i.test(t)) {
+          newTitle = t.replace(/(Vol\.|Volume)\s*\d+/i, `Vol. ${v}`);
+        } else {
+          newTitle = `${t.replace(/,\s*$/, '')}, Vol. ${v}`;
+        }
+
+        const payload = {
+          title: newTitle,
+          authors,
+          publisher,
+          isbn,
+          cover: "",   // do NOT duplicate cover
+          date: ""     // do NOT duplicate date
+        };
+
+        if (colName === "library") {
+          payload.read = false;
+        } else {
+          payload.amazonURL = ""; // do NOT duplicate Amazon link
+        }
+
+        await addDoc(collection(db, colName), payload);
+      }
+
+      alert(`Created volumes: ${toCreate.join(", ")}`);
+      await reloadAll();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to multi-create volumes. See console for details.");
+    }
+  }
+
+  if (adminMultiCreateBtn) {
+    adminMultiCreateBtn.addEventListener('click', handleMultiCreateClick);
+  }
 
   function switchSection(target) {
     if (target === 'library') {
@@ -945,6 +1128,193 @@ h1 {
       vol: parseInt(m[2] || "0", 10)
     };
   }
+  
+  function formatSeriesTitle(baseName, volNumber) {
+    // baseName is lowercased inside parse; so we re-capitalize from current input when possible
+    // but for safety, just ensure there's no trailing comma spacing issues
+    const cleanBase = baseName.replace(/,\s*$/, '');
+    return `${cleanBase}, Vol. ${volNumber}`;
+  }
+
+  function computeSeriesSuggestionFromTitleInput() {
+    const input = adminTitleInput.value.trim().toLowerCase();
+    currentSeriesSuggestion = null;
+    if (!input) return null;
+
+    const all = libraryBooks.concat(wishlistItems);
+    const seriesMap = new Map(); // baseName -> { volumes:Set, authors:Map, publishers:Map }
+
+    all.forEach(b => {
+      if (!b.Title) return;
+      const parsed = parseTitleForSort(b.Title);
+      if (!parsed.name || !parsed.vol) return;
+      if (!parsed.name.startsWith(input)) return;
+
+      let entry = seriesMap.get(parsed.name);
+      if (!entry) {
+        entry = {
+          volumes: new Set(),
+          authors: new Map(),
+          publishers: new Map()
+        };
+        seriesMap.set(parsed.name, entry);
+      }
+      entry.volumes.add(parsed.vol);
+
+      if (b.Authors && b.Authors !== 'Unknown') {
+        entry.authors.set(b.Authors, (entry.authors.get(b.Authors) || 0) + 1);
+      }
+      if (b.Publisher && b.Publisher !== 'Unknown') {
+        entry.publishers.set(b.Publisher, (entry.publishers.get(b.Publisher) || 0) + 1);
+      }
+    });
+
+    if (!seriesMap.size) return null;
+
+    // pick the "best" series = the one with the most volumes
+    let bestName = null;
+    let bestEntry = null;
+    for (const [name, entry] of seriesMap.entries()) {
+      if (!bestEntry || entry.volumes.size > bestEntry.volumes.size) {
+        bestName = name;
+        bestEntry = entry;
+      }
+    }
+
+    if (!bestEntry || !bestEntry.volumes.size) return null;
+
+    const vols = Array.from(bestEntry.volumes).sort((a, b) => a - b);
+    const maxVol = vols[vols.length - 1];
+
+    // Missing volumes between 1..maxVol
+    const missing = [];
+    for (let v = 1; v <= maxVol; v++) {
+      if (!bestEntry.volumes.has(v)) missing.push(v);
+    }
+
+    const nextVol = maxVol + 1;
+    const suggestionVolumes = missing.concat([nextVol]); // only missing + next (as requested)
+
+    if (!suggestionVolumes.length) return null;
+
+    const pickMostCommon = (map) => {
+      let bestKey = null;
+      let bestCount = 0;
+      for (const [k, cnt] of map.entries()) {
+        if (cnt > bestCount) {
+          bestKey = k;
+          bestCount = cnt;
+        }
+      }
+      return bestKey;
+    };
+
+    const suggestedAuthor    = pickMostCommon(bestEntry.authors)    || "";
+    const suggestedPublisher = pickMostCommon(bestEntry.publishers) || "";
+
+    currentSeriesSuggestion = {
+      baseName: bestName,
+      suggestionVolumes,
+      author: suggestedAuthor,
+      publisher: suggestedPublisher
+    };
+    return currentSeriesSuggestion;
+  }
+
+  function renderTitleSuggestions() {
+    if (!adminTitleSuggestions) return;
+    adminTitleSuggestions.innerHTML = "";
+    adminTitleSuggestions.style.display = "none";
+
+    const s = computeSeriesSuggestionFromTitleInput();
+    if (!s) return;
+
+    // only show after user started typing
+    if (!adminTitleInput.value.trim()) return;
+
+    const volsToShow = s.suggestionVolumes.slice(0, 10); // cap for cleanliness
+    if (!volsToShow.length) return;
+
+    adminTitleSuggestions.style.display = "flex";
+
+    volsToShow.forEach(v => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'suggestion-chip';
+
+      // use current typed title as template to preserve casing
+      const currentTitle = adminTitleInput.value.trim();
+      let newTitle = currentTitle;
+      if (/(Vol\.|Volume)\s*\d+/i.test(currentTitle)) {
+        newTitle = currentTitle.replace(/(Vol\.|Volume)\s*\d+/i, `Vol. ${v}`);
+      } else {
+        newTitle = `${currentTitle.replace(/,\s*$/, '')}, Vol. ${v}`;
+      }
+
+      chip.textContent = newTitle;
+
+      chip.addEventListener('click', () => {
+        adminTitleInput.value = newTitle;
+
+        // auto-fill author/publisher if empty and we have suggestions
+        if (s.author && !adminAuthorsInput.value.trim()) {
+          adminAuthorsInput.value = s.author;
+        }
+        if (s.publisher && !adminPublisherInput.value.trim()) {
+          adminPublisherInput.value = s.publisher;
+        }
+
+        // re-run to refresh UI
+        renderTitleSuggestions();
+        renderAuthorPublisherSuggestions();
+        updateMultiCreateVisibility();
+      });
+
+      adminTitleSuggestions.appendChild(chip);
+    });
+  }
+
+  function renderAuthorPublisherSuggestions() {
+    const s = currentSeriesSuggestion;
+    // Authors
+    if (adminAuthorSuggestions) {
+      adminAuthorSuggestions.innerHTML = "";
+      adminAuthorSuggestions.style.display = "none";
+
+      if (s && s.author && adminAuthorsInput.value.trim().length > 0) {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'suggestion-chip';
+        chip.textContent = s.author;
+        chip.addEventListener('click', () => {
+          adminAuthorsInput.value = s.author;
+          renderAuthorPublisherSuggestions();
+        });
+        adminAuthorSuggestions.appendChild(chip);
+        adminAuthorSuggestions.style.display = "flex";
+      }
+    }
+
+    // Publisher
+    if (adminPublisherSuggestions) {
+      adminPublisherSuggestions.innerHTML = "";
+      adminPublisherSuggestions.style.display = "none";
+
+      if (s && s.publisher && adminPublisherInput.value.trim().length > 0) {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'suggestion-chip';
+        chip.textContent = s.publisher;
+        chip.addEventListener('click', () => {
+          adminPublisherInput.value = s.publisher;
+          renderAuthorPublisherSuggestions();
+        });
+        adminPublisherSuggestions.appendChild(chip);
+        adminPublisherSuggestions.style.display = "flex";
+      }
+    }
+  }
+
 
   // ===== LOAD LIBRARY FROM FIRESTORE =====
   async function loadLibraryFromFirestore() {
@@ -1128,17 +1498,16 @@ h1 {
       popupContent.classList.remove('read');
     }
     if (popupEdit) {
-      popupEdit.addEventListener('click', () => {
+      popupEdit.onclick = () => {
         if (!currentPopupBook) return;
-
         openAdminForm({
-           mode: "edit",
-           collection: currentPopupBook.kind, // <-- always correct
-           book: currentPopupBook
-       });
-    });
-
+          mode: "edit",
+          collection: currentPopupBook.kind,
+          book: currentPopupBook
+        });
+      };
     }
+
 
     popupImage.src = book.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
     popupTitle.innerHTML = book.Title || '';
@@ -1323,7 +1692,15 @@ h1 {
         adminTitleInput.value     = book.Title || "";
         adminAuthorsInput.value   = book.Authors || "";
         adminPublisherInput.value = book.Publisher || "";
-        adminDateInput.value      = book.Date || "";
+
+        // Only set date if it's already in a yyyy-mm-dd format
+        const existingDate = (book.Date || "").trim();
+        if (/^\d{4}-\d{2}-\d{2}$/.test(existingDate)) {
+          adminDateInput.value = existingDate;
+        } else {
+          adminDateInput.value = "";
+        }
+
         adminIsbnInput.value      = book.ISBN || "";
         adminCoverInput.value     = book.Cover || "";
         adminCoverPreview.src     = book.Cover || "https://via.placeholder.com/150x220?text=No+Cover";
@@ -1334,6 +1711,12 @@ h1 {
             adminReadInput.checked = !!book.Read;
         }
         }
+
+        // Ensure suggestions & multi-create button reflect the initial values
+        renderTitleSuggestions();
+        renderAuthorPublisherSuggestions();
+        updateMultiCreateVisibility();
+
 
         adminFormOverlay.style.display = "flex";
     }
