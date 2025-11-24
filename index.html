@@ -763,8 +763,10 @@ input[type="date"] {
           type="button"
           id="adminMultiCreateBtn"
           style="display:none; margin-left:8px; padding:4px 10px; border-radius:999px; border:none; background:#ff69b4; color:#1e0d14; font-size:11px; font-weight:600; cursor:pointer; box-shadow:0 0 8px rgba(255,105,180,0.6); white-space:nowrap;">
-          Multi-create volumes
+          Multi-Create Volumes
         </button>
+      </div>
+        
         <div id="multiCreatePanel" style="display:none; margin-top:10px;">
             <h3 style="color:#ffb6c1; text-align:center;">Multi-Create Volumes</h3>
             
@@ -1006,110 +1008,6 @@ input[type="date"] {
     }
   }
 
-  async function handleMultiCreateClick() {
-    const t = adminTitleInput.value.trim();
-    if (!t) {
-      alert("Enter a title with 'Vol. #' first.");
-      return;
-    }
-
-    const match = t.match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*(\d+)\b)/i);
-    if (!match) {
-      alert("Title must contain 'Vol. #' to use multi-create.");
-      return;
-    }
-
-    const baseInputTitle = match[0]; // part including Vol.X
-    const currentVol = parseInt(match[2], 10);
-
-    if (!currentVol || Number.isNaN(currentVol)) {
-      alert("Couldn't detect a valid volume number.");
-      return;
-    }
-
-    // Build a lowercased base key using parseTitleForSort for consistency
-    const parsed = parseTitleForSort(t);
-    if (!parsed.name) {
-      alert("Could not detect a series name.");
-      return;
-    }
-    const baseKey = parsed.name; // lowercased series key
-
-    // Collect existing volumes for this series (library + wishlist)
-    const existingVols = new Set();
-    libraryBooks.concat(wishlistItems).forEach(b => {
-      const p = parseTitleForSort(b.Title || "");
-      if (p.name === baseKey && p.vol) {
-        existingVols.add(p.vol);
-      }
-    });
-
-    const defaultSuggestion = (currentVol + 1).toString();
-    const answer = prompt(
-      "Enter additional volume numbers to create (comma-separated, e.g. 2,3,4,5):",
-      defaultSuggestion
-    );
-    if (!answer) return;
-
-    const nums = answer
-      .split(',')
-      .map(s => parseInt(s.trim(), 10))
-      .filter(v => v && v > 0);
-
-    if (!nums.length) {
-      alert("No valid volume numbers entered.");
-      return;
-    }
-
-    // Filter out volumes that already exist
-    const toCreate = nums.filter(v => !existingVols.has(v));
-    if (!toCreate.length) {
-      alert("All these volumes already exist in Library/Wishlist.");
-      return;
-    }
-
-    const authors   = adminAuthorsInput.value.trim();
-    const publisher = adminPublisherInput.value.trim();
-    const isbn      = adminIsbnInput.value.trim();
-
-    try {
-      const colName = (adminFormCollection === "wishlist") ? "wishlist" : "library";
-
-      for (const v of toCreate) {
-        // use current title as template so extra stuff (like "(Omnibus)") stays
-        let newTitle = t;
-        if (/(Vol\.|Volume)\s*\d+/i.test(t)) {
-          newTitle = t.replace(/(Vol\.|Volume)\s*\d+/i, `Vol. ${v}`);
-        } else {
-          newTitle = `${t.replace(/,\s*$/, '')}, Vol. ${v}`;
-        }
-
-        const payload = {
-          title: newTitle,
-          authors,
-          publisher,
-          isbn,
-          cover: "",   // do NOT duplicate cover
-          date: ""     // do NOT duplicate date
-        };
-
-        if (colName === "library") {
-          payload.read = false;
-        } else {
-          payload.amazonURL = ""; // do NOT duplicate Amazon link
-        }
-
-        await addDoc(collection(db, colName), payload);
-      }
-
-      alert(`Created volumes: ${toCreate.join(", ")}`);
-      await reloadAll();
-    } catch (err) {
-      console.error(err);
-      alert("Failed to multi-create volumes. See console for details.");
-    }
-  }
-
   if (adminMultiCreateBtn) {
         adminMultiCreateBtn.addEventListener("click", () => {
             const suggestion = computeSeriesSuggestionFromTitleInput();
@@ -1223,7 +1121,8 @@ input[type="date"] {
       if (!b.Title) return;
       const parsed = parseTitleForSort(b.Title);
       if (!parsed.name || !parsed.vol) return;
-      if (!parsed.name.startsWith(input)) return;
+      if (!parsed.name.startsWith(input.replace(/,?\s*(vol\.|volume)\s*\d+/i, '').trim())) return;
+
 
         let entry = seriesMap.get(parsed.name);
         if (!entry) {
