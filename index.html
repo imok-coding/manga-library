@@ -639,6 +639,28 @@ h1 {
     box-shadow: 0 0 20px rgba(255,182,193,0.6);
 }
 
+/* Styled date picker */
+#adminDateInput {
+    background: #1e0d14;
+    border: 1px solid #bb7f8f;
+    color: #fff;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    box-shadow: 0 0 6px rgba(255,182,193,0.3) inset;
+}
+
+/* Remove chrome default icon */
+#adminDateInput::-webkit-calendar-picker-indicator {
+    filter: invert(85%) sepia(20%) saturate(300%) hue-rotate(290deg);
+    cursor: pointer;
+}
+
+/* Firefox fix */
+input[type="date"] {
+    color-scheme: dark;
+}
+
 /* ===== MOBILE ===== */
 @media (max-width: 600px) {
     .grid {
@@ -743,6 +765,21 @@ h1 {
           style="display:none; margin-left:8px; padding:4px 10px; border-radius:999px; border:none; background:#ff69b4; color:#1e0d14; font-size:11px; font-weight:600; cursor:pointer; box-shadow:0 0 8px rgba(255,105,180,0.6); white-space:nowrap;">
           Multi-create volumes
         </button>
+        <div id="multiCreatePanel" style="display:none; margin-top:10px;">
+            <h3 style="color:#ffb6c1; text-align:center;">Multi-Create Volumes</h3>
+            
+            <div id="multiCreateList" 
+                style="display:flex; flex-direction:column; gap:8px; padding:10px; 
+                        background:#1e0d14; border-radius:12px;">
+            </div>
+            
+            <button id="multiCreateSave"
+                    style="margin-top:10px; padding:6px 12px; border-radius:999px;
+                        background:#ff69b4; color:#1e0d14; border:none; 
+                        font-weight:600; cursor:pointer; box-shadow:0 0 10px rgba(255,105,180,0.6);">
+                Save All Volumes
+            </button>
+        </div>
       </div>
 
       <label>
@@ -1074,8 +1111,46 @@ h1 {
   }
 
   if (adminMultiCreateBtn) {
-    adminMultiCreateBtn.addEventListener('click', handleMultiCreateClick);
-  }
+        adminMultiCreateBtn.addEventListener("click", () => {
+            const suggestion = computeSeriesSuggestionFromTitleInput();
+            if (!suggestion) {
+                alert("Type a series first to detect volumes.");
+                return;
+            }
+
+            openMultiCreateEditor(suggestion.suggestionVolumes);
+        });
+    }
+
+    document.getElementById("multiCreateSave").addEventListener("click", async () => {
+        const panel = document.getElementById("multiCreateList");
+        const rows = panel.querySelectorAll("input[data-vol]");
+        const colName = adminFormCollection === "wishlist" ? "wishlist" : "library";
+
+        for (const inp of rows) {
+            const title = inp.value.trim();
+            const vol = inp.dataset.vol;
+
+            const payload = {
+                title,
+                authors: adminAuthorsInput.value.trim(),
+                publisher: adminPublisherInput.value.trim(),
+                isbn: "",
+                cover: "",
+                date: ""
+            };
+
+            if (colName === "library") payload.read = false;
+            else payload.amazonURL = "";
+
+            await addDoc(collection(db, colName), payload);
+        }
+
+        alert("Created all volumes!");
+        document.getElementById("multiCreatePanel").style.display = "none";
+        reloadAll();
+    });
+
 
   function switchSection(target) {
     if (target === 'library') {
@@ -1251,10 +1326,24 @@ h1 {
         newTitle = `${currentTitle.replace(/,\s*$/, '')}, Vol. ${v}`;
       }
 
-      chip.textContent = newTitle;
+      chip.textContent = `${s.baseName.replace(/,\s*$/, '')}, Vol. ${v}`;
+
 
       chip.addEventListener('click', () => {
-        adminTitleInput.value = newTitle;
+          const cleanBase = s.baseName.replace(/,\s*$/, '');
+          adminTitleInput.value = `${cleanBase}, Vol. ${v}`;
+
+          if (s.author && !adminAuthorsInput.value.trim())
+            adminAuthorsInput.value = s.author;
+
+          if (s.publisher && !adminPublisherInput.value.trim())
+            adminPublisherInput.value = s.publisher;
+
+          renderTitleSuggestions();
+          renderAuthorPublisherSuggestions();
+          updateMultiCreateVisibility();
+       });
+
 
         // auto-fill author/publisher if empty and we have suggestions
         if (s.author && !adminAuthorsInput.value.trim()) {
@@ -1314,6 +1403,26 @@ h1 {
       }
     }
   }
+
+    function openMultiCreateEditor(volumes) {
+        const wrap = document.getElementById("multiCreateList");
+        const panel = document.getElementById("multiCreatePanel");
+        wrap.innerHTML = "";
+        panel.style.display = "block";
+
+        volumes.forEach(v => {
+            const row = document.createElement("div");
+            row.style = "display:flex; gap:8px; align-items:center;";
+
+            row.innerHTML = `
+                <input type="text" value="${adminTitleInput.value.replace(/Vol\.\s*\d+/, "Vol. "+v)}"
+                    data-vol="${v}"
+                    style="flex:1; padding:6px; background:#2b0f1d; border:1px solid #bb7f8f; color:#fff; border-radius:6px;">
+            `;
+
+            wrap.appendChild(row);
+        });
+    }
 
 
   // ===== LOAD LIBRARY FROM FIRESTORE =====
