@@ -21,6 +21,7 @@ html {
     margin: 0 auto;
     padding: 20px;
     position: relative;
+    overflow: hidden;
 }
 h1 {
     text-align: center;
@@ -76,17 +77,26 @@ h1 {
     top: 0;
     left: 0;
     height: 100%;
-    width: 240px;
+    width: 220px;
     background: #2b0f1d;
     box-shadow: 4px 0 16px rgba(0,0,0,0.6);
-    padding: 60px 0 12px;
+    padding: 60px 0 16px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    justify-content: flex-start;
     transform: translateX(-100%);
     transition: transform 0.25s ease;
     z-index: 10999;
 }
+
+/* menu items area */
+.menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-bottom: 8px;
+}
+
 .menu-panel.open {
     transform: translateX(0);
 }
@@ -104,26 +114,30 @@ h1 {
     background: rgba(255,182,193,0.18);
 }
 
-/* Secret login row (appears at bottom of menu when unlocked) */
-#secretLoginRow {
-    margin-top: auto;
-    padding: 12px 20px 16px;
-    border-top: 1px solid rgba(255,182,193,0.3);
-    display: none; /* hidden until unlocked */
+/* Auth section is at the bottom of panel */
+.auth-section {
+    padding: 10px 16px 16px;
+    border-top: 1px solid rgba(255,182,193,0.25);
+    font-size: 12px;
+    color: #f8d1d8;
 }
-#loginBtn, #logoutBtn {
-    padding: 6px 10px;
-    border-radius: 8px;
+.auth-section-status {
+    margin-bottom: 6px;
+}
+.auth-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
     border: none;
-    font-size: 13px;
     cursor: pointer;
-    background: #ff69b4;
-    color: #1e0d14;
+    font-size: 12px;
+    margin-right: 6px;
+    background: #ffb6c1;
+    color: #2b0f1d;
 }
-#logoutBtn {
-    background: #444;
-    color: #fff;
-    margin-left: 6px;
+.auth-btn.secondary {
+    background: #2b0f1d;
+    color: #ffb6c1;
+    border: 1px solid #ffb6c1;
 }
 
 /* For mobile, slide in from the right instead */
@@ -176,6 +190,68 @@ h1 {
     box-shadow: 0 0 6px rgba(255,182,193,0.3) inset;
 }
 
+/* ===== ADMIN PANEL (floating) ===== */
+#adminBar {
+    display: none; /* shown only when isAdmin = true */
+    position: fixed;
+    top: 84px;
+    right: 20px;
+    background: rgba(43, 15, 29, 0.95);
+    border-radius: 14px;
+    padding: 10px 12px;
+    font-size: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7),
+                0 0 10px rgba(255, 105, 180, 0.4);
+    z-index: 9000;
+    display: none;
+    backdrop-filter: blur(6px);
+}
+#adminBar span {
+    display: block;
+    margin-bottom: 6px;
+    color: #ffb6c1;
+    text-align: left;
+}
+#adminBarButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+}
+#adminBarButtons button {
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: none;
+    background: #ff69b4;
+    color: #1e0d14;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(255,105,180,0.6);
+    font-size: 11px;
+    white-space: nowrap;
+}
+#adminBarButtons button:hover {
+    background: #ffc0cb;
+}
+
+/* Mobile: pin it near bottom as a bar */
+@media (max-width: 600px) {
+    #adminBar {
+        top: auto;
+        bottom: 80px;
+        right: 10px;
+        left: 10px;
+        display: none;
+    }
+    #adminBar span {
+        margin-bottom: 4px;
+        text-align: center;
+    }
+    #adminBarButtons {
+        justify-content: center;
+    }
+}
+
 /* ===== GRID & CARDS ===== */
 .grid {
     display: grid;
@@ -185,7 +261,6 @@ h1 {
     padding: 20px;
 }
 .card {
-    position: relative;
     background: #2b0f1d;
     border-radius: 12px;
     overflow: hidden;
@@ -244,30 +319,6 @@ h1 {
     margin-top: 4px;
 }
 
-/* ===== MULTI-SELECT CHECKBOX ===== */
-.card-select-checkbox {
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
-    border: 2px solid #ffb6c1;
-    background: rgba(0,0,0,0.4);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    color: #ffb6c1;
-}
-.card.multi-select .card-select-checkbox {
-    display: flex;
-}
-.card.selected {
-    outline: 2px solid #ff69b4;
-    box-shadow: 0 0 18px rgba(255,105,180,0.8);
-}
-
 /* ===== PAGE SECTIONS (LIBRARY vs WISHLIST) ===== */
 .page-section {
     transition: opacity 0.3s ease, transform 0.3s ease;
@@ -287,7 +338,7 @@ h1 {
     pointer-events: auto;
 }
 
-/* ===== POPUP (VIEW BOOK) ===== */
+/* ===== POPUP ===== */
 @keyframes fadeIn {
     from {opacity: 0;}
     to {opacity: 1;}
@@ -359,6 +410,113 @@ h1 {
     border: 1px solid rgba(255,105,180,0.3);
     box-shadow: 0 0 25px rgba(255,105,180,0.5);
 }
+/* ===== ADMIN FORM (add/edit) ===== */
+#adminFormOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,13,20,0.92);
+    backdrop-filter: blur(6px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10001;
+}
+#adminFormCard {
+    background: #2b0f1d;
+    border-radius: 16px;
+    padding: 18px;
+    max-width: 720px;
+    width: 90%;
+    display: flex;
+    gap: 18px;
+    box-shadow: 0 0 24px rgba(255,182,193,0.6);
+    position: relative;
+    animation: slideUp 0.25s ease;
+}
+#adminFormClose {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-size: 18px;
+}
+#adminFormImageWrap {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#adminCoverPreview {
+    width: 150px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 14px rgba(255,182,193,0.7);
+    background: #3b1a28;
+}
+#adminFormFields {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+#adminFormTitle {
+    margin: 0 0 6px;
+    color: #ffb6c1;
+    text-align: center;
+}
+#adminFormFields label {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    color: #f8d1d8;
+}
+#adminFormFields input[type="text"] {
+    margin-top: 3px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #bb7f8f;
+    background: #1e0d14;
+    color: #fff;
+    font-size: 12px;
+}
+#adminReadWrapper {
+    margin-top: 6px;
+    font-size: 12px;
+}
+#adminReadWrapper input {
+    margin-right: 6px;
+}
+#adminFormButtons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+#adminFormSave {
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: none;
+    background: #ff69b4;
+    color: #1e0d14;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255,105,180,0.6);
+}
+#adminFormSave:hover {
+    background: #ffc0cb;
+}
+
+@media (max-width: 600px) {
+    #adminFormCard {
+        flex-direction: column;
+        align-items: center;
+    }
+}
 #popupClose {
     position: absolute;
     top: 12px;
@@ -394,149 +552,30 @@ h1 {
     background: #ffc0cb;
 }
 
-/* ===== ADMIN FLOATING PANEL ===== */
-#adminPanel {
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    z-index: 12000;
-    background: rgba(43,15,29,0.95);
-    border-radius: 12px;
-    padding: 8px;
-    box-shadow: 0 0 16px rgba(0,0,0,0.6);
-    display: none; /* only for admin */
-}
-.admin-panel-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.admin-btn {
-    border: none;
-    border-radius: 999px;
-    padding: 6px 10px;
-    font-size: 12px;
-    cursor: pointer;
-    background: #3b1a28;
-    color: #ffb6c1;
-}
-.admin-btn.primary {
-    background: #ff69b4;
-    color: #1e0d14;
-}
-.admin-btn.danger {
-    background: #8b0000;
-    color: #fff;
-}
-.admin-btn.toggled {
-    box-shadow: 0 0 8px rgba(255,105,180,0.9);
-}
-
-/* Mobile: move admin panel to bottom, full width-ish */
-@media (max-width: 600px) {
-    #adminPanel {
-        top: auto;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        right: auto;
-        max-width: 95%;
-    }
-    .admin-panel-group {
-        justify-content: center;
-    }
-}
-
-/* ===== EDIT / ADD FORM OVERLAY ===== */
-#editOverlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(30,13,20,0.95);
-    backdrop-filter: blur(6px);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 12001;
-}
-#editCard {
-    background: #2b0f1d;
-    border-radius: 16px;
-    padding: 16px;
-    max-width: 780px;
-    width: 95%;
-    display: flex;
-    gap: 16px;
-    box-shadow: 0 0 24px rgba(255,182,193,0.6);
-}
-.edit-cover {
-    flex: 0 0 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-}
-#editCoverPreview {
-    width: 180px;
-    height: 260px;
-    object-fit: cover;
-    border-radius: 10px;
-    background: #3b1a28;
-    box-shadow: 0 0 12px rgba(255,182,193,0.6);
-}
-.edit-form {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-.edit-form label {
-    font-size: 13px;
-    color: #f8d1d8;
-}
-.edit-form input, .edit-form select {
-    width: 100%;
-    padding: 6px 8px;
-    border-radius: 8px;
-    border: 1px solid #bb7f8f;
-    background: #1e0d14;
-    color: #fff;
-    font-size: 13px;
-}
-#editRead {
-    margin-right: 6px;
-}
-.edit-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
+/* Admin controls inside popup */
+#popupAdminControls {
     margin-top: 8px;
+    display: none;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
-.edit-actions button {
-    border: none;
+#popupAdminControls button {
+    padding: 5px 10px;
     border-radius: 999px;
-    padding: 6px 14px;
-    font-size: 13px;
+    border: none;
     cursor: pointer;
-}
-#editSaveBtn {
+    font-size: 12px;
     background: #ff69b4;
     color: #1e0d14;
+    font-weight: 600;
 }
-#editCancelBtn {
-    background: #444;
+#popupAdminControls button.delete {
+    background: #ff5555;
     color: #fff;
 }
-
-/* Mobile: stack edit card */
-@media (max-width: 700px) {
-    #editCard {
-        flex-direction: column;
-        align-items: center;
-    }
-    .edit-cover {
-        flex: none;
-    }
+#popupAdminControls button:hover {
+    opacity: 0.9;
 }
 
 /* ===== BACK TO TOP ===== */
@@ -576,7 +615,7 @@ h1 {
     box-shadow: 0 0 20px rgba(255,182,193,0.6);
 }
 
-/* ===== MOBILE GRID ===== */
+/* ===== MOBILE ===== */
 @media (max-width: 600px) {
     .grid {
         grid-template-columns: repeat(3, 1fr);
@@ -609,59 +648,113 @@ h1 {
     <span></span>
     <span></span>
 </button>
-<div id="menuPanel" class="menu-panel">
-    <button class="menu-item" data-target="library">Library</button>
-    <button class="menu-item" data-target="wishlist">Wishlist</button>
-    <div id="secretLoginRow">
-        <div style="font-size:12px; color:#f8d1d8; margin-bottom:4px;">
-            Admin
-        </div>
-        <button id="loginBtn">Sign in</button>
-        <button id="logoutBtn" style="display:none;">Sign out</button>
-    </div>
-</div>
 
-<!-- ADMIN FLOAT PANEL (only when signed in as admin) -->
-<div id="adminPanel">
-  <div class="admin-panel-group">
-    <button class="admin-btn primary" id="adminAddLibrary">+ Library</button>
-    <button class="admin-btn primary" id="adminAddWishlist">+ Wishlist</button>
-    <button class="admin-btn" id="adminMultiSelect">Multi-select</button>
-    <button class="admin-btn" id="adminMoveToLibrary">To Library</button>
-    <button class="admin-btn" id="adminMoveToWishlist">To Wishlist</button>
-    <button class="admin-btn" id="adminMarkRead">Mark Read</button>
-    <button class="admin-btn" id="adminMarkUnread">Mark Unread</button>
-    <button class="admin-btn danger" id="adminDelete">Delete</button>
-  </div>
+<div id="menuPanel" class="menu-panel">
+    <div class="menu-items">
+        <button class="menu-item" data-target="library">Library</button>
+        <button class="menu-item" data-target="wishlist">Wishlist</button>
+    </div>
+    <div id="authSection" class="auth-section" style="display:none;">
+        <div id="authStatus" class="auth-section-status">Not signed in</div>
+        <button id="loginBtn" class="auth-btn">Sign in</button>
+        <button id="logoutBtn" class="auth-btn secondary" style="display:none;">Sign out</button>
+    </div>
 </div>
 
 <div class="container">
-<h1 id="pageTitle">Tyler's Manga Library</h1>
+    <h1 id="pageTitle">Tyler's Manga Library</h1>
 
-<!-- LIBRARY SECTION -->
-<div id="librarySection" class="page-section active">
-    <div class="counter" id="bookCountTop">
-        <span class="total" id="totalBooksTop"></span>
-        <span class="read" id="readBooksTop"></span>
+    <!-- Admin bar (only shown for admin when signed in) -->
+    <div id="adminBar">
+        <span>Admin tools</span>
+        <div id="adminBarButtons">
+            <button id="adminAddLibrary">Add Library Book</button>
+            <button id="adminAddWishlist">Add Wishlist Item</button>
+        </div>
     </div>
-    <input type="text" id="searchInput" placeholder="Search by title, author, publisher, ISBN...">
-    <div class="grid" id="bookGrid"></div>
-    <div class="counter" id="bookCountBottom">
-        <span class="total" id="totalBooksBottom"></span>
-        <span class="read" id="readBooksBottom"></span>
+    
+    <!-- LIBRARY SECTION -->
+    <div id="librarySection" class="page-section active">
+        <div class="counter" id="bookCountTop">
+            <span class="total" id="totalBooksTop"></span>
+            <span class="read" id="readBooksTop"></span>
+        </div>
+        <input type="text" id="searchInput" placeholder="Search by title, author, publisher, ISBN...">
+        <div class="grid" id="bookGrid"></div>
+        <div class="counter" id="bookCountBottom">
+            <span class="total" id="totalBooksBottom"></span>
+            <span class="read" id="readBooksBottom"></span>
+        </div>
     </div>
+
+    <!-- WISHLIST SECTION -->
+    <div id="wishlistSection" class="page-section hidden">
+        <div class="counter">
+            <span class="total" id="wishlistCount"></span>
+        </div>
+        <div class="grid" id="wishlistGrid"></div>
+    </div>
+    
 </div>
 
-<!-- WISHLIST SECTION -->
-<div id="wishlistSection" class="page-section hidden">
-    <div class="counter">
-        <span class="total" id="wishlistCount"></span>
+<!-- Admin Add/Edit Form Overlay -->
+<div id="adminFormOverlay" style="display:none;">
+  <div id="adminFormCard">
+    <button id="adminFormClose" title="Close">&times;</button>
+    <div id="adminFormImageWrap">
+      <img id="adminCoverPreview" src="https://via.placeholder.com/150x220?text=No+Cover" alt="Cover">
     </div>
-    <div class="grid" id="wishlistGrid"></div>
-</div>
+    <div id="adminFormFields">
+      <h2 id="adminFormTitle">Add Book</h2>
+
+      <label>
+        Title
+        <input type="text" id="adminTitleInput" autocomplete="off">
+      </label>
+
+      <label>
+        Authors
+        <input type="text" id="adminAuthorsInput" autocomplete="off">
+      </label>
+
+      <label>
+        Publisher
+        <input type="text" id="adminPublisherInput" autocomplete="off">
+      </label>
+
+      <label>
+        Date
+        <input type="text" id="adminDateInput" placeholder="e.g. 2022 or 01/15/2022" autocomplete="off">
+      </label>
+
+      <label>
+        ISBN
+        <input type="text" id="adminIsbnInput" autocomplete="off">
+      </label>
+
+      <label>
+        Cover URL
+        <input type="text" id="adminCoverInput" autocomplete="off" placeholder="Paste image URL here">
+      </label>
+
+      <label id="adminAmazonWrapper" style="display:none;">
+        Amazon URL (wishlist only)
+        <input type="text" id="adminAmazonInput" autocomplete="off" placeholder="https://www.amazon.com/...">
+      </label>
+
+      <label id="adminReadWrapper" style="display:none;">
+        <input type="checkbox" id="adminReadInput">
+        Mark as read (library only)
+      </label>
+
+      <div id="adminFormButtons">
+        <button id="adminFormSave">Save</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- Popup overlay for viewing book -->
+<!-- Popup overlay -->
 <div id="popupOverlay">
     <div id="popupContent">
         <button id="popupClose" title="Close">&times;</button>
@@ -671,70 +764,36 @@ h1 {
             <div class="meta" id="popupMeta"></div>
             <div class="isbn" id="popupISBN"></div>
             <button id="popupBuy">Buy on Amazon</button>
+            <div id="popupAdminControls">
+                <button id="popupToggleRead">Toggle Read</button>
+                <button id="popupEdit">Edit</button>
+                <button id="popupDelete" class="delete">Delete</button>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Edit/Add overlay -->
-<div id="editOverlay">
-  <div id="editCard">
-    <div class="edit-cover">
-      <img id="editCoverPreview" src="https://via.placeholder.com/150x220?text=No+Cover" alt="Cover Preview">
-    </div>
-    <div class="edit-form">
-      <label>Title
-        <input id="editTitle" list="titleSuggestions" autocomplete="off">
-      </label>
-      <datalist id="titleSuggestions"></datalist>
-
-      <label>Authors
-        <input id="editAuthors" list="authorSuggestions" autocomplete="off">
-      </label>
-      <datalist id="authorSuggestions"></datalist>
-
-      <label>Publisher
-        <input id="editPublisher" list="publisherSuggestions" autocomplete="off">
-      </label>
-      <datalist id="publisherSuggestions"></datalist>
-
-      <label>Date
-        <input id="editDate" placeholder="mm/dd/yyyy or yyyy">
-      </label>
-
-      <label>ISBN
-        <input id="editISBN">
-      </label>
-
-      <label>Cover URL
-        <input id="editCover">
-      </label>
-
-      <label>Collection
-        <select id="editCollection">
-          <option value="library">Library</option>
-          <option value="wishlist">Wishlist</option>
-        </select>
-      </label>
-
-      <label style="margin-top:4px;">
-        <input type="checkbox" id="editRead"> Mark as read
-      </label>
-
-      <div class="edit-actions">
-        <button id="editCancelBtn">Cancel</button>
-        <button id="editSaveBtn">Save</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <button id="backToTop" title="Back to Top"></button>
 
-<!-- FIREBASE + APP LOGIC -->
+<!-- Firebase + App Logic -->
 <script type="module">
+  // ===== FIREBASE CONFIG (your live config) =====
+  const firebaseConfig = {
+    apiKey: "AIzaSyCOOnlmEcAcJywsS93LLfLSywy9ENqnppM",
+    authDomain: "tyler-manga-library.firebaseapp.com",
+    projectId: "tyler-manga-library",
+    storageBucket: "tyler-manga-library.firebasestorage.app",
+    messagingSenderId: "307412068362",
+    appId: "1:307412068362:web:6cfe5666187439dfa757f3"
+  };
+
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-  import { 
-    getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged 
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
   import {
     getFirestore,
@@ -746,245 +805,182 @@ h1 {
     doc
   } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCOOnlmEcAcJywsS93LLfLSywy9ENqnppM",
-    authDomain: "tyler-manga-library.firebaseapp.com",
-    projectId: "tyler-manga-library",
-    storageBucket: "tyler-manga-library.firebasestorage.app",
-    messagingSenderId: "307412068362",
-    appId: "1:307412068362:web:6cfe5666187439dfa757f3"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+  // ===== INIT =====
+  const app   = initializeApp(firebaseConfig);
+  const auth  = getAuth(app);
+  const db    = getFirestore(app);
   const provider = new GoogleAuthProvider();
-  const db = getFirestore(app);
 
+  // ===== GLOBAL STATE =====
   const ADMIN_EMAIL = "imokissick@gmail.com";
 
-  // DOM references
+  let isAdmin = false;
+  let libraryBooks = [];
+  let wishlistItems = [];
+  let readClickState = 0; // 0 = default, 1 = only read, 2 = only unread
+  let secretClickCount = 0;
+  let secretTimer = null;
+  let currentPopupBook = null;
+
+  // DOM refs
+  const menuToggle      = document.getElementById('menuToggle');
+  const menuPanel       = document.getElementById('menuPanel');
+  const pageTitle       = document.getElementById('pageTitle');
+  const librarySection  = document.getElementById('librarySection');
+  const wishlistSection = document.getElementById('wishlistSection');
+
+  const totalTop        = document.getElementById('totalBooksTop');
+  const totalBottom     = document.getElementById('totalBooksBottom');
+  const readTop         = document.getElementById('readBooksTop');
+  const readBottom      = document.getElementById('readBooksBottom');
+  const wishlistCount   = document.getElementById('wishlistCount');
+
   const bookGrid        = document.getElementById('bookGrid');
   const wishlistGrid    = document.getElementById('wishlistGrid');
-  const totalBooksTop   = document.getElementById('totalBooksTop');
-  const totalBooksBottom= document.getElementById('totalBooksBottom');
-  const readBooksTop    = document.getElementById('readBooksTop');
-  const readBooksBottom = document.getElementById('readBooksBottom');
-  const wishlistCountEl = document.getElementById('wishlistCount');
+
   const searchInput     = document.getElementById('searchInput');
 
+  const backToTopBtn    = document.getElementById('backToTop');
+
+  const authSection     = document.getElementById('authSection');
+  const authStatus      = document.getElementById('authStatus');
+  const loginBtn        = document.getElementById('loginBtn');
+  const logoutBtn       = document.getElementById('logoutBtn');
+
+  const adminBar        = document.getElementById('adminBar');
+  const adminAddLibrary = document.getElementById('adminAddLibrary');
+  const adminAddWishlist= document.getElementById('adminAddWishlist');
+
   const popupOverlay    = document.getElementById('popupOverlay');
+  const popupContent    = document.getElementById('popupContent');
   const popupImage      = document.getElementById('popupImage');
   const popupTitle      = document.getElementById('popupTitle');
   const popupMeta       = document.getElementById('popupMeta');
   const popupISBN       = document.getElementById('popupISBN');
-  const popupBuy        = document.getElementById('popupBuy');
   const popupClose      = document.getElementById('popupClose');
+  const popupBuy        = document.getElementById('popupBuy');
+  const popupAdmin      = document.getElementById('popupAdminControls');
+  const popupToggleRead = document.getElementById('popupToggleRead');
+  const popupEdit       = document.getElementById('popupEdit');
+  const popupDelete     = document.getElementById('popupDelete');
 
-  const adminPanel      = document.getElementById('adminPanel');
-  const adminAddLibrary = document.getElementById('adminAddLibrary');
-  const adminAddWishlist= document.getElementById('adminAddWishlist');
-  const adminMultiSelect= document.getElementById('adminMultiSelect');
-  const adminMoveToLib  = document.getElementById('adminMoveToLibrary');
-  const adminMoveToWish = document.getElementById('adminMoveToWishlist');
-  const adminMarkRead   = document.getElementById('adminMarkRead');
-  const adminMarkUnread = document.getElementById('adminMarkUnread');
-  const adminDelete     = document.getElementById('adminDelete');
+// Admin form DOM refs
+  const adminFormOverlay   = document.getElementById('adminFormOverlay');
+  const adminFormCard      = document.getElementById('adminFormCard');
+  const adminFormClose     = document.getElementById('adminFormClose');
+  const adminFormTitle     = document.getElementById('adminFormTitle');
+  const adminCoverPreview  = document.getElementById('adminCoverPreview');
 
-  const editOverlay     = document.getElementById('editOverlay');
-  const editCard        = document.getElementById('editCard');
-  const editTitle       = document.getElementById('editTitle');
-  const editAuthors     = document.getElementById('editAuthors');
-  const editPublisher   = document.getElementById('editPublisher');
-  const editDate        = document.getElementById('editDate');
-  const editISBN        = document.getElementById('editISBN');
-  const editCover       = document.getElementById('editCover');
-  const editCoverPreview= document.getElementById('editCoverPreview');
-  const editCollection  = document.getElementById('editCollection');
-  const editRead        = document.getElementById('editRead');
-  const editSaveBtn     = document.getElementById('editSaveBtn');
-  const editCancelBtn   = document.getElementById('editCancelBtn');
+  const adminTitleInput    = document.getElementById('adminTitleInput');
+  const adminAuthorsInput  = document.getElementById('adminAuthorsInput');
+  const adminPublisherInput= document.getElementById('adminPublisherInput');
+  const adminDateInput     = document.getElementById('adminDateInput');
+  const adminIsbnInput     = document.getElementById('adminIsbnInput');
+  const adminCoverInput    = document.getElementById('adminCoverInput');
+  const adminAmazonWrapper = document.getElementById('adminAmazonWrapper');
+  const adminAmazonInput   = document.getElementById('adminAmazonInput');
+  const adminReadWrapper   = document.getElementById('adminReadWrapper');
+  const adminReadInput     = document.getElementById('adminReadInput');
+  const adminFormSave      = document.getElementById('adminFormSave');
 
-  const titleSuggestionsDL    = document.getElementById('titleSuggestions');
-  const authorSuggestionsDL   = document.getElementById('authorSuggestions');
-  const publisherSuggestionsDL= document.getElementById('publisherSuggestions');
+  // state for current form usage
+  let adminFormMode = "add"; // "add" or "edit"
+  let adminFormCollection = "library"; // "library" or "wishlist"
+  let adminFormDocId = null;
 
-  const loginBtn        = document.getElementById('loginBtn');
-  const logoutBtn       = document.getElementById('logoutBtn');
-  const secretLoginRow  = document.getElementById('secretLoginRow');
+  // ===== HAMBURGER MENU =====
+  menuToggle.addEventListener('click', () => {
+    menuToggle.classList.toggle('active');
+    menuPanel.classList.toggle('open');
+  });
 
-  // Library / Wishlist caches
-  let libraryBooks  = [];   // {id, Title, Authors, ...}
-  let wishlistBooks = [];
-  let isAdmin       = false;
-
-  // Multi-select state
-  let multiSelectMode = false;
-  // { key: "<collection>:<id>", coll: "library"/"wishlist", id: string }
-  let selectedItems = new Map();
-
-  // Suggestion index
-  const suggest = {
-    titles: new Set(),
-    authorsBySeries: new Map(),
-    publishersBySeries: new Map()
-  };
-
-  // Current editing context
-  let editMode = null; // "add" or "edit"
-  let editSourceCollection = null; // "library" or "wishlist"
-  let editBookId = null;
-
-  /* ===== UTILS ===== */
-  function seriesKeyFromTitle(t) {
-    t = (t || "").trim();
-    const m = t.match(/^(.*?),?\s*(?:Vol\.|Volume)\s*(\d+)\b/i);
-    if (!m) return t.toLowerCase();
-    return m[1].trim().toLowerCase();
+  function switchSection(target) {
+    if (target === 'library') {
+      pageTitle.textContent = "Tyler's Manga Library";
+      librarySection.classList.add('active');
+      librarySection.classList.remove('hidden');
+      wishlistSection.classList.remove('active');
+      wishlistSection.classList.add('hidden');
+    } else {
+      pageTitle.textContent = "Wishlist";
+      librarySection.classList.remove('active');
+      librarySection.classList.add('hidden');
+      wishlistSection.classList.add('active');
+      wishlistSection.classList.remove('hidden');
+    }
+    menuToggle.classList.remove('active');
+    menuPanel.classList.remove('open');
   }
 
+  document.querySelectorAll('.menu-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-target');
+      switchSection(target);
+    });
+  });
+
+  // ===== SECRET SIGN-IN TRIGGER (Total Books clicked 5x) =====
+  function handleSecretClick() {
+    secretClickCount++;
+    if (secretTimer) clearTimeout(secretTimer);
+    secretTimer = setTimeout(() => {
+      secretClickCount = 0;
+    }, 2000); // 2s window
+
+    if (secretClickCount >= 5) {
+      authSection.style.display = "block";
+      secretClickCount = 0;
+    }
+  }
+
+  totalTop.addEventListener('click', handleSecretClick);
+
+  // ===== SORTING: Series → Vol # =====
   function parseTitleForSort(t) {
     t = (t || "").trim();
-    let m = t.match(/^(.*?),?\s*(?:Vol\.|Volume)\s*(\d+)\b/i);
+    const m = t.match(/^(.*?),?\s*(?:Vol\.|Volume)\s*(\d+)\b/i);
     if (!m) return { name: t.toLowerCase(), vol: 0 };
-    return { name: m[1].trim().toLowerCase(), vol: parseInt(m[2] || "0", 10) };
+    return {
+      name: m[1].trim().toLowerCase(),
+      vol: parseInt(m[2] || "0", 10)
+    };
   }
 
-  function addToSuggest(book) {
-    if (!book.Title) return;
-    const title = book.Title;
-    const key = seriesKeyFromTitle(title);
-
-    suggest.titles.add(title);
-
-    const aSet = suggest.authorsBySeries.get(key) || new Set();
-    const pSet = suggest.publishersBySeries.get(key) || new Set();
-
-    if (book.Authors && book.Authors !== "Unknown") {
-      book.Authors.split(",").map(a => a.trim()).filter(Boolean).forEach(a => aSet.add(a));
-    }
-    if (book.Publisher && book.Publisher !== "Unknown") {
-      book.Publisher.split(/[,&]/).map(p => p.trim()).filter(Boolean).forEach(p => pSet.add(p));
-    }
-
-    suggest.authorsBySeries.set(key, aSet);
-    suggest.publishersBySeries.set(key, pSet);
-  }
-
-  function rebuildSuggestionLists() {
-    // Title suggestions (all titles)
-    titleSuggestionsDL.innerHTML = "";
-    Array.from(suggest.titles).sort((a,b)=>a.localeCompare(b)).forEach(t => {
-      const opt = document.createElement("option");
-      opt.value = t;
-      titleSuggestionsDL.appendChild(opt);
-    });
-  }
-
-  function updateAuthorPublisherSuggestionsForTitle(title) {
-    const key = seriesKeyFromTitle(title);
-    const aSet = suggest.authorsBySeries.get(key) || new Set();
-    const pSet = suggest.publishersBySeries.get(key) || new Set();
-
-    authorSuggestionsDL.innerHTML = "";
-    publisherSuggestionsDL.innerHTML = "";
-
-    Array.from(aSet).sort((a,b)=>a.localeCompare(b)).forEach(a => {
-      const opt = document.createElement("option");
-      opt.value = a;
-      authorSuggestionsDL.appendChild(opt);
-    });
-
-    Array.from(pSet).sort((a,b)=>a.localeCompare(b)).forEach(p => {
-      const opt = document.createElement("option");
-      opt.value = p;
-      publisherSuggestionsDL.appendChild(opt);
-    });
-  }
-
-  /* ===== FIRESTORE LOADERS ===== */
+  // ===== LOAD LIBRARY FROM FIRESTORE =====
   async function loadLibraryFromFirestore() {
     const snap = await getDocs(collection(db, "library"));
     libraryBooks = [];
     snap.forEach(docSnap => {
-      const d = docSnap.data();
+      const data = docSnap.data();
       libraryBooks.push({
         id: docSnap.id,
-        Title: d.title || "",
-        Authors: d.authors || "Unknown",
-        Publisher: d.publisher || "Unknown",
-        Date: d.date || "Unknown",
-        Cover: d.cover || "",
-        ISBN: d.isbn || "",
-        Read: !!d.read,
-        AmazonURL: d.amazonURL || ""
+        Title: data.title || "",
+        Authors: data.authors || "Unknown",
+        Publisher: data.publisher || "Unknown",
+        Date: data.date || "Unknown",
+        Cover: data.cover || "",
+        ISBN: data.isbn || "",
+        Read: !!data.read,
+        kind: "library"
       });
     });
 
-    // sort by series then volume
+    // Sort
     libraryBooks.sort((a, b) => {
       const aP = parseTitleForSort(a.Title);
       const bP = parseTitleForSort(b.Title);
       const cmp = aP.name.localeCompare(bP.name);
-      return cmp !== 0 ? cmp : aP.vol - bP.vol;
+      return cmp !== 0 ? cmp : (aP.vol - bP.vol);
     });
 
-    // add to suggestion index
-    libraryBooks.forEach(addToSuggest);
-  }
-
-  async function loadWishlistFromFirestore() {
-    const snap = await getDocs(collection(db, "wishlist"));
-    wishlistBooks = [];
-    snap.forEach(docSnap => {
-      const d = docSnap.data();
-      wishlistBooks.push({
-        id: docSnap.id,
-        Title: d.title || "",
-        Authors: d.authors || "Unknown",
-        Publisher: d.publisher || "Unknown",
-        Date: d.date || "Unknown",
-        Cover: d.cover || "",
-        ISBN: d.isbn || "",
-        Read: !!d.read,
-        AmazonURL: d.amazonURL || ""
-      });
-    });
-
-    // same sorting as library
-    wishlistBooks.sort((a, b) => {
-      const aP = parseTitleForSort(a.Title);
-      const bP = parseTitleForSort(b.Title);
-      const cmp = aP.name.localeCompare(bP.name);
-      return cmp !== 0 ? cmp : aP.vol - bP.vol;
-    });
-
-    wishlistBooks.forEach(addToSuggest);
-  }
-
-  function renderLibrary() {
+    // Render
     bookGrid.innerHTML = "";
-    // total counters
-    totalBooksTop.textContent    = `Total Books: ${libraryBooks.length}`;
-    totalBooksBottom.textContent = `Total Books: ${libraryBooks.length}`;
-    const readCount = libraryBooks.filter(b => b.Read).length;
-    readBooksTop.textContent    = `Books Read: ${readCount}`;
-    readBooksBottom.textContent = `Books Read: ${readCount}`;
-
-    const searchVal = (searchInput.value || "").toLowerCase();
-
+    let readCount = 0;
     libraryBooks.forEach(b => {
-      const card = document.createElement("div");
-      card.className = "card" + (b.Read ? " read" : "");
-      card.dataset.id = b.id;
-      card.dataset.collection = "library";
-
-      const checkbox = document.createElement("div");
-      checkbox.className = "card-select-checkbox";
-      checkbox.textContent = "✓";
-      card.appendChild(checkbox);
-
-      const inner = document.createElement("div");
-      inner.innerHTML = `
+      if (b.Read) readCount++;
+      const card = document.createElement('div');
+      card.className = 'card' + (b.Read ? ' read' : '');
+      card.innerHTML = `
         <img src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
         <div class="title">${b.Title || ''}</div>
         <div class="meta">${
@@ -994,45 +990,50 @@ h1 {
         }</div>
         <div class="isbn">${b.ISBN || ''}</div>
       `;
-      card.appendChild(inner);
-
-      const textToSearch = card.innerText.toLowerCase();
-      if (searchVal && !textToSearch.includes(searchVal)) {
-        card.style.display = "none";
-      }
-
-      card.addEventListener("click", (evt) => {
-        if (multiSelectMode) {
-          evt.stopPropagation();
-          toggleCardSelection(card, "library", b.id);
-        } else {
-          showPopup(b);
-        }
-      });
-
+      card.addEventListener('click', () => showPopup(b));
       bookGrid.appendChild(card);
     });
 
-    updateMultiSelectVisuals();
+    totalTop.textContent    = `Total Books: ${libraryBooks.length}`;
+    totalBottom.textContent = `Total Books: ${libraryBooks.length}`;
+    readTop.textContent     = `Books Read: ${readCount}`;
+    readBottom.textContent  = `Books Read: ${readCount}`;
+
+    updateCounters();
   }
 
-  function renderWishlist() {
+  // ===== LOAD WISHLIST FROM FIRESTORE =====
+  async function loadWishlistFromFirestore() {
+    const snap = await getDocs(collection(db, "wishlist"));
+    wishlistItems = [];
+    snap.forEach(docSnap => {
+      const data = docSnap.data();
+      wishlistItems.push({
+        id: docSnap.id,
+        Title: data.title || "",
+        Authors: data.authors || "Unknown",
+        Publisher: data.publisher || "Unknown",
+        Date: data.date || "Unknown",
+        Cover: data.cover || "",
+        ISBN: data.isbn || "",
+        AmazonURL: data.amazonURL || "",
+        kind: "wishlist"
+      });
+    });
+
+    // same sorting as library
+    wishlistItems.sort((a, b) => {
+      const aP = parseTitleForSort(a.Title);
+      const bP = parseTitleForSort(b.Title);
+      const cmp = aP.name.localeCompare(bP.name);
+      return cmp !== 0 ? cmp : (aP.vol - bP.vol);
+    });
+
     wishlistGrid.innerHTML = "";
-    wishlistCountEl.textContent = `Wishlist Items: ${wishlistBooks.length}`;
-
-    wishlistBooks.forEach(b => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.dataset.id = b.id;
-      card.dataset.collection = "wishlist";
-
-      const checkbox = document.createElement("div");
-      checkbox.className = "card-select-checkbox";
-      checkbox.textContent = "✓";
-      card.appendChild(checkbox);
-
-      const inner = document.createElement("div");
-      inner.innerHTML = `
+    wishlistItems.forEach(b => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
         <img src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
         <div class="title">${b.Title || ''}</div>
         <div class="meta">${
@@ -1041,253 +1042,193 @@ h1 {
           (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '')
         }</div>
       `;
-      card.appendChild(inner);
-
-      card.addEventListener("click", (evt) => {
-        if (multiSelectMode) {
-          evt.stopPropagation();
-          toggleCardSelection(card, "wishlist", b.id);
-        } else {
-          showPopup(b);
-        }
-      });
-
+      card.addEventListener('click', () => showPopup(b));
       wishlistGrid.appendChild(card);
     });
 
-    updateMultiSelectVisuals();
+    wishlistCount.textContent = `Wishlist Items: ${wishlistItems.length}`;
   }
 
-  function updateCountersOnly() {
-    const readCount = libraryBooks.filter(b => b.Read).length;
-    totalBooksTop.textContent    = `Total Books: ${libraryBooks.length}`;
-    totalBooksBottom.textContent = `Total Books: ${libraryBooks.length}`;
-    readBooksTop.textContent     = `Books Read: ${readCount}`;
-    readBooksBottom.textContent  = `Books Read: ${readCount}`;
+  async function reloadAll() {
+    await loadLibraryFromFirestore();
+    await loadWishlistFromFirestore();
   }
 
-  /* ===== POPUP VIEW ===== */
+  // ===== LIBRARY FILTER & COUNTERS =====
+  function searchLibrary() {
+    const input = searchInput.value.toLowerCase();
+    const cards = bookGrid.getElementsByClassName('card');
+
+    for (const card of cards) {
+      const isRead = card.classList.contains('read');
+
+      let visibleBySort = false;
+      if (readClickState === 0) visibleBySort = true;
+      else if (readClickState === 1 && isRead) visibleBySort = true;
+      else if (readClickState === 2 && !isRead) visibleBySort = true;
+
+      const visibleBySearch = input === '' || card.innerText.toLowerCase().includes(input);
+
+      card.style.display = (visibleBySort && visibleBySearch) ? '' : 'none';
+    }
+
+    updateCounters();
+  }
+
+  function updateCounters() {
+    const cards = Array.from(bookGrid.querySelectorAll('.card'));
+    if (!readTop || !readBottom) return;
+
+    if (readClickState === 0) {
+      const totalRead = cards.filter(card => card.classList.contains('read')).length;
+      readTop.innerText = `Books Read: ${totalRead}`;
+      readBottom.innerText = `Books Read: ${totalRead}`;
+      readTop.style.color = '';
+      readBottom.style.color = '';
+    } else {
+      let readCount = 0;
+      let unreadCount = 0;
+      for (const card of cards) {
+        if (card.style.display !== 'none') {
+          if (card.classList.contains('read')) readCount++;
+          else unreadCount++;
+        }
+      }
+      if (readClickState === 1) {
+        readTop.innerText = `Books Read: ${readCount}`;
+        readBottom.innerText = `Books Read: ${readCount}`;
+        readTop.style.color = '#32CD32';
+        readBottom.style.color = '#32CD32';
+      } else if (readClickState === 2) {
+        readTop.innerText = `Books Not Read: ${unreadCount}`;
+        readBottom.innerText = `Books Not Read: ${unreadCount}`;
+        readTop.style.color = '#FF5555';
+        readBottom.style.color = '#FF5555';
+      }
+    }
+  }
+
+  function toggleReadFilter() {
+    readClickState = (readClickState + 1) % 3;
+    searchLibrary();
+  }
+
+  readTop.addEventListener('click', toggleReadFilter);
+  readBottom.addEventListener('click', toggleReadFilter);
+  searchInput.addEventListener('input', searchLibrary);
+
+  // ===== POPUP =====
   function showPopup(book) {
-    popupImage.src = book.Cover || "https://via.placeholder.com/150x220?text=No+Cover";
-    popupTitle.textContent = book.Title || "";
-    let metaHtml = "";
-    if (book.Authors && book.Authors!=="Unknown") metaHtml += book.Authors + "<br>";
-    if (book.Publisher && book.Publisher!=="Unknown") metaHtml += book.Publisher + "<br>";
-    if (book.Date && book.Date!=="Unknown") metaHtml += book.Date + "<br>";
-    if (book.Read) metaHtml += '<br><span style="color:#6fcf97;">✔ Read</span>';
-    popupMeta.innerHTML = metaHtml;
-    popupISBN.textContent = book.ISBN || "";
+    currentPopupBook = book;
+    popupOverlay.style.display = 'flex';
+
+    if (book.kind === "library" && (book.Read === true || book.Read === "true")) {
+      popupContent.classList.add('read');
+    } else {
+      popupContent.classList.remove('read');
+    }
+    if (popupEdit) {
+      popupEdit.addEventListener('click', () => {
+        if (!currentPopupBook) return;
+
+        openAdminForm({
+           mode: "edit",
+           collection: currentPopupBook.kind, // <-- always correct
+           book: currentPopupBook
+       });
+    });
+
+    }
+
+    popupImage.src = book.Cover || 'https://via.placeholder.com/150x220?text=No+Cover';
+    popupTitle.innerHTML = book.Title || '';
+    let meta = '';
+    if (book.Authors && book.Authors !== 'Unknown') meta += book.Authors + '<br>';
+    if (book.Publisher && book.Publisher !== 'Unknown') meta += book.Publisher + '<br>';
+    if (book.Date && book.Date !== 'Unknown') meta += book.Date + '<br>';
+    popupMeta.innerHTML = meta;
+    popupISBN.innerHTML = book.ISBN || '';
+
+    if (book.kind === "library" && (book.Read === true || book.Read === "true")) {
+      popupMeta.innerHTML += '<br><span style="color:#6fcf97;">✔ Read</span>';
+    }
 
     if (book.AmazonURL) {
-      popupBuy.style.display = "inline-block";
-      popupBuy.onclick = () => window.open(book.AmazonURL, "_blank");
+      popupBuy.style.display = 'inline-block';
+      popupBuy.onclick = () => window.open(book.AmazonURL, '_blank');
     } else {
-      popupBuy.style.display = "none";
+      popupBuy.style.display = 'none';
       popupBuy.onclick = null;
     }
 
-    popupOverlay.style.display = "flex";
-  }
-  window.showPopup = showPopup; // in case you ever need it globally
-
-  popupClose.addEventListener("click", () => {
-    popupOverlay.style.display = "none";
-  });
-  popupOverlay.addEventListener("click", (e) => {
-    if (e.target === popupOverlay) popupOverlay.style.display = "none";
-  });
-
-  /* ===== SEARCH (LIBRARY ONLY) ===== */
-  searchInput.addEventListener("input", () => {
-    renderLibrary();
-  });
-
-  /* ===== MULTI-SELECT ===== */
-  function toggleCardSelection(card, coll, id) {
-    const key = coll + ":" + id;
-    if (selectedItems.has(key)) {
-      selectedItems.delete(key);
-      card.classList.remove("selected");
+    // Admin controls
+    if (isAdmin) {
+      popupAdmin.style.display = 'flex';
+      if (book.kind === "library") {
+        popupToggleRead.style.display = 'inline-block';
+      } else {
+        popupToggleRead.style.display = 'none';
+      }
     } else {
-      selectedItems.set(key, { coll, id });
-      card.classList.add("selected");
+      popupAdmin.style.display = 'none';
     }
   }
 
-  function updateMultiSelectVisuals() {
-    const allCards = document.querySelectorAll(".card");
-    allCards.forEach(card => {
-      if (multiSelectMode) {
-        card.classList.add("multi-select");
-      } else {
-        card.classList.remove("multi-select");
-        card.classList.remove("selected");
-      }
+  popupClose.addEventListener('click', () => {
+    popupOverlay.style.display = 'none';
+  });
+  popupOverlay.addEventListener('click', (e) => {
+    if (e.target === popupOverlay) {
+      popupOverlay.style.display = 'none';
+    }
+  });
+
+  // ===== ADMIN ACTIONS (popup) =====
+  async function adminToggleRead() {
+    if (!currentPopupBook || currentPopupBook.kind !== "library") return;
+    const newVal = !currentPopupBook.Read;
+    try {
+      await updateDoc(doc(db, "library", currentPopupBook.id), { read: newVal });
+      await loadLibraryFromFirestore();
+      // keep popup open but refresh its state
+      const updated = libraryBooks.find(b => b.id === currentPopupBook.id);
+      if (updated) showPopup(updated);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update read status.");
+    }
+  }
+
+  async function adminDeleteCurrent() {
+    if (!currentPopupBook) return;
+    const colName = currentPopupBook.kind === "wishlist" ? "wishlist" : "library";
+    if (!confirm(`Delete this item from ${colName}?`)) return;
+    try {
+      await deleteDoc(doc(db, colName, currentPopupBook.id));
+      popupOverlay.style.display = 'none';
+      await reloadAll();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete item.");
+    }
+  }
+
+  popupToggleRead.addEventListener('click', adminToggleRead);
+  popupDelete.addEventListener('click', adminDeleteCurrent);
+
+  if (adminAddLibrary) {
+    adminAddLibrary.addEventListener('click', () => {
+      openAdminForm({ mode: "add", collection: "library" });
     });
-    if (!multiSelectMode) {
-      selectedItems.clear();
-    }
-    adminMultiSelect.classList.toggle("toggled", multiSelectMode);
+  }
+  if (adminAddWishlist) {
+    adminAddWishlist.addEventListener('click', () => {
+      openAdminForm({ mode: "add", collection: "wishlist" });
+    });
   }
 
-  async function moveSelected(toCollection) {
-    const items = Array.from(selectedItems.values());
-    for (const item of items) {
-      if (item.coll === toCollection) continue;
-      // find book data
-      const sourceArr = item.coll === "library" ? libraryBooks : wishlistBooks;
-      const idx = sourceArr.findIndex(b => b.id === item.id);
-      if (idx === -1) continue;
-      const book = sourceArr[idx];
-      // data shape for Firestore
-      const payload = {
-        title: book.Title,
-        authors: book.Authors,
-        publisher: book.Publisher,
-        date: book.Date,
-        cover: book.Cover,
-        isbn: book.ISBN,
-        read: book.Read,
-        amazonURL: book.AmazonURL || ""
-      };
-      // add to target
-      await addDoc(collection(db, toCollection), payload);
-      // delete from source
-      await deleteDoc(doc(db, item.coll, item.id));
-    }
-    await refreshAllData();
-  }
-
-  async function markSelectedReadFlag(flag) {
-    const items = Array.from(selectedItems.values());
-    for (const item of items) {
-      await updateDoc(doc(db, item.coll, item.id), { read: flag });
-    }
-    await refreshAllData();
-  }
-
-  async function deleteSelected() {
-    const items = Array.from(selectedItems.values());
-    for (const item of items) {
-      await deleteDoc(doc(db, item.coll, item.id));
-    }
-    await refreshAllData();
-  }
-
-  /* ===== EDIT / ADD FORM ===== */
-  function openEditForm(mode, sourceCollection, book) {
-    editMode = mode;              // "add" or "edit"
-    editSourceCollection = sourceCollection; // "library" or "wishlist"
-    editBookId = book ? book.id : null;
-
-    if (book) {
-      editTitle.value     = book.Title || "";
-      editAuthors.value   = book.Authors || "";
-      editPublisher.value = book.Publisher || "";
-      editDate.value      = book.Date || "";
-      editISBN.value      = book.ISBN || "";
-      editCover.value     = book.Cover || "";
-      editCoverPreview.src= book.Cover || "https://via.placeholder.com/150x220?text=No+Cover";
-      editCollection.value= sourceCollection;
-      editRead.checked    = !!book.Read;
-    } else {
-      editTitle.value     = "";
-      editAuthors.value   = "";
-      editPublisher.value = "";
-      editDate.value      = "";
-      editISBN.value      = "";
-      editCover.value     = "";
-      editCoverPreview.src= "https://via.placeholder.com/150x220?text=No+Cover";
-      editCollection.value= sourceCollection || "library";
-      editRead.checked    = false;
-    }
-
-    updateAuthorPublisherSuggestionsForTitle(editTitle.value);
-    editOverlay.style.display = "flex";
-  }
-
-  function closeEditForm() {
-    editOverlay.style.display = "none";
-  }
-
-  editCancelBtn.addEventListener("click", () => {
-    closeEditForm();
-  });
-  editOverlay.addEventListener("click", (e) => {
-    if (e.target === editOverlay) closeEditForm();
-  });
-
-  editCover.addEventListener("input", () => {
-    const url = editCover.value.trim();
-    editCoverPreview.src = url || "https://via.placeholder.com/150x220?text=No+Cover";
-  });
-
-  editTitle.addEventListener("input", () => {
-    updateAuthorPublisherSuggestionsForTitle(editTitle.value);
-  });
-
-  editSaveBtn.addEventListener("click", async () => {
-    const payload = {
-      title: editTitle.value.trim(),
-      authors: editAuthors.value.trim() || "Unknown",
-      publisher: editPublisher.value.trim() || "Unknown",
-      date: editDate.value.trim() || "Unknown",
-      cover: editCover.value.trim(),
-      isbn: editISBN.value.trim(),
-      read: !!editRead.checked,
-      amazonURL: ""  // can fill later if you want
-    };
-
-    if (!payload.title) {
-      alert("Title is required");
-      return;
-    }
-
-    const targetCollection = editCollection.value;
-
-    if (editMode === "add") {
-      await addDoc(collection(db, targetCollection), payload);
-    } else if (editMode === "edit" && editBookId) {
-      // if collection changed, create in new and delete old
-      if (targetCollection !== editSourceCollection) {
-        await addDoc(collection(db, targetCollection), payload);
-        await deleteDoc(doc(db, editSourceCollection, editBookId));
-      } else {
-        await updateDoc(doc(db, targetCollection, editBookId), payload);
-      }
-    }
-
-    closeEditForm();
-    await refreshAllData();
-  });
-
-  // expose a helper for popup "Edit" later if you want to add it to popup UI
-  window.openEditForm = openEditForm;
-
-  /* ===== SECRET LOGIN BUTTON UNLOCK ===== */
-  let totalClicks = 0;
-  let clickTimer = null;
-
-  function handleTotalBooksClick() {
-    totalClicks += 1;
-    if (!clickTimer) {
-      clickTimer = setTimeout(() => {
-        totalClicks = 0;
-        clickTimer = null;
-      }, 3000); // 3 seconds window
-    }
-    if (totalClicks >= 5) {
-      secretLoginRow.style.display = "block";
-      clearTimeout(clickTimer);
-      clickTimer = null;
-      totalClicks = 0;
-    }
-  }
-
-  totalBooksTop.addEventListener("click", handleTotalBooksClick);
-
-  /* ===== AUTH ===== */
-  loginBtn.addEventListener("click", async () => {
+  // ===== AUTH =====
+  loginBtn.addEventListener('click', async () => {
     try {
       await signInWithPopup(auth, provider);
     } catch (err) {
@@ -1296,7 +1237,7 @@ h1 {
     }
   });
 
-  logoutBtn.addEventListener("click", async () => {
+  logoutBtn.addEventListener('click', async () => {
     try {
       await signOut(auth);
     } catch (err) {
@@ -1305,136 +1246,186 @@ h1 {
     }
   });
 
-  onAuthStateChanged(auth, (user) => {
-    if (user && user.email === ADMIN_EMAIL) {
-      isAdmin = true;
-      adminPanel.style.display = "block";
-      loginBtn.style.display = "none";
-      logoutBtn.style.display = "inline-block";
-    } else if (user) {
-      isAdmin = false;
-      adminPanel.style.display = "none";
-      loginBtn.style.display = "none";
-      logoutBtn.style.display = "inline-block";
+  function updateAdminUI() {
+    if (isAdmin) {
+      adminBar.style.display = "block";
     } else {
-      isAdmin = false;
-      adminPanel.style.display = "none";
-      loginBtn.style.display = "inline-block";
-      logoutBtn.style.display = "none";
+      adminBar.style.display = "none";
     }
-  });
-
-  /* ===== ADMIN PANEL BUTTONS ===== */
-  adminAddLibrary.addEventListener("click", () => {
-    if (!isAdmin) return;
-    openEditForm("add", "library", null);
-  });
-
-  adminAddWishlist.addEventListener("click", () => {
-    if (!isAdmin) return;
-    openEditForm("add", "wishlist", null);
-  });
-
-  adminMultiSelect.addEventListener("click", () => {
-    if (!isAdmin) return;
-    multiSelectMode = !multiSelectMode;
-    updateMultiSelectVisuals();
-  });
-
-  adminMoveToLib.addEventListener("click", async () => {
-    if (!isAdmin || !selectedItems.size) return;
-    await moveSelected("library");
-  });
-
-  adminMoveToWish.addEventListener("click", async () => {
-    if (!isAdmin || !selectedItems.size) return;
-    await moveSelected("wishlist");
-  });
-
-  adminMarkRead.addEventListener("click", async () => {
-    if (!isAdmin || !selectedItems.size) return;
-    await markSelectedReadFlag(true);
-  });
-
-  adminMarkUnread.addEventListener("click", async () => {
-    if (!isAdmin || !selectedItems.size) return;
-    await markSelectedReadFlag(false);
-  });
-
-  adminDelete.addEventListener("click", async () => {
-    if (!isAdmin || !selectedItems.size) return;
-    if (!confirm("Delete selected items?")) return;
-    await deleteSelected();
-  });
-
-  /* ===== REFRESH ALL DATA ===== */
-  async function refreshAllData() {
-    // reset suggestions
-    suggest.titles.clear();
-    suggest.authorsBySeries.clear();
-    suggest.publishersBySeries.clear();
-
-    await loadLibraryFromFirestore();
-    await loadWishlistFromFirestore();
-    rebuildSuggestionLists();
-    renderLibrary();
-    renderWishlist();
   }
 
-  // initial load
-  refreshAllData().catch(console.error);
-</script>
-
-<script>
-/* ===== NON-MODULE UI: MENU & SECTIONS & BACK TO TOP ===== */
-const menuToggle = document.getElementById('menuToggle');
-const menuPanel  = document.getElementById('menuPanel');
-const pageTitle  = document.getElementById('pageTitle');
-const librarySection  = document.getElementById('librarySection');
-const wishlistSection = document.getElementById('wishlistSection');
-const backToTopBtn = document.getElementById('backToTop');
-
-menuToggle.addEventListener('click', () => {
-    menuToggle.classList.toggle('active');
-    menuPanel.classList.toggle('open');
-});
-
-function switchSection(target) {
-    if (target === 'library') {
-        pageTitle.textContent = "Tyler's Manga Library";
-        librarySection.classList.add('active');
-        librarySection.classList.remove('hidden');
-        wishlistSection.classList.remove('active');
-        wishlistSection.classList.add('hidden');
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      authStatus.textContent = `Signed in as ${user.email}`;
+      loginBtn.style.display = 'none';
+      logoutBtn.style.display = 'inline-block';
+      isAdmin = (user.email === ADMIN_EMAIL);
     } else {
-        pageTitle.textContent = "Wishlist";
-        librarySection.classList.remove('active');
-        librarySection.classList.add('hidden');
-        wishlistSection.classList.add('active');
-        wishlistSection.classList.remove('hidden');
+      authStatus.textContent = "Not signed in";
+      loginBtn.style.display = 'inline-block';
+      logoutBtn.style.display = 'none';
+      isAdmin = false;
     }
-    menuToggle.classList.remove('active');
-    menuPanel.classList.remove('open');
-}
+    updateAdminUI();
+  });
 
-document.querySelectorAll('.menu-item').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const target = btn.getAttribute('data-target');
-        switchSection(target);
-    });
-});
-
-window.addEventListener('scroll', () => {
+  // ===== BACK TO TOP =====
+  window.addEventListener('scroll', () => {
     if (window.scrollY > 250) {
-        backToTopBtn.classList.add('show');
+      backToTopBtn.classList.add('show');
     } else {
-        backToTopBtn.classList.remove('show');
+      backToTopBtn.classList.remove('show');
     }
-});
-backToTopBtn.addEventListener('click', () => {
+  });
+  backToTopBtn.addEventListener('click', () => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-});
-</script>
+  });
 
+  // ===== INITIAL LOAD =====
+  reloadAll();
+
+    function resetAdminForm() {
+        adminTitleInput.value     = "";
+        adminAuthorsInput.value   = "";
+        adminPublisherInput.value = "";
+        adminDateInput.value      = "";
+        adminIsbnInput.value      = "";
+        adminCoverInput.value     = "";
+        adminAmazonInput.value    = "";
+        adminReadInput.checked    = false;
+        adminCoverPreview.src     = "https://via.placeholder.com/150x220?text=No+Cover";
+    }
+
+    function openAdminForm(options) {
+        const { mode, collection, book } = options;
+
+        adminFormMode       = mode || "add";
+        adminFormCollection = collection || "library";
+        adminFormDocId      = book ? book.id : null;
+
+        resetAdminForm();
+
+        // Configure labels & visibility
+        const isLibrary  = (adminFormCollection === "library");
+        const isWishlist = (adminFormCollection === "wishlist");
+
+        adminAmazonWrapper.style.display = isWishlist ? "flex" : "none";
+        adminReadWrapper.style.display   = isLibrary  ? "block" : "none";
+
+        if (adminFormMode === "add") {
+        adminFormTitle.textContent = isLibrary ? "Add Library Book" : "Add Wishlist Item";
+        } else {
+        adminFormTitle.textContent = isLibrary ? "Edit Library Book" : "Edit Wishlist Item";
+        }
+
+        // If editing, prefill
+        if (book) {
+        adminTitleInput.value     = book.Title || "";
+        adminAuthorsInput.value   = book.Authors || "";
+        adminPublisherInput.value = book.Publisher || "";
+        adminDateInput.value      = book.Date || "";
+        adminIsbnInput.value      = book.ISBN || "";
+        adminCoverInput.value     = book.Cover || "";
+        adminCoverPreview.src     = book.Cover || "https://via.placeholder.com/150x220?text=No+Cover";
+
+        if (isWishlist) {
+            adminAmazonInput.value = book.AmazonURL || "";
+        } else {
+            adminReadInput.checked = !!book.Read;
+        }
+        }
+
+        adminFormOverlay.style.display = "flex";
+    }
+
+    function closeAdminForm() {
+        adminFormOverlay.style.display = "none";
+    }
+
+    adminCoverInput.addEventListener('input', () => {
+        const url = adminCoverInput.value.trim();
+        if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
+        adminCoverPreview.src = url;
+        } else {
+        adminCoverPreview.src = "https://via.placeholder.com/150x220?text=No+Cover";
+        }
+    });
+
+        adminFormClose.addEventListener('click', closeAdminForm);
+        adminFormOverlay.addEventListener('click', (e) => {
+            if (e.target === adminFormOverlay) {
+            closeAdminForm();
+            }
+        });
+
+    adminFormSave.addEventListener('click', async () => {
+        const title     = adminTitleInput.value.trim();
+        const authors   = adminAuthorsInput.value.trim();
+        const publisher = adminPublisherInput.value.trim();
+        const date      = adminDateInput.value.trim();
+        const isbn      = adminIsbnInput.value.trim();
+        const cover     = adminCoverInput.value.trim();
+        const amazonURL = adminAmazonInput.value.trim();
+        const read      = adminReadInput.checked;
+
+        if (!title) {
+        alert("Title is required.");
+        return;
+        }
+
+        try {
+        if (adminFormMode === "add") {
+            if (adminFormCollection === "library") {
+            await addDoc(collection(db, "library"), {
+                title,
+                authors,
+                publisher,
+                date,
+                isbn,
+                cover,
+                read
+            });
+            } else {
+            await addDoc(collection(db, "wishlist"), {
+                title,
+                authors,
+                publisher,
+                date,
+                isbn,
+                cover,
+                amazonURL
+            });
+            }
+        } else if (adminFormMode === "edit" && adminFormDocId) {
+            const colName = adminFormCollection === "library" ? "library" : "wishlist";
+            const ref = doc(db, colName, adminFormDocId);
+            const payload = {
+            title,
+            authors,
+            publisher,
+            date,
+            isbn,
+            cover
+            };
+            if (colName === "library") {
+            payload.read = read;
+            } else {
+            payload.amazonURL = amazonURL;
+            }
+            await updateDoc(ref, payload);
+        }
+
+        closeAdminForm();
+        await reloadAll();
+        } catch (err) {
+        console.error(err);
+        alert("Failed to save. Check console for details.");
+        }
+    });
+
+
+  // expose some helpers to global (for safety if you need console access)
+  window.searchLibrary = searchLibrary;
+</script>
 </body>
 </html>
