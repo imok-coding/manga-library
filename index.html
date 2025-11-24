@@ -1648,6 +1648,14 @@ function loadCurrentMultiCreateEntry() {
     multiEditorIsbnInput.value = item.isbn;
     multiEditorCoverInput.value = item.cover;
     multiEditorCoverPreview.src = item.cover || "https://via.placeholder.com/150x220?text=No+Cover";
+    // Show Amazon URL only for wishlist editing
+    if (adminFormCollection === "wishlist") {
+        multiEditorAmazonWrapper.style.display = "flex";
+        multiEditorAmazonInput.value = item.amazonURL || "";
+    } else {
+        multiEditorAmazonWrapper.style.display = "none";
+    }
+
 }
 
 multiEditorPrev.onclick = () => {
@@ -1674,6 +1682,7 @@ function saveCurrentMultiCreateEntry() {
     item.date = multiEditorDateInput.value.trim();
     item.isbn = multiEditorIsbnInput.value.trim();
     item.cover = multiEditorCoverInput.value.trim();
+    item.amazonURL = multiEditorAmazonInput.value.trim();
 }
 
 function openMultiCreateEditor(volumes) {
@@ -2209,6 +2218,15 @@ document.getElementById("multiEditorAddVolume").onclick = () => {
         adminCoverPreview.src = url;
         } else {
         adminCoverPreview.src = "https://via.placeholder.com/150x220?text=No+Cover";
+        }
+    });
+    
+    multiEditorCoverInput.addEventListener('input', () => {
+        const url = multiEditorCoverInput.value.trim();
+        if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
+            multiEditorCoverPreview.src = url;
+        } else {
+            multiEditorCoverPreview.src = "https://via.placeholder.com/150x220?text=No+Cover";
         }
     });
 
