@@ -1536,7 +1536,77 @@ function openMultiEditorFromSuggestion(s) {
     }
 
     // Pass the suggestionVolumes INTO the multi-create panel
-    openMultiCreateEditor(s.suggestionVolumes);
+    openMultiCreateFullscreenEditor(s);
+}
+
+function openMultiCreateFullscreenEditor(s) {
+    // s = { baseName, displayName, suggestionVolumes, author, publisher }
+
+    multiCreateActive = true;
+    multiCreateVolumes = s.suggestionVolumes.slice(); // copy array
+    multiCreateIndex = 0;
+
+    // Build default multiCreateItems
+    multiCreateItems = multiCreateVolumes.map(v => ({
+        title: `${s.displayName || s.baseName}, Vol. ${v}`,
+        authors: s.author || "",
+        publisher: s.publisher || "",
+        date: "",
+        isbn: "",
+        cover: "",
+        amazonURL: "",
+        read: false
+    }));
+
+    // Show the overlay
+    multiEditorOverlay.style.display = "flex";
+
+    loadCurrentMultiCreateEntry();
+}
+
+function loadCurrentMultiCreateEntry() {
+    const item = multiCreateItems[multiCreateIndex];
+    const vol = multiCreateVolumes[multiCreateIndex];
+
+    multiEditorSeriesLabel.textContent = 
+        (currentSeriesSuggestion.displayName || currentSeriesSuggestion.baseName);
+
+    multiEditorVolumeLabel.textContent = `Volume ${vol}`;
+    multiEditorPosition.textContent = `Entry ${multiCreateIndex + 1} of ${multiCreateItems.length}`;
+
+    multiEditorTitleInput.value = item.title;
+    multiEditorAuthorsInput.value = item.authors;
+    multiEditorPublisherInput.value = item.publisher;
+    multiEditorDateInput.value = item.date;
+    multiEditorIsbnInput.value = item.isbn;
+    multiEditorCoverInput.value = item.cover;
+    multiEditorCoverPreview.src = item.cover || "https://via.placeholder.com/150x220?text=No+Cover";
+}
+
+multiEditorPrev.onclick = () => {
+    saveCurrentMultiCreateEntry();
+    if (multiCreateIndex > 0) {
+        multiCreateIndex--;
+        loadCurrentMultiCreateEntry();
+    }
+};
+
+multiEditorNext.onclick = () => {
+    saveCurrentMultiCreateEntry();
+    if (multiCreateIndex < multiCreateItems.length - 1) {
+        multiCreateIndex++;
+        loadCurrentMultiCreateEntry();
+    }
+};
+
+function saveCurrentMultiCreateEntry() {
+    const item = multiCreateItems[multiCreateIndex];
+    item.title = multiEditorTitleInput.value.trim();
+    item.authors = multiEditorAuthorsInput.value.trim();
+    item.publisher = multiEditorPublisherInput.value.trim();
+    item.date = multiEditorDateInput.value.trim();
+    item.isbn = multiEditorIsbnInput.value.trim();
+    item.cover = multiEditorCoverInput.value.trim();
 }
 
 function openMultiCreateEditor(volumes) {
@@ -1988,6 +2058,35 @@ function openMultiCreateEditor(volumes) {
 
         adminFormOverlay.style.display = "flex";
     }
+    
+multiEditorSaveAll.onclick = async () => {
+    saveCurrentMultiCreateEntry();
+
+    const col = adminFormCollection === "wishlist" ? "wishlist" : "library";
+
+    for (const item of multiCreateItems) {
+        const payload = {
+            title: item.title,
+            authors: item.authors,
+            publisher: item.publisher,
+            date: item.date,
+            isbn: item.isbn,
+            cover: item.cover
+        };
+
+        if (col === "wishlist") {
+            payload.amazonURL = item.amazonURL;
+        } else {
+            payload.read = item.read;
+        }
+
+        await addDoc(collection(db, col), payload);
+    }
+
+    multiEditorOverlay.style.display = "none";
+    await reloadAll();
+};
+
 
     function closeAdminForm() {
         adminFormOverlay.style.display = "none";
