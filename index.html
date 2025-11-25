@@ -773,31 +773,13 @@ h1 {
     box-shadow: 0 0 20px rgba(255,182,193,0.6);
 }
 
-/* ===== MULTI-SELECT ===== */
-.multi-select-checkbox {
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    width: 20px;
-    height: 20px;
-    border-radius: 6px;
-    background: rgba(30,13,20,0.9);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 6px rgba(255,182,193,0.4);
-    z-index: 10;
-}
-
-.multi-select-checkbox input[type="checkbox"] {
-    width: 14px;
-    height: 14px;
-    cursor: pointer;
-}
-
-/* When multi-select mode is on, show the checkboxes */
-body.multi-select-active .multi-select-checkbox {
-    display: flex;
+/* Highlight for multi-selected cards (brighter than read glow) */
+.card.multi-selected {
+    background: #3b1a2f;
+    border: 2px solid #fff59d;
+    box-shadow:
+        0 0 24px rgba(255, 255, 180, 0.95),
+        0 0 10px rgba(255, 255, 255, 0.7);
 }
 
 /* Bottom multi-select action bar */
@@ -1457,6 +1439,7 @@ input[type="date"] {
   <div id="multiSelectInfo">0 selected</div>
   <div id="multiSelectActions">
     <button id="multiSelectMove" class="multi-select-btn primary">Move to Wishlist</button>
+    <button id="multiSelectEdit" class="multi-select-btn secondary">Edit Selected</button>
     <button id="multiSelectMarkRead" class="multi-select-btn secondary">Mark Read</button>
     <button id="multiSelectMarkUnread" class="multi-select-btn secondary">Mark Unread</button>
     <button id="multiSelectDelete" class="multi-select-btn danger">Delete</button>
@@ -1521,6 +1504,8 @@ input[type="date"] {
   // Multi-select state
   let multiSelectActive = false;
   let multiSelectedIds = new Set();
+  let multiEditorMode = 'series'; // 'series' for multi-volume, 'selection' for multi-select edits
+
 
   // Multi-create editor state
   let multiCreateActive = false;
@@ -1565,6 +1550,8 @@ input[type="date"] {
   const multiSelectMarkUnread = document.getElementById('multiSelectMarkUnread');
   const multiSelectDelete  = document.getElementById('multiSelectDelete');
   const multiSelectCancel  = document.getElementById('multiSelectCancel');
+  const multiSelectEdit    = document.getElementById('multiSelectEdit');
+
 
   const popupOverlay    = document.getElementById('popupOverlay');
   const popupContent    = document.getElementById('popupContent');
@@ -1640,6 +1627,65 @@ input[type="date"] {
   const signUpPassword        = document.getElementById('signUpPassword');
   const signUpPasswordConfirm = document.getElementById('signUpPasswordConfirm');
 
+
+  function updateMultiSelectInfo() {
+    const count = multiSelectedIds.size;
+    if (multiSelectInfo) {
+      multiSelectInfo.textContent = `${count} selected`;
+    }
+  }
+
+  function updateMultiSelectUI() {
+    // Show/hide bar
+    if (multiSelectBar) {
+      multiSelectBar.style.display = (multiSelectActive && isAdmin) ? 'flex' : 'none';
+    }
+
+    // Toggle body class (if you want any page-wide styling)
+    if (multiSelectActive && isAdmin) {
+      document.body.classList.add('multi-select-active');
+    } else {
+      document.body.classList.remove('multi-select-active');
+    }
+
+    // Configure which actions are visible/labelled based on section
+    const isLibraryPage = (currentSectionKey === 'library');
+
+    if (multiSelectMove) {
+      multiSelectMove.textContent = isLibraryPage ? 'Move to Wishlist' : 'Move to Library';
+    }
+
+    if (multiSelectMarkRead && multiSelectMarkUnread) {
+      // Only meaningful in Library
+      multiSelectMarkRead.style.display   = isLibraryPage ? 'inline-block' : 'none';
+      multiSelectMarkUnread.style.display = isLibraryPage ? 'inline-block' : 'none';
+    }
+
+    updateMultiSelectInfo();
+  }
+
+  function exitMultiSelectMode() {
+    multiSelectActive = false;
+    multiSelectedIds.clear();
+
+    // Remove highlight from all cards
+    document.querySelectorAll('.card.multi-selected').forEach(card => {
+      card.classList.remove('multi-selected');
+    });
+
+    updateMultiSelectUI();
+  }
+
+  function toggleCardSelection(card, id) {
+    if (multiSelectedIds.has(id)) {
+      multiSelectedIds.delete(id);
+      card.classList.remove('multi-selected');
+    } else {
+      multiSelectedIds.add(id);
+      card.classList.add('multi-selected');
+    }
+    updateMultiSelectInfo();
+  }
 
   // ===== AUTH MODAL LOGIC =====
   function setAuthTab(tab) {
@@ -2167,6 +2213,7 @@ function computeFullVolumeList(s) {
 function openMultiCreateFullscreenEditor(s) {
     // s = { baseName, displayName, suggestionVolumes, author, publisher }
 
+    multiEditorMode = 'series';
     multiCreateActive = true;
     const fullList = s.fullList;  // passed from openMultiEditorFromSuggestion()
 
@@ -2195,32 +2242,109 @@ function openMultiCreateFullscreenEditor(s) {
     loadCurrentMultiCreateEntry();
 }
 
-function loadCurrentMultiCreateEntry() {
-    const item = multiCreateItems[multiCreateIndex];
-    const vol = multiCreateVolumes[multiCreateIndex];
-
-    multiEditorSeriesLabel.textContent = 
-        (currentSeriesSuggestion.displayName || currentSeriesSuggestion.baseName);
-
-    multiEditorVolumeLabel.textContent = `Volume ${vol}`;
-    multiEditorPosition.textContent = `Entry ${multiCreateIndex + 1} of ${multiCreateItems.length}`;
-
-    multiEditorTitleInput.value = item.title;
-    multiEditorAuthorsInput.value = item.authors;
-    multiEditorPublisherInput.value = item.publisher;
-    multiEditorDateInput.value = item.date;
-    multiEditorIsbnInput.value = item.isbn;
-    multiEditorCoverInput.value = item.cover;
-    multiEditorCoverPreview.src = item.cover || "https://via.placeholder.com/150x220?text=No+Cover";
-    // Show Amazon URL only for wishlist editing
-    if (adminFormCollection === "wishlist") {
-        multiEditorAmazonWrapper.style.display = "flex";
-        multiEditorAmazonInput.value = item.amazonURL || "";
-    } else {
-        multiEditorAmazonWrapper.style.display = "none";
+function openMultiEditForSelection() {
+    const ids = Array.from(multiSelectedIds);
+    if (!ids.length) {
+        alert('Select at least one item first.');
+        return;
     }
 
+    const isLibraryPage = (currentSectionKey === 'library');
+    const sourceArray = isLibraryPage ? libraryBooks : wishlistItems;
+
+    const items = [];
+    ids.forEach(id => {
+        const b = sourceArray.find(x => x.id === id);
+        if (!b) return;
+
+        const existingDate = (b.Date || "").trim();
+        const dateValue = /^\d{4}-\d{2}-\d{2}$/.test(existingDate)
+            ? existingDate
+            : "";
+
+        items.push({
+            title: b.Title || "",
+            authors: b.Authors || "",
+            publisher: b.Publisher || "",
+            date: dateValue,
+            isbn: b.ISBN || "",
+            cover: b.Cover || "",
+            amazonURL: b.AmazonURL || "",
+            read: !!b.Read,
+            vol: 0, // not used in selection mode
+            existsAlready: true,
+            docId: b.id
+        });
+    });
+
+    if (!items.length) {
+        alert('Could not load selected items.');
+        return;
+    }
+
+    // Sort by title just for nice navigation
+    items.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+
+    multiCreateItems   = items;
+    multiCreateVolumes = items.map((_, i) => i + 1);
+    multiCreateIndex   = 0;
+    multiEditorMode    = 'selection';
+
+    // Ensure collection is correct so Save All knows where to update
+    adminFormCollection = isLibraryPage ? 'library' : 'wishlist';
+
+    multiEditorOverlay.style.display = "flex";
+    loadCurrentMultiCreateEntry();
 }
+
+function loadCurrentMultiCreateEntry() {
+    const item = multiCreateItems[multiCreateIndex];
+
+    // Position info (common)
+    multiEditorPosition.textContent = `Entry ${multiCreateIndex + 1} of ${multiCreateItems.length}`;
+
+    if (multiEditorMode === 'series' && currentSeriesSuggestion) {
+        // Series / volume mode
+        const vol = multiCreateVolumes[multiCreateIndex];
+        multiEditorSeriesLabel.textContent =
+            (currentSeriesSuggestion.displayName || currentSeriesSuggestion.baseName);
+        multiEditorVolumeLabel.style.display = 'block';
+        multiEditorVolumeLabel.textContent = `Volume ${vol}`;
+    } else {
+        // Multi-select edit mode
+        multiEditorSeriesLabel.textContent = item.title || (
+            currentSectionKey === 'library'
+                ? 'Library Entry'
+                : 'Wishlist Entry'
+        );
+        multiEditorVolumeLabel.style.display = 'none';
+    }
+
+    // Common field binding
+    multiEditorTitleInput.value     = item.title;
+    multiEditorAuthorsInput.value   = item.authors;
+    multiEditorPublisherInput.value = item.publisher;
+    multiEditorDateInput.value      = item.date;
+    multiEditorIsbnInput.value      = item.isbn;
+    multiEditorCoverInput.value     = item.cover;
+
+    multiEditorCoverPreview.src =
+        item.cover || "https://via.placeholder.com/150x220?text=No+Cover";
+
+    // Show Amazon URL only for wishlist editing
+    const isWishlist = (adminFormCollection === "wishlist" || currentSectionKey === 'wishlist');
+    if (isWishlist) {
+        multiEditorAmazonWrapper.style.display = "flex";
+        multiEditorAmazonInput.value = item.amazonURL || "";
+        multiEditorReadWrapper.style.display = "none";
+    } else {
+        multiEditorAmazonWrapper.style.display = "none";
+        multiEditorReadWrapper.style.display = "flex";
+        multiEditorReadInput.checked = !!item.read;
+    }
+}
+
+
 
 multiEditorPrev.onclick = () => {
     saveCurrentMultiCreateEntry();
@@ -2331,21 +2455,26 @@ function openMultiCreateEditor(volumes) {
         card.dataset.id = b.id;
         card.dataset.kind = 'library';
         card.innerHTML = `
-          <div class="multi-select-checkbox">
-            <input type="checkbox" class="multi-check" data-id="${b.id}" data-kind="library">
-          </div>
-          <img src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
-          <div class="title">${b.Title || ''}</div>
-          <div class="meta">${
-            (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
-            (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
-            (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '')
-          }</div>
-          <div class="isbn">${b.ISBN || ''}</div>
+            <img src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
+            <div class="title">${b.Title || ''}</div>
+            <div class="meta">${
+              (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
+              (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
+              (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '')
+            }</div>
+            <div class="isbn">${b.ISBN || ''}</div>
         `;
-      card.addEventListener('click', () => showPopup(b));
-      bookGrid.appendChild(card);
-    });
+
+        card.addEventListener('click', (e) => {
+          if (multiSelectActive && isAdmin && currentSectionKey === 'library') {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleCardSelection(card, b.id);
+          } else {
+            showPopup(b);
+          }
+        });
+
 
     totalTop.textContent    = `Total Books: ${libraryBooks.length}`;
     totalBottom.textContent = `Total Books: ${libraryBooks.length}`;
@@ -2355,52 +2484,6 @@ function openMultiCreateEditor(volumes) {
     updateCounters();
 
   }
-
-    function updateMultiSelectInfo() {
-      const count = multiSelectedIds.size;
-      if (multiSelectInfo) {
-        multiSelectInfo.textContent = `${count} selected`;
-      }
-    }
-
-    function updateMultiSelectUI() {
-      // Show/hide bar
-      if (multiSelectBar) {
-        multiSelectBar.style.display = multiSelectActive && isAdmin ? 'flex' : 'none';
-      }
-
-      // Toggle body class to show checkboxes
-      if (multiSelectActive && isAdmin) {
-        document.body.classList.add('multi-select-active');
-      } else {
-        document.body.classList.remove('multi-select-active');
-      }
-
-      // Configure which actions are visible/labelled based on section
-      const isLibraryPage = (currentSectionKey === 'library');
-
-      if (multiSelectMove) {
-        multiSelectMove.textContent = isLibraryPage ? 'Move to Wishlist' : 'Move to Library';
-      }
-
-      if (multiSelectMarkRead && multiSelectMarkUnread) {
-        // Only meaningful in Library
-        multiSelectMarkRead.style.display = isLibraryPage ? 'inline-block' : 'none';
-        multiSelectMarkUnread.style.display = isLibraryPage ? 'inline-block' : 'none';
-      }
-
-      updateMultiSelectInfo();
-    }
-
-    function exitMultiSelectMode() {
-      multiSelectActive = false;
-      multiSelectedIds.clear();
-      // Uncheck all checkboxes
-      document.querySelectorAll('.multi-check').forEach(cb => {
-        cb.checked = false;
-      });
-      updateMultiSelectUI();
-    }
 
   // ===== LOAD WISHLIST FROM FIRESTORE =====
   async function loadWishlistFromFirestore() {
@@ -2436,9 +2519,6 @@ function openMultiCreateEditor(volumes) {
       card.dataset.id = b.id;
       card.dataset.kind = 'wishlist';
       card.innerHTML = `
-        <div class="multi-select-checkbox">
-          <input type="checkbox" class="multi-check" data-id="${b.id}" data-kind="wishlist">
-        </div>
         <img src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
         <div class="title">${b.Title || ''}</div>
         <div class="meta">${
@@ -2447,9 +2527,16 @@ function openMultiCreateEditor(volumes) {
           (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '')
         }</div>
       `;
-      card.addEventListener('click', () => showPopup(b));
-      wishlistGrid.appendChild(card);
-    });
+
+      card.addEventListener('click', (e) => {
+        if (multiSelectActive && isAdmin && currentSectionKey === 'wishlist') {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleCardSelection(card, b.id);
+        } else {
+          showPopup(b);
+        }
+      });
 
     wishlistCount.textContent = `Wishlist Items: ${wishlistItems.length}`;
   }
@@ -2631,39 +2718,23 @@ function openMultiCreateEditor(volumes) {
     });
   }
   if (adminMultiSelect) {
-  adminMultiSelect.addEventListener('click', () => {
-    if (!isAdmin) return;
-    multiSelectActive = !multiSelectActive;
-    if (!multiSelectActive) {
-      multiSelectedIds.clear();
-      document.querySelectorAll('.multi-check').forEach(cb => cb.checked = false);
-    }
-    updateMultiSelectUI();
-  });
-}
+    adminMultiSelect.addEventListener('click', () => {
+      if (!isAdmin) return;
+      multiSelectActive = !multiSelectActive;
 
-  // Handle checkbox selection in Library
-  bookGrid.addEventListener('change', (e) => {
-    if (!multiSelectActive || !isAdmin) return;
-    const target = e.target;
-    if (!target.classList.contains('multi-check')) return;
+      if (!multiSelectActive) {
+        exitMultiSelectMode();
+      } else {
+        // entering multi-select: clear previous selections & highlight
+        multiSelectedIds.clear();
+        document.querySelectorAll('.card').forEach(card => {
+          card.classList.remove('multi-selected');
+        });
+        updateMultiSelectUI();
+      }
+    });
+  }
 
-    if (target.dataset.kind !== 'library' || currentSectionKey !== 'library') {
-      // Ignore if somehow mismatched
-      target.checked = false;
-      return;
-    }
-
-    const id = target.dataset.id;
-    if (!id) return;
-
-    if (target.checked) {
-      multiSelectedIds.add(id);
-    } else {
-      multiSelectedIds.delete(id);
-    }
-    updateMultiSelectInfo();
-  });
 
   async function applyMultiSelectAction(action) {
     const ids = Array.from(multiSelectedIds);
@@ -2751,29 +2822,12 @@ function openMultiCreateEditor(volumes) {
   if (multiSelectCancel) {
     multiSelectCancel.addEventListener('click', () => exitMultiSelectMode());
   }
-
-
-  // Handle checkbox selection in Wishlist
-  wishlistGrid.addEventListener('change', (e) => {
-    if (!multiSelectActive || !isAdmin) return;
-    const target = e.target;
-    if (!target.classList.contains('multi-check')) return;
-
-    if (target.dataset.kind !== 'wishlist' || currentSectionKey !== 'wishlist') {
-      target.checked = false;
-      return;
-    }
-
-    const id = target.dataset.id;
-    if (!id) return;
-
-    if (target.checked) {
-      multiSelectedIds.add(id);
-    } else {
-      multiSelectedIds.delete(id);
-    }
-    updateMultiSelectInfo();
-  });
+  if (multiSelectEdit) {
+    multiSelectEdit.addEventListener('click', () => {
+      if (!isAdmin) return;
+      openMultiEditForSelection();
+    });
+  }
 
   // ===== AUTH =====
   loginBtn.addEventListener('click', () => {
