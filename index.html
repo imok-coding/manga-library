@@ -166,8 +166,8 @@
          background: rgba(255,182,193,0.25);
          cursor: pointer;
          }
-         /* ===== SEARCH INPUT (Library only) ===== */
-         #searchInput {
+         /* ===== SEARCH INPUTS ===== */
+         #searchInput, #wishlistSearchInput {
          width: 90%;
          max-width: 500px;
          margin: 12px auto;
@@ -1123,6 +1123,10 @@
             <div class="counter">
                <span class="total" id="wishlistCount"></span>
             </div>
+            <input
+               type="text"
+               id="wishlistSearchInput"
+               placeholder="Search wishlist by title, author, publisher, ISBN...">
             <div class="grid" id="wishlistGrid"></div>
          </div>
       </div>
@@ -1403,6 +1407,7 @@
          const wishlistGrid    = document.getElementById('wishlistGrid');
          
          const searchInput     = document.getElementById('searchInput');
+         const wishlistSearchInput = document.getElementById('wishlistSearchInput');
          
          const backToTopBtn    = document.getElementById('backToTop');
          
@@ -2436,11 +2441,11 @@
              });
          
              // 🔧 this was missing:
-             wishlistGrid.appendChild(card);
-           });
+           wishlistGrid.appendChild(card);
+          });
          
-           wishlistCount.textContent = `Wishlist Items: ${wishlistItems.length}`;
-         }
+          searchWishlist();
+        }
          
          // ===== RELOAD BOTH =====
          async function reloadAll() {
@@ -2468,6 +2473,28 @@
            }
          
            updateCounters();
+         }
+         
+         function searchWishlist() {
+           const query = wishlistSearchInput ? wishlistSearchInput.value.toLowerCase() : '';
+           const cards = wishlistGrid ? wishlistGrid.getElementsByClassName('card') : [];
+          
+           for (const card of cards) {
+             const visibleBySearch = query === '' || card.innerText.toLowerCase().includes(query);
+             card.style.display = visibleBySearch ? '' : 'none';
+           }
+          
+           updateWishlistCounter();
+         }
+         
+         function updateWishlistCounter() {
+           if (!wishlistGrid || !wishlistCount) return;
+           const cards = Array.from(wishlistGrid.querySelectorAll('.card'));
+           const visible = cards.filter(card => card.style.display !== 'none').length;
+           const total = wishlistItems.length;
+           wishlistCount.textContent = (wishlistSearchInput && wishlistSearchInput.value.trim())
+             ? `Wishlist Items: ${visible} / ${total}`
+             : `Wishlist Items: ${total}`;
          }
          
          function updateCounters() {
@@ -2510,7 +2537,12 @@
          
          readTop.addEventListener('click', toggleReadFilter);
          readBottom.addEventListener('click', toggleReadFilter);
-         searchInput.addEventListener('input', searchLibrary);
+         if (searchInput) {
+           searchInput.addEventListener('input', searchLibrary);
+         }
+         if (wishlistSearchInput) {
+           wishlistSearchInput.addEventListener('input', searchWishlist);
+         }
          
          // ===== POPUP =====
          function showPopup(book) {
