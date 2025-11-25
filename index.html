@@ -2133,7 +2133,8 @@ function computeFullVolumeList(s) {
                 cover: b.Cover,
                 amazonURL: b.AmazonURL || "",
                 read: !!b.Read,
-                existsAlready: true
+                existsAlready: true,
+                docId: b.id
             });
         }
     });
@@ -2151,7 +2152,8 @@ function computeFullVolumeList(s) {
                 cover: "",
                 amazonURL: "",
                 read: false,
-                existsAlready: false
+                existsAlready: false,
+                docId: null
             });
         }
     });
@@ -2178,8 +2180,10 @@ function openMultiCreateFullscreenEditor(s) {
         amazonURL: item.amazonURL,
         read: item.read,
         vol: item.vol,
-        existsAlready: item.existsAlready
+        existsAlready: item.existsAlready,
+        docId: item.docId || null
     }));
+
 
     multiCreateVolumes = fullList.map(item => item.vol);
     multiCreateIndex = 0;
@@ -2913,31 +2917,43 @@ function openMultiCreateEditor(volumes) {
     }
     
 multiEditorSaveAll.onclick = async () => {
-    saveCurrentMultiCreateEntry();
+  saveCurrentMultiCreateEntry();
 
-    const col = adminFormCollection === "wishlist" ? "wishlist" : "library";
+  const col = adminFormCollection === "wishlist" ? "wishlist" : "library";
 
+  try {
     for (const item of multiCreateItems) {
-        const payload = {
-            title: item.title,
-            authors: item.authors,
-            publisher: item.publisher,
-            date: item.date,
-            isbn: item.isbn,
-            cover: item.cover
-        };
+      const payload = {
+        title: item.title,
+        authors: item.authors,
+        publisher: item.publisher,
+        date: item.date,
+        isbn: item.isbn,
+        cover: item.cover
+      };
 
-        if (col === "wishlist") {
-            payload.amazonURL = item.amazonURL;
-        } else {
-            payload.read = item.read;
-        }
+      if (col === "wishlist") {
+        payload.amazonURL = item.amazonURL || "";
+      } else {
+        payload.read = !!item.read;
+      }
 
+      if (item.existsAlready && item.docId) {
+        // UPDATE existing doc
+        await updateDoc(doc(db, col, item.docId), payload);
+      } else {
+        // ADD new doc
         await addDoc(collection(db, col), payload);
+      }
     }
 
     multiEditorOverlay.style.display = "none";
+    multiCreateActive = false;
     await reloadAll();
+  } catch (err) {
+    console.error("Multi-editor save error:", err);
+    alert("Failed to save volumes. Check console for details.");
+  }
 };
 
 multiEditorClose.onclick = () => {
@@ -2945,45 +2961,47 @@ multiEditorClose.onclick = () => {
     multiCreateActive = false;
 };
 
-document.getElementById("multiEditorAddVolume").onclick = () => {
-    saveCurrentMultiCreateEntry();
+    document.getElementById("multiEditorAddVolume").onclick = () => {
+      saveCurrentMultiCreateEntry();
 
-    const volStr = prompt("Enter new volume number:");
-    if (!volStr || !/^\d+$/.test(volStr)) {
-        alert("Please enter a valid number.");
+      // Find current max volume
+      let maxVol = 0;
+      for (const v of multiCreateVolumes) {
+        if (v > maxVol) maxVol = v;
+      }
+      const newVol = maxVol + 1;
+
+      // Just in case, avoid accidental duplicate
+      if (multiCreateVolumes.includes(newVol)) {
+        alert("That volume already exists in the list.");
         return;
-    }
+      }
 
-    const newVol = parseInt(volStr, 10);
+      const baseName = (currentSeriesSuggestion.displayName || currentSeriesSuggestion.baseName);
+      const newItem = {
+        title: `${baseName}, Vol. ${newVol}`,
+        authors: currentSeriesSuggestion.author || "",
+        publisher: currentSeriesSuggestion.publisher || "",
+        date: "",
+        isbn: "",
+        cover: "",
+        amazonURL: "",
+        read: false,
+        vol: newVol,
+        existsAlready: false,
+        docId: null
+      };
 
-    // prevent duplicates
-    if (multiCreateVolumes.includes(newVol)) {
-        alert("That volume is already in the list.");
-        return;
-    }
+      // Keep arrays sorted by volume
+      let insertIndex = multiCreateVolumes.findIndex(v => v > newVol);
+      if (insertIndex === -1) insertIndex = multiCreateVolumes.length;
 
-    // push new volume
-    multiCreateVolumes.push(newVol);
-    multiCreateVolumes.sort((a,b)=>a-b);
+      multiCreateVolumes.splice(insertIndex, 0, newVol);
+      multiCreateItems.splice(insertIndex, 0, newItem);
+      multiCreateIndex = insertIndex;
 
-    multiCreateItems.splice(
-        multiCreateVolumes.indexOf(newVol),
-        0,
-        {
-            title: `${currentSeriesSuggestion.displayName || currentSeriesSuggestion.baseName}, Vol. ${newVol}`,
-            authors: currentSeriesSuggestion.author || "",
-            publisher: currentSeriesSuggestion.publisher || "",
-            date: "",
-            isbn: "",
-            cover: "",
-            amazonURL: "",
-            read: false
-        }
-    );
-
-    multiCreateIndex = multiCreateVolumes.indexOf(newVol);
-    loadCurrentMultiCreateEntry();
-};
+      loadCurrentMultiCreateEntry();
+    };
 
     function closeAdminForm() {
         adminFormOverlay.style.display = "none";
