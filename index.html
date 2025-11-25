@@ -270,6 +270,7 @@ h1 {
     box-shadow: 0 2px 8px rgba(255,182,193,0.2);
     width: 100%;
     max-width: 150px;
+    position: relative;
 }
 .card:hover {
     transform: scale(1.05);
@@ -772,6 +773,95 @@ h1 {
     box-shadow: 0 0 20px rgba(255,182,193,0.6);
 }
 
+/* ===== MULTI-SELECT ===== */
+.multi-select-checkbox {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background: rgba(30,13,20,0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 6px rgba(255,182,193,0.4);
+    z-index: 10;
+}
+
+.multi-select-checkbox input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+
+/* When multi-select mode is on, show the checkboxes */
+body.multi-select-active .multi-select-checkbox {
+    display: flex;
+}
+
+/* Bottom multi-select action bar */
+#multiSelectBar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 8px 14px;
+    background: rgba(30,13,20,0.96);
+    border-top: 1px solid rgba(255,182,193,0.35);
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    z-index: 10040;
+    backdrop-filter: blur(6px);
+}
+
+#multiSelectInfo {
+    font-size: 12px;
+    color: #f8d1d8;
+}
+
+#multiSelectActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.multi-select-btn {
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(255,105,180,0.5);
+}
+
+.multi-select-btn.primary {
+    background: #ff69b4;
+    color: #1e0d14;
+}
+
+.multi-select-btn.danger {
+    background: #ff5555;
+    color: #fff;
+}
+
+.multi-select-btn.secondary {
+    background: #2b0f1d;
+    color: #ffb6c1;
+    border: 1px solid #ffb6c1;
+    box-shadow: none;
+}
+
+@media (max-width: 600px) {
+    #multiSelectBar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
 #multiCreatePanel {
     position: relative;
     padding-bottom: 70px; /* makes space for + button */
@@ -1119,6 +1209,7 @@ input[type="date"] {
         <div id="adminBarButtons">
             <button id="adminAddLibrary">Add Library Book</button>
             <button id="adminAddWishlist">Add Wishlist Item</button>
+            <button id="adminMultiSelect">Multi-Select</button>
         </div>
     </div>
     
@@ -1361,6 +1452,18 @@ input[type="date"] {
 
 <button id="backToTop" title="Back to Top"></button>
 
+<!-- Multi-Select Action Bar -->
+<div id="multiSelectBar">
+  <div id="multiSelectInfo">0 selected</div>
+  <div id="multiSelectActions">
+    <button id="multiSelectMove" class="multi-select-btn primary">Move to Wishlist</button>
+    <button id="multiSelectMarkRead" class="multi-select-btn secondary">Mark Read</button>
+    <button id="multiSelectMarkUnread" class="multi-select-btn secondary">Mark Unread</button>
+    <button id="multiSelectDelete" class="multi-select-btn danger">Delete</button>
+    <button id="multiSelectCancel" class="multi-select-btn secondary">Cancel</button>
+  </div>
+</div>
+
 <!-- Firebase + App Logic -->
 <script type="module">
   // ===== FIREBASE CONFIG (your live config) =====
@@ -1413,7 +1516,12 @@ input[type="date"] {
   let secretTimer = null;
   let currentPopupBook = null;
   let currentSeriesSuggestion = null; // { baseName, suggestionVolumes, author, publisher }
-  
+  let currentSectionKey = 'library';  // 'library' or 'wishlist'
+
+  // Multi-select state
+  let multiSelectActive = false;
+  let multiSelectedIds = new Set();
+
   // Multi-create editor state
   let multiCreateActive = false;
   let multiCreateVolumes = [];  // e.g. [55, 67, 89, 111]
@@ -1448,6 +1556,15 @@ input[type="date"] {
   const adminBar        = document.getElementById('adminBar');
   const adminAddLibrary = document.getElementById('adminAddLibrary');
   const adminAddWishlist= document.getElementById('adminAddWishlist');
+  const adminMultiSelect   = document.getElementById('adminMultiSelect');
+
+  const multiSelectBar     = document.getElementById('multiSelectBar');
+  const multiSelectInfo    = document.getElementById('multiSelectInfo');
+  const multiSelectMove    = document.getElementById('multiSelectMove');
+  const multiSelectMarkRead   = document.getElementById('multiSelectMarkRead');
+  const multiSelectMarkUnread = document.getElementById('multiSelectMarkUnread');
+  const multiSelectDelete  = document.getElementById('multiSelectDelete');
+  const multiSelectCancel  = document.getElementById('multiSelectCancel');
 
   const popupOverlay    = document.getElementById('popupOverlay');
   const popupContent    = document.getElementById('popupContent');
@@ -1729,6 +1846,8 @@ input[type="date"] {
   }
 
   function switchSection(target) {
+    currentSectionKey = target === 'wishlist' ? 'wishlist' : 'library';
+
     if (target === 'library') {
       pageTitle.textContent = "Tyler's Manga Library";
       librarySection.classList.add('active');
@@ -1742,6 +1861,12 @@ input[type="date"] {
       wishlistSection.classList.add('active');
       wishlistSection.classList.remove('hidden');
     }
+
+    // Reset multi-select when switching sections
+    multiSelectActive = false;
+    multiSelectedIds.clear();
+    updateMultiSelectUI();
+
     menuToggle.classList.remove('active');
     menuPanel.classList.remove('open');
   }
@@ -2197,18 +2322,23 @@ function openMultiCreateEditor(volumes) {
     let readCount = 0;
     libraryBooks.forEach(b => {
       if (b.Read) readCount++;
-      const card = document.createElement('div');
-      card.className = 'card' + (b.Read ? ' read' : '');
-      card.innerHTML = `
-        <img src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
-        <div class="title">${b.Title || ''}</div>
-        <div class="meta">${
-          (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
-          (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
-          (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '')
-        }</div>
-        <div class="isbn">${b.ISBN || ''}</div>
-      `;
+        const card = document.createElement('div');
+        card.className = 'card' + (b.Read ? ' read' : '');
+        card.dataset.id = b.id;
+        card.dataset.kind = 'library';
+        card.innerHTML = `
+          <div class="multi-select-checkbox">
+            <input type="checkbox" class="multi-check" data-id="${b.id}" data-kind="library">
+          </div>
+          <img src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
+          <div class="title">${b.Title || ''}</div>
+          <div class="meta">${
+            (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
+            (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
+            (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '')
+          }</div>
+          <div class="isbn">${b.ISBN || ''}</div>
+        `;
       card.addEventListener('click', () => showPopup(b));
       bookGrid.appendChild(card);
     });
@@ -2219,6 +2349,53 @@ function openMultiCreateEditor(volumes) {
     readBottom.textContent  = `Books Read: ${readCount}`;
 
     updateCounters();
+
+    function updateMultiSelectInfo() {
+      const count = multiSelectedIds.size;
+      if (multiSelectInfo) {
+        multiSelectInfo.textContent = `${count} selected`;
+      }
+    }
+
+    function updateMultiSelectUI() {
+      // Show/hide bar
+      if (multiSelectBar) {
+        multiSelectBar.style.display = multiSelectActive && isAdmin ? 'flex' : 'none';
+      }
+
+      // Toggle body class to show checkboxes
+      if (multiSelectActive && isAdmin) {
+        document.body.classList.add('multi-select-active');
+      } else {
+        document.body.classList.remove('multi-select-active');
+      }
+
+      // Configure which actions are visible/labelled based on section
+      const isLibraryPage = (currentSectionKey === 'library');
+
+      if (multiSelectMove) {
+        multiSelectMove.textContent = isLibraryPage ? 'Move to Wishlist' : 'Move to Library';
+      }
+
+      if (multiSelectMarkRead && multiSelectMarkUnread) {
+        // Only meaningful in Library
+        multiSelectMarkRead.style.display = isLibraryPage ? 'inline-block' : 'none';
+        multiSelectMarkUnread.style.display = isLibraryPage ? 'inline-block' : 'none';
+      }
+
+      updateMultiSelectInfo();
+    }
+
+    function exitMultiSelectMode() {
+      multiSelectActive = false;
+      multiSelectedIds.clear();
+      // Uncheck all checkboxes
+      document.querySelectorAll('.multi-check').forEach(cb => {
+        cb.checked = false;
+      });
+      updateMultiSelectUI();
+    }
+
   }
 
   // ===== LOAD WISHLIST FROM FIRESTORE =====
@@ -2252,7 +2429,12 @@ function openMultiCreateEditor(volumes) {
     wishlistItems.forEach(b => {
       const card = document.createElement('div');
       card.className = 'card';
+      card.dataset.id = b.id;
+      card.dataset.kind = 'wishlist';
       card.innerHTML = `
+        <div class="multi-select-checkbox">
+          <input type="checkbox" class="multi-check" data-id="${b.id}" data-kind="wishlist">
+        </div>
         <img src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
         <div class="title">${b.Title || ''}</div>
         <div class="meta">${
@@ -2444,6 +2626,150 @@ function openMultiCreateEditor(volumes) {
       openAdminForm({ mode: "add", collection: "wishlist" });
     });
   }
+  if (adminMultiSelect) {
+  adminMultiSelect.addEventListener('click', () => {
+    if (!isAdmin) return;
+    multiSelectActive = !multiSelectActive;
+    if (!multiSelectActive) {
+      multiSelectedIds.clear();
+      document.querySelectorAll('.multi-check').forEach(cb => cb.checked = false);
+    }
+    updateMultiSelectUI();
+  });
+}
+
+  // Handle checkbox selection in Library
+  bookGrid.addEventListener('change', (e) => {
+    if (!multiSelectActive || !isAdmin) return;
+    const target = e.target;
+    if (!target.classList.contains('multi-check')) return;
+
+    if (target.dataset.kind !== 'library' || currentSectionKey !== 'library') {
+      // Ignore if somehow mismatched
+      target.checked = false;
+      return;
+    }
+
+    const id = target.dataset.id;
+    if (!id) return;
+
+    if (target.checked) {
+      multiSelectedIds.add(id);
+    } else {
+      multiSelectedIds.delete(id);
+    }
+    updateMultiSelectInfo();
+  });
+
+  async function applyMultiSelectAction(action) {
+    const ids = Array.from(multiSelectedIds);
+    if (!ids.length) {
+      alert('Select at least one item first.');
+      return;
+    }
+
+    const isLibraryPage = (currentSectionKey === 'library');
+
+    try {
+      if (action === 'move') {
+        if (isLibraryPage) {
+          if (!confirm(`Move ${ids.length} item(s) to Wishlist?`)) return;
+          for (const id of ids) {
+            const b = libraryBooks.find(x => x.id === id);
+            if (!b) continue;
+            const payload = {
+              title: b.Title,
+              authors: b.Authors,
+              publisher: b.Publisher,
+              date: b.Date,
+              isbn: b.ISBN,
+              cover: b.Cover,
+              amazonURL: b.AmazonURL || ''
+            };
+            await addDoc(collection(db, "wishlist"), payload);
+            await deleteDoc(doc(db, "library", id));
+          }
+        } else {
+          if (!confirm(`Move ${ids.length} item(s) to Library?`)) return;
+          for (const id of ids) {
+            const b = wishlistItems.find(x => x.id === id);
+            if (!b) continue;
+            const payload = {
+              title: b.Title,
+              authors: b.Authors,
+              publisher: b.Publisher,
+              date: b.Date,
+              isbn: b.ISBN,
+              cover: b.Cover,
+              read: false
+            };
+            await addDoc(collection(db, "library"), payload);
+            await deleteDoc(doc(db, "wishlist", id));
+          }
+        }
+      } else if (action === 'markRead' && isLibraryPage) {
+        for (const id of ids) {
+          await updateDoc(doc(db, "library", id), { read: true });
+        }
+      } else if (action === 'markUnread' && isLibraryPage) {
+        for (const id of ids) {
+          await updateDoc(doc(db, "library", id), { read: false });
+        }
+      } else if (action === 'delete') {
+        const colName = isLibraryPage ? "library" : "wishlist";
+        if (!confirm(`Delete ${ids.length} item(s) from ${isLibraryPage ? 'Library' : 'Wishlist'}?`)) return;
+        for (const id of ids) {
+          await deleteDoc(doc(db, colName, id));
+        }
+      }
+
+      await reloadAll();
+      exitMultiSelectMode();
+    } catch (err) {
+      console.error('Multi-select action error:', err);
+      alert('Action failed. Check console for details.');
+    }
+  }
+
+  // Hook buttons
+  if (multiSelectMove) {
+    multiSelectMove.addEventListener('click', () => applyMultiSelectAction('move'));
+  }
+  if (multiSelectMarkRead) {
+    multiSelectMarkRead.addEventListener('click', () => applyMultiSelectAction('markRead'));
+  }
+  if (multiSelectMarkUnread) {
+    multiSelectMarkUnread.addEventListener('click', () => applyMultiSelectAction('markUnread'));
+  }
+  if (multiSelectDelete) {
+    multiSelectDelete.addEventListener('click', () => applyMultiSelectAction('delete'));
+  }
+  if (multiSelectCancel) {
+    multiSelectCancel.addEventListener('click', () => exitMultiSelectMode());
+  }
+
+
+  // Handle checkbox selection in Wishlist
+  wishlistGrid.addEventListener('change', (e) => {
+    if (!multiSelectActive || !isAdmin) return;
+    const target = e.target;
+    if (!target.classList.contains('multi-check')) return;
+
+    if (target.dataset.kind !== 'wishlist' || currentSectionKey !== 'wishlist') {
+      target.checked = false;
+      return;
+    }
+
+    const id = target.dataset.id;
+    if (!id) return;
+
+    if (target.checked) {
+      multiSelectedIds.add(id);
+    } else {
+      multiSelectedIds.delete(id);
+    }
+    updateMultiSelectInfo();
+  });
 
   // ===== AUTH =====
   loginBtn.addEventListener('click', () => {
