@@ -1470,6 +1470,7 @@
          const multiEditorVolumeLabel   = document.getElementById('multiEditorVolumeLabel');
          const multiEditorPosition      = document.getElementById('multiEditorPosition');
          
+         const multiEditorTitle         = document.getElementById('multiEditorTitle');
          const multiEditorTitleInput    = document.getElementById('multiEditorTitleInput');
          const multiEditorAuthorsInput  = document.getElementById('multiEditorAuthorsInput');
          const multiEditorPublisherInput= document.getElementById('multiEditorPublisherInput');
@@ -1480,6 +1481,7 @@
          const multiEditorAmazonInput   = document.getElementById('multiEditorAmazonInput');
          const multiEditorReadWrapper   = document.getElementById('multiEditorReadWrapper');
          const multiEditorReadInput     = document.getElementById('multiEditorReadInput');
+         const multiEditorAddVolume     = document.getElementById('multiEditorAddVolume');
          const multiEditorPrev          = document.getElementById('multiEditorPrev');
          const multiEditorNext          = document.getElementById('multiEditorNext');
          const multiEditorSaveAll       = document.getElementById('multiEditorSaveAll');
@@ -2170,8 +2172,27 @@
            loadCurrentMultiCreateEntry();
          }
          
+         function updateMultiEditorHeader() {
+           if (multiEditorTitle) {
+             multiEditorTitle.textContent = (multiEditorMode === 'series')
+               ? 'Multi-Create Volumes'
+               : 'Multi-Select Editing';
+           }
+           if (multiEditorSaveAll) {
+             multiEditorSaveAll.textContent = (multiEditorMode === 'series')
+               ? 'Save All Volumes'
+               : 'Save All Changes';
+           }
+           if (multiEditorAddVolume) {
+             multiEditorAddVolume.style.display = (multiEditorMode === 'series')
+               ? 'inline-block'
+               : 'none';
+           }
+         }
+         
          function loadCurrentMultiCreateEntry() {
            const item = multiCreateItems[multiCreateIndex];
+           updateMultiEditorHeader();
          
            // Position info (common)
            multiEditorPosition.textContent = `Entry ${multiCreateIndex + 1} of ${multiCreateItems.length}`;
@@ -2897,12 +2918,14 @@
            multiCreateActive = false;
          };
          
-           document.getElementById("multiEditorAddVolume").onclick = () => {
-             saveCurrentMultiCreateEntry();
+          if (multiEditorAddVolume) {
+            multiEditorAddVolume.onclick = () => {
+              if (multiEditorMode !== 'series') return;
+              saveCurrentMultiCreateEntry();
          
-             // Find current max volume
-             let maxVol = 0;
-             for (const v of multiCreateVolumes) {
+              // Find current max volume
+              let maxVol = 0;
+              for (const v of multiCreateVolumes) {
                if (v > maxVol) maxVol = v;
              }
              const newVol = maxVol + 1;
@@ -2931,13 +2954,14 @@
              // Keep arrays sorted by volume
              let insertIndex = multiCreateVolumes.findIndex(v => v > newVol);
              if (insertIndex === -1) insertIndex = multiCreateVolumes.length;
-         
+            
              multiCreateVolumes.splice(insertIndex, 0, newVol);
              multiCreateItems.splice(insertIndex, 0, newItem);
              multiCreateIndex = insertIndex;
          
              loadCurrentMultiCreateEntry();
            };
+          }
          
            function closeAdminForm() {
                adminFormOverlay.style.display = "none";
@@ -2960,7 +2984,7 @@
                    multiEditorCoverPreview.src = "https://via.placeholder.com/150x220?text=No+Cover";
                }
            });
-         
+           
                adminFormClose.addEventListener('click', closeAdminForm);
                adminFormOverlay.addEventListener('click', (e) => {
                    if (e.target === adminFormOverlay) {
@@ -2977,6 +3001,8 @@
                const cover     = adminCoverInput.value.trim();
                const amazonURL = adminAmazonInput.value.trim();
                const read      = adminReadInput.checked;
+               const editingExisting = (adminFormMode === "edit" && adminFormDocId);
+               const editingCollection = adminFormCollection;
          
                if (!title) {
                alert("Title is required.");
@@ -3027,6 +3053,15 @@
          
                closeAdminForm();
                await reloadAll();
+
+               const popupIsOpen = popupOverlay && popupOverlay.style.display === 'flex';
+               if (editingExisting && popupIsOpen && currentPopupBook && currentPopupBook.id === adminFormDocId) {
+                 const source = editingCollection === "wishlist" ? wishlistItems : libraryBooks;
+                 const updated = source.find(b => b.id === adminFormDocId);
+                 if (updated) {
+                   showPopup(updated);
+                 }
+               }
                } catch (err) {
                console.error(err);
                alert("Failed to save. Check console for details.");
