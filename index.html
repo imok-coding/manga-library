@@ -2354,6 +2354,8 @@ function openMultiCreateEditor(volumes) {
 
     updateCounters();
 
+  }
+
     function updateMultiSelectInfo() {
       const count = multiSelectedIds.size;
       if (multiSelectInfo) {
@@ -2399,8 +2401,6 @@ function openMultiCreateEditor(volumes) {
       });
       updateMultiSelectUI();
     }
-
-  }
 
   // ===== LOAD WISHLIST FROM FIRESTORE =====
   async function loadWishlistFromFirestore() {
