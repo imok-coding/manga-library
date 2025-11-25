@@ -799,6 +799,204 @@ input[type="date"] {
     color-scheme: dark;
 }
 
+/* Prevent selecting Total Books text */
+#totalBooksTop,
+#totalBooksBottom {
+    user-select: none;
+}
+
+/* ===== AUTH MODAL (SIGN IN / SIGN UP) ===== */
+#authModalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,13,20,0.92);
+    backdrop-filter: blur(6px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10050;
+    animation: fadeIn 0.25s ease;
+}
+
+#authModalCard {
+    background: #2b0f1d;
+    border-radius: 16px;
+    padding: 20px 20px 18px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 0 24px rgba(255,182,193,0.7);
+    position: relative;
+    animation: slideUp 0.25s ease;
+    color: #fff;
+}
+
+#authModalClose {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+#authModalTitle {
+    margin: 0 0 10px;
+    text-align: center;
+    color: #ffb6c1;
+    text-shadow: 0 0 6px rgba(255,182,193,0.7);
+}
+
+/* Tabs */
+#authTabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    border-radius: 999px;
+    background: rgba(255,182,193,0.08);
+    padding: 3px;
+}
+
+.auth-tab {
+    flex: 1;
+    border-radius: 999px;
+    border: none;
+    padding: 6px 0;
+    background: transparent;
+    color: #f8d1d8;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.auth-tab.active {
+    background: #ff69b4;
+    color: #1e0d14;
+    font-weight: 600;
+    box-shadow: 0 0 8px rgba(255,105,180,0.6);
+}
+
+/* Error message */
+.auth-error {
+    background: rgba(255,85,85,0.16);
+    border: 1px solid rgba(255,85,85,0.5);
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-size: 12px;
+    color: #ffaaaa;
+    margin-bottom: 8px;
+}
+
+/* Forms */
+.auth-form {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.auth-form.active {
+    display: flex;
+}
+
+.auth-form label {
+    font-size: 12px;
+    color: #f8d1d8;
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-form input[type="email"],
+.auth-form input[type="password"] {
+    margin-top: 3px;
+    padding: 7px 8px;
+    border-radius: 6px;
+    border: 1px solid #bb7f8f;
+    background: #1e0d14;
+    color: #fff;
+    font-size: 13px;
+}
+
+.auth-submit {
+    margin-top: 6px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: none;
+    background: #ff69b4;
+    color: #1e0d14;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255,105,180,0.6);
+    font-size: 13px;
+}
+
+.auth-submit:hover {
+    background: #ffc0cb;
+}
+
+.auth-link {
+    margin-top: 4px;
+    border: none;
+    background: none;
+    color: #f8d1d8;
+    font-size: 12px;
+    text-align: left;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Divider + Google button */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 10px 0 6px;
+    font-size: 11px;
+    color: #f8d1d8;
+}
+
+.auth-divider span:first-child,
+.auth-divider span:last-child {
+    flex: 1;
+    height: 1px;
+    background: rgba(255,182,193,0.25);
+}
+
+.auth-google {
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1px solid #fff;
+    background: #fff;
+    color: #1e0d14;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.auth-google:hover {
+    filter: brightness(1.05);
+}
+
+.auth-note {
+    margin-top: 6px;
+    font-size: 11px;
+    color: #f8d1d8;
+    opacity: 0.8;
+}
+
+@media (max-width: 600px) {
+    #authModalCard {
+        max-width: 360px;
+        padding: 18px 16px 14px;
+    }
+}
+
 /* ===== MOBILE ===== */
 @media (max-width: 600px) {
     .grid {
@@ -843,6 +1041,71 @@ input[type="date"] {
         <button id="loginBtn" class="auth-btn">Sign in</button>
         <button id="logoutBtn" class="auth-btn secondary" style="display:none;">Sign out</button>
     </div>
+</div>
+
+<!-- Auth Sign In / Sign Up Modal -->
+<div id="authModalOverlay">
+  <div id="authModalCard">
+    <button id="authModalClose" title="Close">&times;</button>
+    <h2 id="authModalTitle">Admin Sign In</h2>
+
+    <div id="authTabs">
+      <button id="authTabSignIn" class="auth-tab active">Sign In</button>
+      <button id="authTabSignUp"  class="auth-tab">Sign Up</button>
+    </div>
+
+    <div id="authError" class="auth-error" style="display:none;"></div>
+
+    <!-- SIGN IN FORM -->
+    <form id="authSignInForm" class="auth-form active">
+      <label>
+        Email
+        <input type="email" id="signInEmail" autocomplete="email" required>
+      </label>
+
+      <label>
+        Password
+        <input type="password" id="signInPassword" autocomplete="current-password" required>
+      </label>
+
+      <button type="submit" class="auth-submit">Sign In</button>
+      <button type="button" id="authForgotPassword" class="auth-link">
+        Forgot password?
+      </button>
+
+      <div class="auth-divider">
+        <span></span><span>or</span><span></span>
+      </div>
+
+      <button type="button" id="authGoogleSignIn" class="auth-google">
+        <!-- you can later add a G icon -->
+        Sign in with Google
+      </button>
+    </form>
+
+    <!-- SIGN UP FORM -->
+    <form id="authSignUpForm" class="auth-form">
+      <label>
+        Email
+        <input type="email" id="signUpEmail" autocomplete="email" required>
+      </label>
+
+      <label>
+        Password
+        <input type="password" id="signUpPassword" autocomplete="new-password" required>
+      </label>
+
+      <label>
+        Confirm Password
+        <input type="password" id="signUpPasswordConfirm" autocomplete="new-password" required>
+      </label>
+
+      <button type="submit" class="auth-submit">Create Account</button>
+      <p class="auth-note">
+        New accounts are not admins by default. An admin must grant you admin permissions in Firebase.
+      </p>
+    </form>
+  </div>
 </div>
 
 <div class="container">
@@ -1114,7 +1377,10 @@ input[type="date"] {
     GoogleAuthProvider,
     signInWithPopup,
     signOut,
-    onAuthStateChanged
+    onAuthStateChanged,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail
   } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
   import {
     getFirestore,
@@ -1123,7 +1389,9 @@ input[type="date"] {
     addDoc,
     updateDoc,
     deleteDoc,
-    doc
+    doc,
+    getDoc,
+    setDoc
   } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
   // ===== INIT =====
@@ -1237,6 +1505,170 @@ input[type="date"] {
   const multiEditorNext          = document.getElementById('multiEditorNext');
   const multiEditorSaveAll       = document.getElementById('multiEditorSaveAll');
 
+  // Auth modal DOM refs
+  const authModalOverlay      = document.getElementById('authModalOverlay');
+  const authModalClose        = document.getElementById('authModalClose');
+  const authTabSignIn         = document.getElementById('authTabSignIn');
+  const authTabSignUp         = document.getElementById('authTabSignUp');
+  const authSignInForm        = document.getElementById('authSignInForm');
+  const authSignUpForm        = document.getElementById('authSignUpForm');
+  const authError             = document.getElementById('authError');
+  const authGoogleSignIn      = document.getElementById('authGoogleSignIn');
+  const authForgotPassword    = document.getElementById('authForgotPassword');
+  const signInEmail           = document.getElementById('signInEmail');
+  const signInPassword        = document.getElementById('signInPassword');
+  const signUpEmail           = document.getElementById('signUpEmail');
+  const signUpPassword        = document.getElementById('signUpPassword');
+  const signUpPasswordConfirm = document.getElementById('signUpPasswordConfirm');
+
+
+  // ===== AUTH MODAL LOGIC =====
+  function setAuthTab(tab) {
+    const isSignIn = (tab === 'signin');
+    if (!authTabSignIn || !authTabSignUp) return;
+
+    authTabSignIn.classList.toggle('active', isSignIn);
+    authTabSignUp.classList.toggle('active', !isSignIn);
+
+    authSignInForm.classList.toggle('active', isSignIn);
+    authSignUpForm.classList.toggle('active', !isSignIn);
+  }
+
+  function showAuthError(message) {
+    if (!authError) return;
+    authError.style.display = 'block';
+    authError.textContent = message;
+  }
+
+  function clearAuthError() {
+    if (!authError) return;
+    authError.style.display = 'none';
+    authError.textContent = '';
+  }
+
+  function openAuthModal(defaultTab = 'signin') {
+    clearAuthError();
+    setAuthTab(defaultTab === 'signup' ? 'signup' : 'signin');
+    authModalOverlay.style.display = 'flex';
+  }
+
+  function closeAuthModal() {
+    authModalOverlay.style.display = 'none';
+  }
+
+  // Tab switching
+  if (authTabSignIn) {
+    authTabSignIn.addEventListener('click', () => setAuthTab('signin'));
+  }
+  if (authTabSignUp) {
+    authTabSignUp.addEventListener('click', () => setAuthTab('signup'));
+  }
+
+  // Close modal
+  if (authModalClose) {
+    authModalClose.addEventListener('click', closeAuthModal);
+  }
+  if (authModalOverlay) {
+    authModalOverlay.addEventListener('click', (e) => {
+      if (e.target === authModalOverlay) closeAuthModal();
+    });
+  }
+
+  // Email / password SIGN IN
+  if (authSignInForm) {
+    authSignInForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAuthError();
+
+      const email = (signInEmail.value || '').trim();
+      const password = signInPassword.value || '';
+
+      if (!email || !password) {
+        showAuthError('Email and password are required.');
+        return;
+      }
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        // onAuthStateChanged will close the modal and set admin UI.
+      } catch (err) {
+        console.error('Sign-in error', err);
+        showAuthError(err.message || 'Failed to sign in.');
+      }
+    });
+  }
+
+  // Email / password SIGN UP
+  if (authSignUpForm) {
+    authSignUpForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAuthError();
+
+      const email = (signUpEmail.value || '').trim();
+      const password = signUpPassword.value || '';
+      const confirm = signUpPasswordConfirm.value || '';
+
+      if (!email || !password) {
+        showAuthError('Email and password are required.');
+        return;
+      }
+      if (password !== confirm) {
+        showAuthError('Passwords do not match.');
+        return;
+      }
+
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        // create a user document with admin: false by default
+        try {
+          await setDoc(doc(db, "users", cred.user.uid), {
+            email,
+            admin: false
+          });
+        } catch (docErr) {
+          console.error('Failed to save user doc', docErr);
+        }
+        // User will now be signed in; onAuthStateChanged will run.
+      } catch (err) {
+        console.error('Sign-up error', err);
+        showAuthError(err.message || 'Failed to create account.');
+      }
+    });
+  }
+
+  // Forgot password
+  if (authForgotPassword) {
+    authForgotPassword.addEventListener('click', async () => {
+      clearAuthError();
+      const email = (signInEmail.value || '').trim();
+      if (!email) {
+        showAuthError('Enter your email above before using "Forgot password?".');
+        return;
+      }
+      try {
+        await sendPasswordResetEmail(auth, email);
+        showAuthError('Password reset email sent (check your inbox).');
+      } catch (err) {
+        console.error('Password reset error', err);
+        showAuthError(err.message || 'Failed to send reset email.');
+      }
+    });
+  }
+
+  // Google sign-in from inside modal
+  if (authGoogleSignIn) {
+    authGoogleSignIn.addEventListener('click', async () => {
+      clearAuthError();
+      try {
+        await signInWithPopup(auth, provider);
+        // onAuthStateChanged will handle the rest
+      } catch (err) {
+        console.error('Google sign-in error', err);
+        showAuthError(err.message || 'Google sign-in failed.');
+      }
+    });
+  }
+
 
   // state for current form usage
   let adminFormMode = "add"; // "add" or "edit"
@@ -1328,8 +1760,9 @@ input[type="date"] {
     }, 2000); // 2s window
 
     if (secretClickCount >= 5) {
-      authSection.style.display = "block";
+      authSection.style.display = "block";  // reveals secret sign-in on menu
       secretClickCount = 0;
+      openAuthModal('signin');              // ALSO pop up the overlay form
     }
   }
 
@@ -2011,13 +2444,8 @@ function openMultiCreateEditor(volumes) {
   }
 
   // ===== AUTH =====
-  loginBtn.addEventListener('click', async () => {
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (err) {
-      console.error(err);
-      alert("Login failed: " + err.message);
-    }
+  loginBtn.addEventListener('click', () => {
+    openAuthModal('signin');
   });
 
   logoutBtn.addEventListener('click', async () => {
@@ -2037,20 +2465,41 @@ function openMultiCreateEditor(volumes) {
     }
   }
 
-  onAuthStateChanged(auth, (user) => {
+
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
       authStatus.textContent = `Signed in as ${user.email}`;
       loginBtn.style.display = 'none';
       logoutBtn.style.display = 'inline-block';
-      isAdmin = (user.email === ADMIN_EMAIL);
+
+      // Check Firestore for admin flag
+      let adminFlag = false;
+      try {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          const data = userSnap.data();
+          adminFlag = !!data.admin;
+        } else if (user.email === ADMIN_EMAIL) {
+          // Fallback so you don't lock yourself out:
+          adminFlag = true;
+        }
+      } catch (err) {
+        console.error("Error checking admin flag", err);
+      }
+
+      isAdmin = adminFlag;
+      updateAdminUI();
+      closeAuthModal();
     } else {
       authStatus.textContent = "Not signed in";
       loginBtn.style.display = 'inline-block';
       logoutBtn.style.display = 'none';
       isAdmin = false;
+      updateAdminUI();
     }
-    updateAdminUI();
   });
+
 
   // ===== BACK TO TOP =====
   window.addEventListener('scroll', () => {
