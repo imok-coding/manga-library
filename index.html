@@ -144,6 +144,10 @@
          .menu-panel.open {
          transform: translateX(0);
          }
+         .menu-panel {
+         width: 80%;
+         max-width: 320px;
+         }
          }
          /* ===== COUNTERS ===== */
          .counter {
@@ -998,19 +1002,57 @@
          }
          /* ===== MOBILE ===== */
          @media (max-width: 600px) {
+         body {
+         padding-bottom: 72px; /* leave space for sticky bars/buttons */
+         }
+         .container {
+         padding: 12px;
+         }
+         h1 {
+         font-size: 22px;
+         margin-top: 14px;
+         }
+         #searchInput, #wishlistSearchInput {
+         width: 100%;
+         margin: 10px auto;
+         font-size: 13px;
+         }
          .grid {
-         grid-template-columns: repeat(3, 1fr);
-         gap: 14px;
-         padding: 10px;
+         grid-template-columns: repeat(2, minmax(140px, 1fr));
+         gap: 12px;
+         padding: 10px 6px 80px;
          }
          .card {
          max-width: 100%;
+         box-shadow: 0 2px 8px rgba(255,182,193,0.25);
+         }
+         .card img {
+         height: 200px;
+         }
+         .card .title {
+         min-height: unset;
+         }
+         .counter {
+         gap: 10px;
+         font-size: 12px;
+         }
+         #multiSelectBar {
+         padding: 10px;
+         gap: 8px;
+         }
+         #multiSelectActions {
+         justify-content: flex-start;
+         }
+         .multi-select-btn {
+         font-size: 11px;
+         padding: 5px 9px;
          }
          #popupContent {
          flex-direction: column;
          align-items: center;
          gap: 15px;
          text-align: center;
+         width: 94%;
          }
          #popupContent img {
          max-width: 150px;
@@ -1018,6 +1060,37 @@
          .popup-info {
          padding-left: 0;
          padding-right: 0;
+         font-size: 13px;
+         }
+         #adminFormCard,
+         #multiEditorCard {
+         max-width: 92%;
+         width: 92%;
+         flex-direction: column;
+         }
+         #adminFormImageWrap,
+         #multiEditorImageWrap {
+         justify-content: center;
+         }
+         #adminCoverPreview,
+         #multiEditorCoverPreview {
+         width: 130px;
+         }
+         #adminBar {
+         right: 12px;
+         left: 12px;
+         bottom: 76px;
+         top: auto;
+         padding: 10px;
+         }
+         #adminBarButtons {
+         gap: 8px;
+         }
+         #backToTop {
+         right: 16px;
+         bottom: 16px;
+         width: 44px;
+         height: 44px;
          }
          }
       </style>
