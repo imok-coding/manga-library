@@ -1613,11 +1613,7 @@
          if (authModalClose) {
            authModalClose.addEventListener('click', closeAuthModal);
          }
-         if (authModalOverlay) {
-           authModalOverlay.addEventListener('click', (e) => {
-             if (e.target === authModalOverlay) closeAuthModal();
-           });
-         }
+         // Do not close the auth modal just by clicking the blurred backdrop (harder to dismiss accidentally).
          
          // Email / password SIGN IN
          if (authSignInForm) {
@@ -1815,7 +1811,10 @@
            if (secretClickCount >= 5) {
              authSection.style.display = "block";  // reveals secret sign-in on menu
              secretClickCount = 0;
-             openAuthModal('signin');              // ALSO pop up the overlay form
+             // If already signed in, just reveal the menu section; don't pop the modal.
+             if (!auth.currentUser) {
+               openAuthModal('signin');
+             }
            }
          }
          
@@ -2632,7 +2631,11 @@
            try {
              await deleteDoc(doc(db, colName, currentPopupBook.id));
              popupOverlay.style.display = 'none';
-             await reloadAll();
+             if (colName === "wishlist") {
+               await loadWishlistFromFirestore();
+             } else {
+               await loadLibraryFromFirestore();
+             }
            } catch (err) {
              console.error(err);
              alert("Failed to delete item.");
@@ -2733,7 +2736,13 @@
                }
              }
          
-             await reloadAll();
+             if (action === 'move') {
+               await reloadAll(); // both collections changed
+             } else if (isLibraryPage) {
+               await loadLibraryFromFirestore();
+             } else {
+               await loadWishlistFromFirestore();
+             }
              exitMultiSelectMode();
            } catch (err) {
              console.error('Multi-select action error:', err);
@@ -2908,11 +2917,11 @@
          multiEditorSaveAll.onclick = async () => {
          saveCurrentMultiCreateEntry();
          
-         const col = adminFormCollection === "wishlist" ? "wishlist" : "library";
+           const col = adminFormCollection === "wishlist" ? "wishlist" : "library";
          
-         try {
-           for (const item of multiCreateItems) {
-             const payload = {
+           try {
+             for (const item of multiCreateItems) {
+               const payload = {
                title: item.title,
                authors: item.authors,
                publisher: item.publisher,
@@ -2938,7 +2947,11 @@
          
            multiEditorOverlay.style.display = "none";
            multiCreateActive = false;
-           await reloadAll();
+           if (col === "wishlist") {
+             await loadWishlistFromFirestore();
+           } else {
+             await loadLibraryFromFirestore();
+           }
          } catch (err) {
            console.error("Multi-editor save error:", err);
            alert("Failed to save volumes. Check console for details.");
@@ -3084,21 +3097,25 @@
                }
          
                closeAdminForm();
-               await reloadAll();
+               if (adminFormCollection === "wishlist") {
+                 await loadWishlistFromFirestore();
+               } else {
+                 await loadLibraryFromFirestore();
+               }
 
                const popupIsOpen = popupOverlay && popupOverlay.style.display === 'flex';
                if (editingExisting && popupIsOpen && currentPopupBook && currentPopupBook.id === adminFormDocId) {
                  const source = editingCollection === "wishlist" ? wishlistItems : libraryBooks;
                  const updated = source.find(b => b.id === adminFormDocId);
-                 if (updated) {
-                   showPopup(updated);
-                 }
-               }
-               } catch (err) {
-               console.error(err);
-               alert("Failed to save. Check console for details.");
-               }
-           });
+             if (updated) {
+               showPopup(updated);
+             }
+           }
+           } catch (err) {
+           console.error(err);
+           alert("Failed to save. Check console for details.");
+           }
+       });
          
          
          // expose some helpers to global (for safety if you need console access)
