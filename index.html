@@ -2239,24 +2239,28 @@
                const b = sourceArray.find(x => x.id === id);
                if (!b) return;
          
-               const existingDate = (b.Date || "").trim();
-               const dateValue = /^\d{4}-\d{2}-\d{2}$/.test(existingDate)
-                   ? existingDate
-                   : "";
-         
-               items.push({
-                   title: b.Title || "",
-                   authors: b.Authors || "",
-                   publisher: b.Publisher || "",
-                   date: dateValue,
-                   isbn: b.ISBN || "",
-                   cover: b.Cover || "",
-                   amazonURL: b.AmazonURL || "",
-                   read: !!b.Read,
-                   vol: 0, // not used in selection mode
-                   existsAlready: true,
-                   docId: b.id
-               });
+              const existingDate = (b.Date || "").trim();
+              const dateValue = /^\d{4}-\d{2}-\d{2}$/.test(existingDate)
+                  ? existingDate
+                  : "";
+              const parsed = parseTitleForSort(b.Title);
+
+              items.push({
+                  title: b.Title || "",
+                  authors: b.Authors || "",
+                  publisher: b.Publisher || "",
+                  date: dateValue,
+                  isbn: b.ISBN || "",
+                  cover: b.Cover || "",
+                  amazonURL: b.AmazonURL || "",
+                  read: !!b.Read,
+                  // Capture parsed sort info so numeric volumes stay in order (1,2,3...10)
+                  sortName: parsed.name || (b.Title || "").toLowerCase(),
+                  sortVol: parsed.vol || 0,
+                  vol: parsed.vol || 0, // still unused for UI, but preserved for consistency
+                  existsAlready: true,
+                  docId: b.id
+              });
            });
          
            if (!items.length) {
@@ -2264,8 +2268,14 @@
                return;
            }
          
-           // Sort by title just for nice navigation
-           items.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+           // Sort by series/name, then numeric volume, then title to avoid 1,10,2 ordering
+           items.sort((a, b) => {
+               const nameCmp = (a.sortName || '').localeCompare(b.sortName || '');
+               if (nameCmp !== 0) return nameCmp;
+               const volCmp = (a.sortVol || 0) - (b.sortVol || 0);
+               if (volCmp !== 0) return volCmp;
+               return (a.title || '').localeCompare(b.title || '');
+           });
          
            multiCreateItems   = items;
            multiCreateVolumes = items.map((_, i) => i + 1);
