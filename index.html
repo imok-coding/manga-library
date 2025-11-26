@@ -2108,16 +2108,22 @@
            row.insertBefore(daySel, hiddenInput);
            row.insertBefore(yearSel, hiddenInput);
 
-           function updateDayOptions() {
+           function updateDayOptions(preserveSelection = true) {
              const y = parseInt(yearSel.value || '2000', 10);
              const m = parseInt(monthSel.value || '1', 10);
              const daysInMonth = new Date(y, m, 0).getDate();
+             const prevDay = preserveSelection ? (daySel.value || '') : '';
              while (daySel.options.length > 1) daySel.remove(1);
              for (let d = 1; d <= daysInMonth; d++) {
                const opt = document.createElement('option');
                opt.value = String(d).padStart(2, '0');
                opt.textContent = String(d).padStart(2, '0');
                daySel.appendChild(opt);
+             }
+             if (prevDay) {
+               const clamped = Math.min(parseInt(prevDay, 10), daysInMonth);
+               const clampedVal = String(clamped).padStart(2, '0');
+               daySel.value = clampedVal;
              }
            }
 
@@ -2135,16 +2141,16 @@
            function syncSelectsFromHidden() {
              const val = hiddenInput.value || '';
              const m = /^\s*(\d{4})-(\d{2})-(\d{2})\s*$/.exec(val);
-             updateDayOptions();
+             updateDayOptions(false);
              if (m) {
                yearSel.value = m[1];
                monthSel.value = m[2];
-               updateDayOptions();
+               updateDayOptions(false);
                daySel.value = m[3];
              } else {
                yearSel.value = '';
                monthSel.value = '';
-               updateDayOptions();
+               updateDayOptions(false);
                daySel.value = '';
              }
            }
