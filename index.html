@@ -51,15 +51,15 @@
          display: flex;
          flex-direction: column;
          justify-content: space-between;
-         background: rgba(43,15,29,0.75);
-         border: 1px solid rgba(255,182,193,0.35);
+         background: rgba(43,15,29,0.65);
+         border: 1px solid rgba(255,182,193,0.25);
          border-radius: 10px;
          padding: 0;
          cursor: pointer;
          z-index: 11000;
          appearance: none;
          -webkit-appearance: none;
-         box-shadow: 0 4px 14px rgba(0,0,0,0.45), 0 0 10px rgba(255,105,180,0.25);
+         box-shadow: none;
          }
          .menu-toggle span {
          display: block;
@@ -282,6 +282,11 @@
          .stat-card.tall {
          min-height: 200px;
          }
+         .stat-stack {
+         display: grid;
+         grid-template-rows: repeat(2, auto);
+         gap: 10px;
+         }
          .stat-card:hover {
          transform: translateY(-6px);
          box-shadow: 0 10px 24px rgba(255,182,193,0.28);
@@ -297,6 +302,17 @@
          font-weight: 700;
          color: #fff;
          text-align: center;
+         }
+         .stat-card.mini {
+         padding: 10px;
+         gap: 4px;
+         }
+         .stat-card.mini h3 {
+         font-size: 12px;
+         margin-bottom: 2px;
+         }
+         .stat-card.mini .stat-value {
+         font-size: 18px;
          }
          .stat-card .stat-value.next-release {
          font-size: 16px;
@@ -345,9 +361,7 @@
          border-radius: 10px;
          padding: 6px;
          line-height: 1.35;
-         opacity: 0;
-         transition: opacity 0.2s ease;
-         pointer-events: none;
+         display: none; /* hide hover box inside pies */
          }
          .stat-card:hover .pie {
          transform: scale(1.05);
@@ -403,6 +417,36 @@
          letter-spacing: 0.4px;
          text-transform: uppercase;
          }
+         .stat-list {
+         display: flex;
+         flex-direction: column;
+         gap: 6px;
+         width: 100%;
+         }
+         .stat-list-row {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         padding: 6px 8px;
+         background: rgba(255,182,193,0.08);
+         border: 1px solid rgba(255,182,193,0.2);
+         border-radius: 8px;
+         font-size: 12px;
+         color: #f8d1d8;
+         }
+         .stat-list-row .stat-rank {
+         color: #ffb6c1;
+         font-weight: 700;
+         margin-right: 6px;
+         }
+         .stat-list-row .stat-name {
+         flex: 1;
+         text-align: left;
+         }
+         .stat-list-row .stat-count {
+         color: #fff;
+         font-weight: 700;
+         }
          .line-chart {
          position: relative;
          width: 100%;
@@ -446,12 +490,17 @@
          /* Dashboard library list */
          .dash-library {
          display: grid;
-         grid-template-columns: 1.1fr 1fr;
+         grid-template-columns: 1fr 1fr;
          gap: 12px;
          width: 100%;
+         align-items: stretch;
+         }
+         .dash-library-list,
+         .dash-library-details {
+         min-height: 380px;
+         height: 100%;
          }
          .dash-library-list {
-         max-height: 240px;
          overflow-y: auto;
          border: 1px solid rgba(255,182,193,0.25);
          border-radius: 10px;
@@ -519,9 +568,10 @@
          .dash-library-details {
          border: 1px solid rgba(255,182,193,0.25);
          border-radius: 10px;
-         padding: 10px;
+         padding: 12px;
          background: rgba(43,15,29,0.6);
-         min-height: 180px;
+         display: flex;
+         flex-direction: column;
          }
          .dash-detail-title {
          margin: 0 0 8px;
@@ -1108,18 +1158,51 @@
          }
          #popupBuy {
          margin-top: 6px;
-         padding: 6px 16px;
+         padding: 8px 16px;
          border-radius: 999px;
          border: none;
          background: #ff69b4;
          color: #1e0d14;
-         font-weight: 600;
+         font-weight: 700;
          cursor: pointer;
          box-shadow: 0 0 10px rgba(255,105,180,0.6);
          display: none;
+         gap: 8px;
+         align-items: center;
+         justify-content: center;
          }
-         #popupBuy:hover {
-         background: #ffc0cb;
+         #popupBuy .buy-icon {
+         display: inline-flex;
+         width: 20px;
+         height: 20px;
+         border-radius: 50%;
+         align-items: center;
+         justify-content: center;
+         font-size: 12px;
+         font-weight: 800;
+         color: #1e0d14;
+         }
+         #popupBuy.buy-amazon {
+         background: linear-gradient(135deg,#ffb347,#ff9900);
+         color: #1e0d14;
+         }
+         #popupBuy.buy-amazon .buy-icon {
+         background: #232f3e;
+         color: #ffb347;
+         }
+         #popupBuy.buy-crunchyroll {
+         background: linear-gradient(135deg,#ff974d,#f26b1d);
+         color: #1e0d14;
+         }
+         #popupBuy.buy-crunchyroll .buy-icon {
+         background: #1e0d14;
+         color: #f26b1d;
+         }
+         #popupBuy.buy-generic {
+         background: #2b0f1d;
+         color: #ffb6c1;
+         border: 1px solid #ffb6c1;
+         box-shadow: none;
          }
          /* Admin controls inside popup */
          #popupAdminControls {
@@ -1242,6 +1325,13 @@
          #multiSelectBar {
          flex-direction: column;
          align-items: flex-start;
+         }
+         .dash-library {
+         grid-template-columns: 1fr;
+         }
+         .dash-library-list,
+         .dash-library-details {
+         min-height: 0;
          }
          }
          #multiCreatePanel {
@@ -1686,9 +1776,15 @@
          <!-- DASHBOARD SECTION (admins only) -->
          <div id="dashboardSection" class="page-section hidden">
             <div class="dashboard-grid">
-               <div class="stat-card">
-                  <h3>Total Library Books</h3>
-                  <div class="stat-value" id="statTotalLibrary">0</div>
+               <div class="stat-stack">
+                  <div class="stat-card mini">
+                     <h3>Total Library Books</h3>
+                     <div class="stat-value" id="statTotalLibrary">0</div>
+                  </div>
+                  <div class="stat-card mini">
+                     <h3>Wishlist Items</h3>
+                     <div class="stat-value" id="statWishlist">0</div>
+                  </div>
                </div>
                <div class="stat-card">
                   <h3>Read / Unread</h3>
@@ -1698,15 +1794,23 @@
                   <div class="stat-value"><span id="statRead">0</span> / <span id="statUnread">0</span></div>
                </div>
                <div class="stat-card">
-                  <h3>Wishlist Items</h3>
-                  <div class="stat-value" id="statWishlist">0</div>
-               </div>
-               <div class="stat-card">
                   <h3>Library vs Wishlist</h3>
                   <div class="pie" id="pieCollection" style="--pct:0;">
                      <div class="pie-label" id="statCollectionPct">0%</div>
                   </div>
                   <div class="stat-value"><span id="statLibShare">0</span> / <span id="statWishShare">0</span></div>
+               </div>
+               <div class="stat-card">
+                  <h3>Top 3 Demographics</h3>
+                  <div class="stat-list" id="statTopDemographics"></div>
+               </div>
+               <div class="stat-card">
+                  <h3>Top 3 Publishers</h3>
+                  <div class="stat-list" id="statTopPublishers"></div>
+               </div>
+               <div class="stat-card">
+                  <h3>Top 3 Genres</h3>
+                  <div class="stat-list" id="statTopGenres"></div>
                </div>
             <div class="stat-card">
                <h3>Next Wishlist Release</h3>
@@ -1737,7 +1841,7 @@
                </div>
                <div class="stat-card wide">
                   <h3>Library Manager</h3>
-                  <div class="dash-library">
+                     <div class="dash-library">
                      <div class="dash-library-list" id="dashLibraryList"></div>
                      <div class="dash-library-details">
                      <div id="dashLibraryEmpty">Select a series or book to edit</div>
@@ -2118,6 +2222,9 @@
          const statCurrentYearSub   = document.getElementById('statCurrentYearSub');
          const statAvgReadTime      = document.getElementById('statAvgReadTime');
          const statAvgReadTimeSub   = document.getElementById('statAvgReadTimeSub');
+         const statTopDemographics  = document.getElementById('statTopDemographics');
+         const statTopPublishers    = document.getElementById('statTopPublishers');
+         const statTopGenres        = document.getElementById('statTopGenres');
          const statMonthlyLine      = document.getElementById('statMonthlyLine');
          const statMonthlyYear      = document.getElementById('statMonthlyYear');
          const statDayOfWeekBars    = document.getElementById('statDayOfWeekBars');
@@ -3697,6 +3804,37 @@
            }
            return null;
          }
+
+         function computeTopCounts(list, key, topN = 3) {
+           const counts = new Map();
+           list.forEach(item => {
+             const val = (item[key] || "").trim();
+             if (!val || val.toLowerCase() === 'unknown') return;
+             counts.set(val, (counts.get(val) || 0) + 1);
+           });
+           return Array.from(counts.entries())
+             .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+             .slice(0, topN);
+         }
+
+         function renderTopList(el, items, emptyText) {
+           if (!el) return;
+           el.innerHTML = '';
+           if (!items.length) {
+             el.textContent = emptyText;
+             return;
+           }
+           items.forEach(([name, count], idx) => {
+             const row = document.createElement('div');
+             row.className = 'stat-list-row';
+             row.innerHTML = `
+               <span class="stat-rank">${idx + 1}.</span>
+               <span class="stat-name">${name}</span>
+               <span class="stat-count">${count}</span>
+             `;
+             el.appendChild(row);
+           });
+         }
          
          function findNextWishlistRelease() {
            if (!wishlistItems || !wishlistItems.length) return null;
@@ -3809,6 +3947,10 @@
            if (statCollectionValue) {
              statCollectionValue.textContent = `$${totalMsrp.toFixed(2)}`;
            }
+           // Top lists
+           renderTopList(statTopDemographics, computeTopCounts(libraryBooks, 'Demographic'), 'No demographics yet');
+           renderTopList(statTopPublishers, computeTopCounts(libraryBooks, 'Publisher'), 'No publishers yet');
+           renderTopList(statTopGenres, computeTopCounts(libraryBooks, 'Genre'), 'No genres yet');
            // Current year read count
            const readThisYear = libraryBooks.filter(b => {
              const dt = resolveReadDate(b);
@@ -4197,6 +4339,22 @@
          }
          
          // ===== POPUP =====
+         function classifyStore(url) {
+           try {
+             const parsed = new URL(url);
+             const host = parsed.hostname.toLowerCase();
+             if (host.includes('amazon.') || host === 'amzn.to') {
+               return { store: 'amazon', label: 'Amazon', icon: 'a' };
+             }
+             if (host.includes('crunchyroll')) {
+               return { store: 'crunchyroll', label: 'Crunchyroll', icon: 'C' };
+             }
+             return { store: 'generic', label: host.replace(/^www\./, '') || 'Store', icon: '↗' };
+           } catch (e) {
+             return { store: 'generic', label: 'Store', icon: '↗' };
+           }
+         }
+
          function showPopup(book) {
            currentPopupBook = book;
            popupOverlay.style.display = 'flex';
@@ -4233,7 +4391,11 @@
            }
          
            if (book.AmazonURL) {
-             popupBuy.style.display = 'inline-block';
+             const info = classifyStore(book.AmazonURL);
+             popupBuy.classList.remove('buy-amazon','buy-crunchyroll','buy-generic');
+             popupBuy.classList.add(`buy-${info.store}`);
+             popupBuy.innerHTML = `<span class="buy-icon">${info.icon}</span>Buy from ${info.label}`;
+             popupBuy.style.display = 'inline-flex';
              popupBuy.onclick = () => window.open(book.AmazonURL, '_blank');
            } else {
              popupBuy.style.display = 'none';
