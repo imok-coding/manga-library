@@ -184,6 +184,38 @@
          color: #fff;
          box-shadow: 0 0 6px rgba(255,182,193,0.3) inset;
          }
+         /* ===== WISHLIST COUNTDOWN ===== */
+         #wishlistCountdown {
+         width: 90%;
+         max-width: 520px;
+         margin: 0 auto 10px;
+         padding: 12px 14px;
+         background: rgba(255,182,193,0.08);
+         border: 1px solid rgba(255,182,193,0.35);
+         border-radius: 12px;
+         box-shadow: 0 0 12px rgba(255,182,193,0.25);
+         text-align: center;
+         display: none;
+         }
+         #wishlistCountdown .countdown-label {
+         font-size: 12px;
+         letter-spacing: 0.5px;
+         text-transform: uppercase;
+         color: #f8d1d8;
+         margin-bottom: 4px;
+         }
+         #wishlistCountdownTitle {
+         font-size: 16px;
+         font-weight: 700;
+         color: #ffb6c1;
+         margin-bottom: 6px;
+         }
+         #wishlistCountdownTimer {
+         font-size: 18px;
+         font-weight: 700;
+         color: #ffffff;
+         letter-spacing: 1px;
+         }
          /* ===== ADMIN PANEL (floating) ===== */
          #adminBar {
          display: none; /* shown only when isAdmin = true */
@@ -1226,6 +1258,11 @@
             <div class="counter">
                <span class="total" id="wishlistCount"></span>
             </div>
+            <div id="wishlistCountdown">
+               <div class="countdown-label">Next Release</div>
+               <div id="wishlistCountdownTitle"></div>
+               <div id="wishlistCountdownTimer"></div>
+            </div>
             <input
                type="text"
                id="wishlistSearchInput"
@@ -1492,6 +1529,9 @@
          let multiCreateVolumes = [];  // e.g. [55, 67, 89, 111]
          let multiCreateIndex  = 0;    // current index in that array
          let multiCreateItems  = [];   // detailed data for each volume
+         // Wishlist countdown state
+         let wishlistCountdownInterval = null;
+         let nextWishlistRelease = null;
          
          // DOM refs
          const menuToggle      = document.getElementById('menuToggle');
@@ -1505,6 +1545,9 @@
          const readTop         = document.getElementById('readBooksTop');
          const readBottom      = document.getElementById('readBooksBottom');
          const wishlistCount   = document.getElementById('wishlistCount');
+         const wishlistCountdownEl   = document.getElementById('wishlistCountdown');
+         const wishlistCountdownTitle= document.getElementById('wishlistCountdownTitle');
+         const wishlistCountdownTimer= document.getElementById('wishlistCountdownTimer');
          
          const bookGrid        = document.getElementById('bookGrid');
          const wishlistGrid    = document.getElementById('wishlistGrid');
@@ -2429,6 +2472,88 @@
          }
          
          
+         
+         // Helpers for wishlist countdown
+         function parseWishlistDate(dateStr) {
+           if (!dateStr) return null;
+           const trimmed = ("" + dateStr).trim();
+           if (!trimmed || /^unknown$/i.test(trimmed)) return null;
+           if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+             const [y, m, d] = trimmed.split("-").map(Number);
+             const localDate = new Date(y, m - 1, d);
+             return isNaN(localDate) ? null : localDate;
+           }
+           const parsed = new Date(trimmed);
+           return isNaN(parsed) ? null : parsed;
+         }
+         
+         function findNextWishlistRelease() {
+           if (!wishlistItems || !wishlistItems.length) return null;
+           const now = new Date();
+           let best = null;
+           wishlistItems.forEach(item => {
+             const releaseDate = parseWishlistDate(item.Date);
+             if (!releaseDate) return;
+             if (releaseDate.getTime() <= now.getTime()) return;
+             if (!best || releaseDate.getTime() < best.date.getTime()) {
+               best = { item, date: releaseDate };
+             }
+           });
+           return best;
+         }
+         
+         function stopWishlistCountdown() {
+           if (wishlistCountdownInterval) {
+             clearInterval(wishlistCountdownInterval);
+             wishlistCountdownInterval = null;
+           }
+         }
+         
+         function updateWishlistCountdown() {
+           stopWishlistCountdown();
+           if (!wishlistCountdownEl || !wishlistCountdownTitle || !wishlistCountdownTimer) return;
+         
+           const next = findNextWishlistRelease();
+           nextWishlistRelease = next;
+         
+           if (!next) {
+             wishlistCountdownEl.style.display = 'none';
+             wishlistCountdownTitle.textContent = '';
+             wishlistCountdownTimer.textContent = '';
+             return;
+           }
+         
+           wishlistCountdownTitle.textContent = `Next Release: ${next.item.Title || 'Unknown'}`;
+           wishlistCountdownEl.style.display = 'block';
+         
+           const target = next.date;
+           const tick = () => {
+             const now = new Date();
+             let diff = target.getTime() - now.getTime();
+             if (diff <= 0) {
+               updateWishlistCountdown();
+               return;
+             }
+             const dayMs = 86400000;
+             const hourMs = 3600000;
+             const minuteMs = 60000;
+         
+             const days = Math.floor(diff / dayMs);
+             diff -= days * dayMs;
+             const hours = Math.floor(diff / hourMs);
+             diff -= hours * hourMs;
+             const minutes = Math.floor(diff / minuteMs);
+             diff -= minutes * minuteMs;
+             const seconds = Math.floor(diff / 1000);
+         
+             wishlistCountdownTimer.textContent =
+               `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+           };
+         
+           tick();
+           wishlistCountdownInterval = setInterval(tick, 1000);
+         }
+         
          // ===== LOAD LIBRARY FROM FIRESTORE =====
          async function loadLibraryFromFirestore() {
            const snap = await getDocs(collection(db, "library"));
@@ -2554,9 +2679,10 @@
          
              // 🔧 this was missing:
            wishlistGrid.appendChild(card);
-          });
+         });
          
-          searchWishlist();
+         updateWishlistCountdown();
+         searchWishlist();
         }
          
          // ===== RELOAD BOTH =====
