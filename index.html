@@ -184,37 +184,40 @@
          color: #fff;
          box-shadow: 0 0 6px rgba(255,182,193,0.3) inset;
          }
-         /* ===== WISHLIST COUNTDOWN ===== */
+         /* ===== WISHLIST HEADER & COUNTDOWN ===== */
+         #wishlistHeader {
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         gap: 6px;
+         }
          #wishlistCountdown {
-         width: 90%;
-         max-width: 520px;
-         margin: 0 auto 10px;
-         padding: 12px 14px;
-         background: rgba(255,182,193,0.08);
+         display: none;
+         padding: 8px 12px;
+         background: linear-gradient(135deg, rgba(255,182,193,0.18), rgba(255,105,180,0.18));
          border: 1px solid rgba(255,182,193,0.35);
          border-radius: 12px;
-         box-shadow: 0 0 12px rgba(255,182,193,0.25);
+         box-shadow: 0 4px 14px rgba(255,182,193,0.25);
          text-align: center;
-         display: none;
          }
          #wishlistCountdown .countdown-label {
-         font-size: 12px;
-         letter-spacing: 0.5px;
+         font-size: 10px;
+         letter-spacing: 0.6px;
          text-transform: uppercase;
          color: #f8d1d8;
-         margin-bottom: 4px;
+         margin-bottom: 2px;
          }
          #wishlistCountdownTitle {
-         font-size: 16px;
+         font-size: 14px;
          font-weight: 700;
          color: #ffb6c1;
-         margin-bottom: 6px;
+         margin-bottom: 4px;
          }
          #wishlistCountdownTimer {
-         font-size: 18px;
+         font-size: 15px;
          font-weight: 700;
          color: #ffffff;
-         letter-spacing: 1px;
+         letter-spacing: 0.8px;
          }
          /* ===== ADMIN PANEL (floating) ===== */
          #adminBar {
@@ -1255,13 +1258,15 @@
          </div>
          <!-- WISHLIST SECTION -->
          <div id="wishlistSection" class="page-section hidden">
-            <div class="counter">
-               <span class="total" id="wishlistCount"></span>
-            </div>
-            <div id="wishlistCountdown">
-               <div class="countdown-label">Next Release</div>
-               <div id="wishlistCountdownTitle"></div>
-               <div id="wishlistCountdownTimer"></div>
+            <div id="wishlistHeader">
+               <div class="counter" style="margin:0;">
+                  <span class="total" id="wishlistCount"></span>
+               </div>
+               <div id="wishlistCountdown">
+                  <div class="countdown-label">Next Release</div>
+                  <div id="wishlistCountdownTitle"></div>
+                  <div id="wishlistCountdownTimer"></div>
+               </div>
             </div>
             <input
                type="text"
