@@ -263,6 +263,15 @@
          color: #fff;
          text-align: center;
          }
+         .stat-card .stat-value.next-release {
+         font-size: 16px;
+         line-height: 1.3;
+         }
+         .stat-sub {
+         font-size: 12px;
+         color: #f8d1d8;
+         text-align: center;
+         }
          .pie {
          width: 130px;
          height: 130px;
@@ -325,7 +334,50 @@
          padding: 8px;
          background: rgba(43,15,29,0.5);
          }
-         .dash-library-list button {
+         .dash-series {
+         margin-bottom: 8px;
+         }
+         .dash-series-header {
+         width: 100%;
+         text-align: left;
+         background: transparent;
+         border: 1px solid rgba(255,182,193,0.25);
+         color: #ffb6c1;
+         padding: 8px;
+         border-radius: 8px;
+         cursor: pointer;
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         gap: 8px;
+         }
+         .dash-series-header .dash-series-title {
+         flex: 1;
+         }
+         .dash-series-header .dash-series-meta {
+         font-size: 11px;
+         color: #f8d1d8;
+         }
+         .dash-series-header .dash-series-chevron {
+         transition: transform 0.2s ease;
+         }
+         .dash-series.expanded .dash-series-chevron {
+         transform: rotate(90deg);
+         }
+         .dash-series-header.active {
+         border-color: #ff69b4;
+         box-shadow: 0 0 8px rgba(255,105,180,0.5);
+         }
+         .dash-series-books {
+         margin: 6px 0 10px 10px;
+         padding-left: 10px;
+         border-left: 1px solid rgba(255,182,193,0.25);
+         display: none;
+         }
+         .dash-series.expanded .dash-series-books {
+         display: block;
+         }
+         .dash-series-books button {
          width: 100%;
          text-align: left;
          background: transparent;
@@ -336,7 +388,7 @@
          margin-bottom: 6px;
          cursor: pointer;
          }
-         .dash-library-list button.active {
+         .dash-series-books button.active {
          border-color: #ff69b4;
          box-shadow: 0 0 8px rgba(255,105,180,0.5);
          }
@@ -1484,14 +1536,37 @@
                </div>
             <div class="stat-card">
                <h3>Next Wishlist Release</h3>
-               <div class="stat-value" id="statNextRelease">None scheduled</div>
+               <div class="stat-value next-release" id="statNextRelease">None scheduled</div>
+               <div class="stat-sub" id="statNextCountdown"></div>
+            </div>
+            <div class="stat-card">
+               <h3>Collection MSRP</h3>
+               <div class="stat-value" id="statCollectionValue">$0.00</div>
             </div>
             <div class="stat-card wide">
                <h3>Library Manager</h3>
                <div class="dash-library">
                   <div class="dash-library-list" id="dashLibraryList"></div>
                   <div class="dash-library-details">
-                     <div id="dashLibraryEmpty">Select a book to edit</div>
+                     <div id="dashLibraryEmpty">Select a series or book to edit</div>
+                     <div id="dashSeriesForm" style="display:none;">
+                        <div class="dash-detail-title" id="dashSeriesTitle"></div>
+                        <div class="dash-detail-row">
+                           <label><input type="checkbox" id="dashSeriesRead"> Mark series as read</label>
+                        </div>
+                        <div class="dash-detail-row">
+                           <span>Date Purchased</span>
+                           <input type="date" id="dashSeriesDatePurchased">
+                        </div>
+                        <div class="dash-detail-row">
+                           <span>MSRP (per book)</span>
+                           <input type="number" id="dashSeriesMSRP" step="0.01" min="0" placeholder="0.00">
+                        </div>
+                        <div class="dash-detail-actions">
+                           <button class="dash-btn secondary" id="dashSeriesCancel">Cancel</button>
+                           <button class="dash-btn primary" id="dashSeriesSave">Save Series</button>
+                        </div>
+                     </div>
                      <div id="dashLibraryForm" style="display:none;">
                         <div class="dash-detail-title" id="dashDetailTitle"></div>
                         <div class="dash-detail-row">
@@ -1504,6 +1579,10 @@
                         <div class="dash-detail-row" id="dashDetailDateReadRow">
                            <span>Date Read</span>
                            <input type="date" id="dashDetailDateRead">
+                        </div>
+                        <div class="dash-detail-row">
+                           <span>MSRP (per book)</span>
+                           <input type="number" id="dashDetailMSRP" step="0.01" min="0" placeholder="0.00">
                         </div>
                         <div class="dash-detail-actions">
                            <button class="dash-btn secondary" id="dashDetailCancel">Cancel</button>
@@ -1772,6 +1851,9 @@
          let currentSeriesSuggestion = null; // { baseName, suggestionVolumes, author, publisher }
          let currentSectionKey = 'library';  // 'library' or 'wishlist'
          let dashSelectedBookId = null;
+         let dashSelectedSeriesKey = null;
+         let dashGroupedSeries = [];
+         let dashSeriesExpanded = new Set();
          
          // Multi-select state
          let multiSelectActive = false;
@@ -1815,6 +1897,8 @@
          const statUnread       = document.getElementById('statUnread');
          const statWishlist     = document.getElementById('statWishlist');
          const statNextRelease  = document.getElementById('statNextRelease');
+         const statNextCountdown= document.getElementById('statNextCountdown');
+         const statCollectionValue = document.getElementById('statCollectionValue');
          const pieRead          = document.getElementById('pieRead');
          const pieCollection    = document.getElementById('pieCollection');
          const statReadPct      = document.getElementById('statReadPct');
@@ -1823,6 +1907,13 @@
          const statWishShare    = document.getElementById('statWishShare');
          const dashLibraryList  = document.getElementById('dashLibraryList');
          const dashLibraryEmpty = document.getElementById('dashLibraryEmpty');
+         const dashSeriesForm   = document.getElementById('dashSeriesForm');
+         const dashSeriesTitle  = document.getElementById('dashSeriesTitle');
+         const dashSeriesRead   = document.getElementById('dashSeriesRead');
+         const dashSeriesDatePurchased = document.getElementById('dashSeriesDatePurchased');
+         const dashSeriesMSRP   = document.getElementById('dashSeriesMSRP');
+         const dashSeriesSave   = document.getElementById('dashSeriesSave');
+         const dashSeriesCancel = document.getElementById('dashSeriesCancel');
          const dashLibraryForm  = document.getElementById('dashLibraryForm');
          const dashDetailTitle  = document.getElementById('dashDetailTitle');
          const dashDetailRead   = document.getElementById('dashDetailRead');
@@ -1897,6 +1988,7 @@
         attachDateDropdowns(adminDateReadInput);
         attachDateDropdowns(dashDetailDatePurchased);
         attachDateDropdowns(dashDetailDateRead);
+        attachDateDropdowns(dashSeriesDatePurchased);
          
          // Multi-create editor DOM refs
          const multiEditorOverlay       = document.getElementById('multiEditorOverlay');
@@ -2338,26 +2430,145 @@
           });
         }
 
+        function getSeriesDisplayNameFromTitle(title) {
+          const t = title || "";
+          const m = t.match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*\d+)?$/i);
+          const name = m ? m[1].trim() : t.trim();
+          return name || "Untitled";
+        }
+
+        function getSeriesKey(book) {
+          if (!book) return "";
+          const parsed = parseTitleForSort(book.Title);
+          if (parsed.vol && parsed.name) return parsed.name;
+          return (book.Title || "").trim().toLowerCase() || (book.id || "");
+        }
+
+        function buildSeriesGroups() {
+          const map = new Map();
+          libraryBooks.forEach(b => {
+            const key = getSeriesKey(b);
+            const displayName = getSeriesDisplayNameFromTitle(b.Title);
+            if (!map.has(key)) {
+              map.set(key, { seriesKey: key, displayName, books: [] });
+            }
+            map.get(key).books.push(b);
+          });
+          dashGroupedSeries = Array.from(map.values()).sort((a, b) => a.displayName.localeCompare(b.displayName));
+          dashGroupedSeries.forEach(group => {
+            group.books.sort((a, b) => {
+              const aP = parseTitleForSort(a.Title);
+              const bP = parseTitleForSort(b.Title);
+              const nameCmp = aP.name.localeCompare(bP.name);
+              if (nameCmp !== 0) return nameCmp;
+              if (aP.vol !== bP.vol) return aP.vol - bP.vol;
+              return (a.Title || "").localeCompare(b.Title || "");
+            });
+          });
+        }
+
         function renderDashboardLibraryList() {
           if (!dashLibraryList) return;
+          buildSeriesGroups();
           dashLibraryList.innerHTML = "";
-          if (!libraryBooks.length) {
+          if (!dashGroupedSeries.length) {
             dashLibraryList.textContent = "No library items";
             if (dashLibraryEmpty) dashLibraryEmpty.style.display = "block";
             if (dashLibraryForm) dashLibraryForm.style.display = "none";
+            if (dashSeriesForm) dashSeriesForm.style.display = "none";
             return;
           }
-          libraryBooks.forEach(b => {
-            const btn = document.createElement('button');
-            btn.textContent = `${b.Title || 'Untitled'}${b.Read ? ' ✔' : ''}`;
-            if (b.id === dashSelectedBookId) btn.classList.add('active');
-            btn.addEventListener('click', () => {
-              dashSelectedBookId = b.id;
-              openDashboardDetail(b.id);
+
+          dashGroupedSeries.forEach(group => {
+            const seriesDiv = document.createElement('div');
+            seriesDiv.className = 'dash-series';
+            if (dashSeriesExpanded.has(group.seriesKey)) seriesDiv.classList.add('expanded');
+
+            const header = document.createElement('button');
+            header.className = 'dash-series-header';
+            if (group.seriesKey === dashSelectedSeriesKey && !dashSelectedBookId) {
+              header.classList.add('active');
+            }
+            const readCount = group.books.filter(b => b.Read).length;
+            header.innerHTML = `
+              <span class="dash-series-chevron">▸</span>
+              <span class="dash-series-title">${group.displayName}</span>
+              <span class="dash-series-meta">${group.books.length} book${group.books.length !== 1 ? 's' : ''}${group.books.length ? ' • ' + readCount + ' read' : ''}</span>
+            `;
+            header.addEventListener('click', () => {
+              if (dashSeriesExpanded.has(group.seriesKey)) {
+                dashSeriesExpanded.delete(group.seriesKey);
+              } else {
+                dashSeriesExpanded.add(group.seriesKey);
+              }
+              dashSelectedSeriesKey = group.seriesKey;
+              dashSelectedBookId = null;
+              openSeriesDetail(group.seriesKey);
               renderDashboardLibraryList();
             });
-            dashLibraryList.appendChild(btn);
+            seriesDiv.appendChild(header);
+
+            const booksWrap = document.createElement('div');
+            booksWrap.className = 'dash-series-books';
+            group.books.forEach(book => {
+              const btn = document.createElement('button');
+              btn.textContent = `${book.Title || 'Untitled'}${book.Read ? ' ✔' : ''}`;
+              if (book.id === dashSelectedBookId) btn.classList.add('active');
+              btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dashSelectedBookId = book.id;
+                dashSelectedSeriesKey = group.seriesKey;
+                dashSeriesExpanded.add(group.seriesKey);
+                openDashboardDetail(book.id);
+                renderDashboardLibraryList();
+              });
+              booksWrap.appendChild(btn);
+            });
+            seriesDiv.appendChild(booksWrap);
+            dashLibraryList.appendChild(seriesDiv);
           });
+        }
+
+        function openSeriesDetail(seriesKey) {
+          const group = dashGroupedSeries.find(g => g.seriesKey === seriesKey);
+          dashSelectedSeriesKey = seriesKey;
+          dashSelectedBookId = null;
+          if (!group) {
+            if (dashLibraryEmpty) dashLibraryEmpty.style.display = "block";
+            if (dashSeriesForm) dashSeriesForm.style.display = "none";
+            if (dashLibraryForm) dashLibraryForm.style.display = "none";
+            return;
+          }
+          if (dashLibraryEmpty) dashLibraryEmpty.style.display = "none";
+          if (dashSeriesForm) dashSeriesForm.style.display = "block";
+          if (dashLibraryForm) dashLibraryForm.style.display = "none";
+
+          if (dashSeriesTitle) dashSeriesTitle.textContent = group.displayName;
+
+          const readCount = group.books.filter(b => b.Read).length;
+          const allRead = readCount === group.books.length && group.books.length > 0;
+          const allUnread = readCount === 0;
+          if (dashSeriesRead) {
+            dashSeriesRead.checked = allRead;
+            dashSeriesRead.indeterminate = !allRead && !allUnread;
+          }
+
+          if (dashSeriesDatePurchased) {
+            const dpValues = Array.from(new Set(group.books.map(b => (b.DatePurchased || "").trim())));
+            const dpVal = dpValues.length === 1 ? dpValues[0] : "";
+            setDateInputValue(dashSeriesDatePurchased, dpVal);
+            dashSeriesDatePurchased.dataset.initialValue = dashSeriesDatePurchased.value || "";
+          }
+
+          if (dashSeriesMSRP) {
+            const msrpValues = Array.from(new Set(group.books.map(b => {
+              const v = b.MSRP;
+              return (v === undefined || v === null || v === "") ? "" : String(v);
+            })));
+            const msrpVal = msrpValues.length === 1 ? msrpValues[0] : "";
+            dashSeriesMSRP.value = msrpVal;
+            dashSeriesMSRP.dataset.initialValue = dashSeriesMSRP.value || "";
+          }
         }
 
         function openDashboardDetail(id) {
@@ -2366,15 +2577,22 @@
             dashSelectedBookId = null;
             if (dashLibraryEmpty) dashLibraryEmpty.style.display = "block";
             if (dashLibraryForm) dashLibraryForm.style.display = "none";
+            if (dashSeriesForm) dashSeriesForm.style.display = "none";
             return;
           }
+          const seriesKey = getSeriesKey(book);
+          dashSelectedSeriesKey = seriesKey;
+          dashSeriesExpanded.add(seriesKey);
+
           if (dashLibraryEmpty) dashLibraryEmpty.style.display = "none";
           if (dashLibraryForm) dashLibraryForm.style.display = "block";
+          if (dashSeriesForm) dashSeriesForm.style.display = "none";
           if (dashDetailTitle) dashDetailTitle.textContent = book.Title || "Untitled";
           if (dashDetailRead) dashDetailRead.checked = !!book.Read;
           if (dashDetailDatePurchased) setDateInputValue(dashDetailDatePurchased, book.DatePurchased || "");
           if (dashDetailDateRead) setDateInputValue(dashDetailDateRead, book.Read ? (book.DateRead || "") : "");
           if (dashDetailDateReadRow) dashDetailDateReadRow.style.display = book.Read ? "block" : "none";
+          if (dashDetailMSRP) dashDetailMSRP.value = (book.MSRP !== undefined && book.MSRP !== null && book.MSRP !== "") ? book.MSRP : "";
         }
 
         if (dashDetailRead && dashDetailDateReadRow) {
@@ -2388,6 +2606,12 @@
               dashDetailDateReadRow.style.display = "none";
               if (dashDetailDateRead) setDateInputValue(dashDetailDateRead, "");
             }
+          });
+        }
+
+        if (dashSeriesRead) {
+          dashSeriesRead.addEventListener('change', () => {
+            dashSeriesRead.indeterminate = false;
           });
         }
 
@@ -2407,10 +2631,13 @@
             const dp = dashDetailDatePurchased ? dashDetailDatePurchased.value.trim() : "";
             const drRaw = dashDetailDateRead ? dashDetailDateRead.value.trim() : "";
             const dr = readVal ? ( /^\d{4}-\d{2}-\d{2}$/.test(drRaw) ? drRaw : new Date().toISOString().slice(0,10) ) : "";
+            const msrpRaw = dashDetailMSRP ? dashDetailMSRP.value.trim() : "";
+            const msrpNum = msrpRaw === "" ? "" : parseFloat(msrpRaw);
             const payload = {
               datePurchased: dp || "",
               read: readVal,
-              dateRead: dr
+              dateRead: dr,
+              msrp: msrpRaw === "" ? "" : (Number.isFinite(msrpNum) ? msrpNum : "")
             };
             try {
               await updateDoc(doc(db, "library", dashSelectedBookId), payload);
@@ -2422,6 +2649,74 @@
               console.error(err);
               alert("Failed to save changes.");
             }
+          });
+        }
+
+        async function saveSeriesChanges() {
+          if (!dashSelectedSeriesKey) return;
+          const group = dashGroupedSeries.find(g => g.seriesKey === dashSelectedSeriesKey);
+          if (!group || !group.books.length) return;
+
+          const applyRead = dashSeriesRead ? !dashSeriesRead.indeterminate : false;
+          const newReadVal = dashSeriesRead ? !!dashSeriesRead.checked : false;
+
+          const dpInput = dashSeriesDatePurchased ? dashSeriesDatePurchased.value.trim() : "";
+          const dpInitial = dashSeriesDatePurchased ? (dashSeriesDatePurchased.dataset.initialValue || "") : "";
+          const dpChanged = dashSeriesDatePurchased ? (dpInput !== dpInitial) : false;
+
+          const msrpInput = dashSeriesMSRP ? dashSeriesMSRP.value.trim() : "";
+          const msrpInitial = dashSeriesMSRP ? (dashSeriesMSRP.dataset.initialValue || "") : "";
+          const msrpChanged = dashSeriesMSRP ? (msrpInput !== msrpInitial) : false;
+          const msrpNumber = msrpInput === "" ? "" : parseFloat(msrpInput);
+          const msrpValue = msrpInput === "" ? "" : (Number.isFinite(msrpNumber) ? msrpNumber : "");
+
+          const updates = [];
+          for (const book of group.books) {
+            const payload = {};
+            if (applyRead) {
+              payload.read = newReadVal;
+              payload.dateRead = newReadVal
+                ? (book.DateRead && /^\d{4}-\d{2}-\d{2}$/.test(book.DateRead) ? book.DateRead : new Date().toISOString().slice(0,10))
+                : "";
+            }
+            if (dpChanged) {
+              payload.datePurchased = dpInput;
+            }
+            if (msrpChanged) {
+              payload.msrp = msrpValue;
+            }
+            if (Object.keys(payload).length) {
+              updates.push(updateDoc(doc(db, "library", book.id), payload));
+            }
+          }
+
+          if (!updates.length) return;
+
+          try {
+            await Promise.all(updates);
+            await loadLibraryFromFirestore();
+            dashSeriesExpanded.add(dashSelectedSeriesKey);
+            openSeriesDetail(dashSelectedSeriesKey);
+            renderDashboardLibraryList();
+            alert("Series updated.");
+          } catch (err) {
+            console.error(err);
+            alert("Failed to update series.");
+          }
+        }
+
+        if (dashSeriesSave) {
+          dashSeriesSave.addEventListener('click', saveSeriesChanges);
+        }
+
+        if (dashSeriesCancel) {
+          dashSeriesCancel.addEventListener('click', () => {
+            dashSelectedSeriesKey = null;
+            dashSelectedBookId = null;
+            if (dashSeriesForm) dashSeriesForm.style.display = "none";
+            if (dashLibraryForm) dashLibraryForm.style.display = "none";
+            if (dashLibraryEmpty) dashLibraryEmpty.style.display = "block";
+            renderDashboardLibraryList();
           });
         }
 
@@ -3104,20 +3399,23 @@
          function updateWishlistCountdown() {
            stopWishlistCountdown();
            if (!wishlistCountdownEl || !wishlistCountdownTitle || !wishlistCountdownTimer) return;
-         
+ 
            const next = findNextWishlistRelease();
            nextWishlistRelease = next;
-         
+ 
            if (!next) {
              wishlistCountdownEl.style.display = 'none';
              wishlistCountdownTitle.textContent = '';
              wishlistCountdownTimer.textContent = '';
+             if (statNextRelease) statNextRelease.textContent = 'None scheduled';
+             if (statNextCountdown) statNextCountdown.textContent = '';
              return;
            }
-         
+ 
            wishlistCountdownTitle.textContent = `Next Release: ${next.item.Title || 'Unknown'}`;
            wishlistCountdownEl.style.display = 'block';
-         
+           if (statNextRelease) statNextRelease.textContent = next.item.Title || 'Unknown';
+ 
            const target = next.date;
            const tick = () => {
              const now = new Date();
@@ -3137,11 +3435,15 @@
              const minutes = Math.floor(diff / minuteMs);
              diff -= minutes * minuteMs;
              const seconds = Math.floor(diff / 1000);
-         
+ 
              wishlistCountdownTimer.textContent =
                `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+             if (statNextCountdown) {
+               statNextCountdown.textContent =
+                 `${days}d ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+             }
            };
-         
+ 
            tick();
            wishlistCountdownInterval = setInterval(tick, 1000);
          }
@@ -3169,6 +3471,13 @@
            if (statCollectionPct) statCollectionPct.textContent = `${libPct}%`;
            if (statLibShare) statLibShare.textContent = totalLib;
            if (statWishShare) statWishShare.textContent = wishCount;
+           const totalMsrp = libraryBooks.reduce((sum, b) => {
+             const v = (b.MSRP !== undefined && b.MSRP !== null && b.MSRP !== "") ? parseFloat(b.MSRP) : NaN;
+             return Number.isFinite(v) ? sum + v : sum;
+           }, 0);
+           if (statCollectionValue) {
+             statCollectionValue.textContent = `$${totalMsrp.toFixed(2)}`;
+           }
            if (statNextRelease) {
              if (nextWishlistRelease && nextWishlistRelease.item) {
                statNextRelease.textContent = nextWishlistRelease.item.Title || 'Unknown';
@@ -3194,6 +3503,7 @@
              ISBN: data.isbn || "",
              DateRead: data.dateRead || "",
              DatePurchased: data.datePurchased || "",
+             MSRP: (data.msrp !== undefined && data.msrp !== null) ? data.msrp : "",
              Read: !!data.read,
              kind: "library"
            });
@@ -3252,6 +3562,8 @@
            renderDashboardLibraryList();
            if (dashSelectedBookId) {
              openDashboardDetail(dashSelectedBookId);
+           } else if (dashSelectedSeriesKey) {
+             openSeriesDetail(dashSelectedSeriesKey);
            }
          } // <-- properly close loadLibraryFromFirestore
          
