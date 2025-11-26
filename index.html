@@ -1481,6 +1481,10 @@
                <input type="checkbox" id="adminReadInput">
                Mark as read (library only)
                </label>
+               <label id="adminDateReadWrapper" style="display:none;">
+               Date when read (library only)
+               <input type="date" id="adminDateReadInput" autocomplete="off">
+               </label>
                <div id="adminFormButtons">
                   <button id="adminFormSave">Save</button>
                </div>
@@ -1537,6 +1541,10 @@
                <label id="multiEditorReadWrapper" style="display:none;">
                <input type="checkbox" id="multiEditorReadInput">
                Mark as read (library only)
+               </label>
+               <label id="multiEditorDateReadWrapper" style="display:none;">
+               Date when read (library only)
+               <input type="date" id="multiEditorDateReadInput" autocomplete="off">
                </label>
                <button id="multiEditorAddVolume"
                   type="button"
@@ -1748,6 +1756,8 @@
          const adminAmazonInput   = document.getElementById('adminAmazonInput');
          const adminReadWrapper   = document.getElementById('adminReadWrapper');
          const adminReadInput     = document.getElementById('adminReadInput');
+         const adminDateReadWrapper = document.getElementById('adminDateReadWrapper');
+         const adminDateReadInput = document.getElementById('adminDateReadInput');
          const adminFormSave      = document.getElementById('adminFormSave');
          
          // Multi-create editor DOM refs
@@ -1769,10 +1779,24 @@
          const multiEditorAmazonInput   = document.getElementById('multiEditorAmazonInput');
          const multiEditorReadWrapper   = document.getElementById('multiEditorReadWrapper');
          const multiEditorReadInput     = document.getElementById('multiEditorReadInput');
+         const multiEditorDateReadWrapper = document.getElementById('multiEditorDateReadWrapper');
+         const multiEditorDateReadInput   = document.getElementById('multiEditorDateReadInput');
          const multiEditorAddVolume     = document.getElementById('multiEditorAddVolume');
          const multiEditorPrev          = document.getElementById('multiEditorPrev');
          const multiEditorNext          = document.getElementById('multiEditorNext');
          const multiEditorSaveAll       = document.getElementById('multiEditorSaveAll');
+
+         if (multiEditorReadInput && multiEditorDateReadInput) {
+           multiEditorReadInput.addEventListener('change', () => {
+             if (multiEditorReadInput.checked) {
+               if (!multiEditorDateReadInput.value) {
+                 multiEditorDateReadInput.value = new Date().toISOString().slice(0,10);
+               }
+             } else {
+               multiEditorDateReadInput.value = "";
+             }
+           });
+         }
          
          // Auth modal DOM refs
          const authModalOverlay      = document.getElementById('authModalOverlay');
@@ -2047,6 +2071,18 @@
                return;
              }
              openMultiEditorFromSuggestion(suggestion);
+           });
+         }
+
+         if (adminReadInput && adminDateReadInput) {
+           adminReadInput.addEventListener('change', () => {
+             if (adminReadInput.checked) {
+               if (!adminDateReadInput.value) {
+                 adminDateReadInput.value = new Date().toISOString().slice(0,10);
+               }
+             } else {
+               adminDateReadInput.value = "";
+             }
            });
          }
          
@@ -2369,21 +2405,22 @@
            allBooks.forEach(b => {
                const parsed = parseTitleForSort(b.Title);
                if (parsed.name === s.baseName && parsed.vol > 0) {
-                   result.push({
-                       vol: parsed.vol,
-                       title: b.Title,
-                       authors: b.Authors,
-                       publisher: b.Publisher,
-                       date: b.Date,
-                       isbn: b.ISBN,
-                       cover: b.Cover,
-                       amazonURL: b.AmazonURL || "",
-                       read: !!b.Read,
-                       existsAlready: true,
-                       docId: b.id
-                   });
-               }
-           });
+                  result.push({
+                      vol: parsed.vol,
+                      title: b.Title,
+                      authors: b.Authors,
+                      publisher: b.Publisher,
+                      date: b.Date,
+                      isbn: b.ISBN,
+                      cover: b.Cover,
+                      amazonURL: b.AmazonURL || "",
+                      read: !!b.Read,
+                      dateRead: b.DateRead || "",
+                      existsAlready: true,
+                      docId: b.id
+                  });
+              }
+          });
          
            // 2. Add volumes the user does NOT have yet (missing + next vol)
            s.suggestionVolumes.forEach(v => {
@@ -2398,6 +2435,7 @@
                        cover: "",
                        amazonURL: "",
                        read: false,
+                       dateRead: "",
                        existsAlready: false,
                        docId: null
                    });
@@ -2426,6 +2464,7 @@
                cover: item.cover,
                amazonURL: item.amazonURL,
                read: item.read,
+               dateRead: /^\d{4}-\d{2}-\d{2}$/.test(item.dateRead || "") ? item.dateRead : "",
                vol: item.vol,
                existsAlready: item.existsAlready,
                docId: item.docId || null
@@ -2472,6 +2511,7 @@
                   cover: b.Cover || "",
                   amazonURL: b.AmazonURL || "",
                   read: !!b.Read,
+                  dateRead: b.DateRead || "",
                   // Capture parsed sort info so numeric volumes stay in order (1,2,3...10)
                   sortName: parsed.name || (b.Title || "").toLowerCase(),
                   sortVol: parsed.vol || 0,
@@ -2556,7 +2596,7 @@
            multiEditorDateInput.value      = item.date;
            multiEditorIsbnInput.value      = item.isbn;
            multiEditorCoverInput.value     = item.cover;
-         
+
            multiEditorCoverPreview.src =
                item.cover || "https://via.placeholder.com/150x220?text=No+Cover";
          
@@ -2566,10 +2606,19 @@
                multiEditorAmazonWrapper.style.display = "flex";
                multiEditorAmazonInput.value = item.amazonURL || "";
                multiEditorReadWrapper.style.display = "none";
+               if (multiEditorDateReadWrapper) multiEditorDateReadWrapper.style.display = "none";
+               if (multiEditorReadInput) multiEditorReadInput.checked = false;
+               if (multiEditorDateReadInput) multiEditorDateReadInput.value = "";
            } else {
                multiEditorAmazonWrapper.style.display = "none";
                multiEditorReadWrapper.style.display = "flex";
                multiEditorReadInput.checked = !!item.read;
+               if (multiEditorDateReadWrapper) {
+                 multiEditorDateReadWrapper.style.display = "flex";
+               }
+               if (multiEditorDateReadInput) {
+                 multiEditorDateReadInput.value = item.dateRead || "";
+               }
            }
          }
          
@@ -2600,6 +2649,19 @@
            item.isbn = multiEditorIsbnInput.value.trim();
            item.cover = multiEditorCoverInput.value.trim();
            item.amazonURL = multiEditorAmazonInput.value.trim();
+           if (multiEditorReadInput) {
+             item.read = !!multiEditorReadInput.checked;
+           }
+           if (multiEditorDateReadInput) {
+             const dr = multiEditorDateReadInput.value.trim();
+             item.dateRead = /^\d{4}-\d{2}-\d{2}$/.test(dr) ? dr : "";
+             if (item.read && !item.dateRead) {
+               item.dateRead = new Date().toISOString().slice(0,10);
+             }
+             if (!item.read) {
+               item.dateRead = "";
+             }
+           }
          }
          
          function openMultiCreateEditor(volumes) {
@@ -2775,6 +2837,7 @@
                Date: data.date || "Unknown",
                Cover: data.cover || "",
                ISBN: data.isbn || "",
+               DateRead: data.dateRead || "",
                Read: !!data.read,
                kind: "library"
              });
@@ -2804,7 +2867,8 @@
                  <div class="meta">${
                    (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
                    (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
-                   (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '')
+                   (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '') +
+                   (b.Read && b.DateRead ? ('Read on ' + b.DateRead + '<br>') : '')
                  }</div>
                  <div class="isbn">${b.ISBN || ''}</div>
              `;
@@ -3021,9 +3085,10 @@
            if (book.Date && book.Date !== 'Unknown') meta += book.Date + '<br>';
            popupMeta.innerHTML = meta;
            popupISBN.innerHTML = book.ISBN || '';
-         
+
            if (book.kind === "library" && (book.Read === true || book.Read === "true")) {
-             popupMeta.innerHTML += '<br><span style="color:#6fcf97;">✔ Read</span>';
+             const dr = book.DateRead ? ` (on ${book.DateRead})` : '';
+             popupMeta.innerHTML += `<br><span style="color:#6fcf97;">✔ Read${dr}</span>`;
            }
          
            if (book.AmazonURL) {
@@ -3061,7 +3126,9 @@
            if (!currentPopupBook || currentPopupBook.kind !== "library") return;
            const newVal = !currentPopupBook.Read;
            try {
-             await updateDoc(doc(db, "library", currentPopupBook.id), { read: newVal });
+             const payload = { read: newVal };
+             payload.dateRead = newVal ? new Date().toISOString().slice(0,10) : "";
+             await updateDoc(doc(db, "library", currentPopupBook.id), payload);
              await loadLibraryFromFirestore();
              // keep popup open but refresh its state
              const updated = libraryBooks.find(b => b.id === currentPopupBook.id);
@@ -3168,15 +3235,15 @@
                    await deleteDoc(doc(db, "wishlist", id));
                  }
                }
-             } else if (action === 'markRead' && isLibraryPage) {
-               for (const id of ids) {
-                 await updateDoc(doc(db, "library", id), { read: true });
-               }
-             } else if (action === 'markUnread' && isLibraryPage) {
-               for (const id of ids) {
-                 await updateDoc(doc(db, "library", id), { read: false });
-               }
-             } else if (action === 'delete') {
+            } else if (action === 'markRead' && isLibraryPage) {
+              for (const id of ids) {
+                await updateDoc(doc(db, "library", id), { read: true, dateRead: new Date().toISOString().slice(0,10) });
+              }
+            } else if (action === 'markUnread' && isLibraryPage) {
+              for (const id of ids) {
+                await updateDoc(doc(db, "library", id), { read: false, dateRead: "" });
+              }
+            } else if (action === 'delete') {
                const colName = isLibraryPage ? "library" : "wishlist";
                if (!confirm(`Delete ${ids.length} item(s) from ${isLibraryPage ? 'Library' : 'Wishlist'}?`)) return;
                for (const id of ids) {
@@ -3303,13 +3370,14 @@
                adminTitleInput.value     = "";
                adminAuthorsInput.value   = "";
                adminPublisherInput.value = "";
-               adminDateInput.value      = "";
-               adminIsbnInput.value      = "";
-               adminCoverInput.value     = "";
-               adminAmazonInput.value    = "";
-               adminReadInput.checked    = false;
-               adminCoverPreview.src     = "https://via.placeholder.com/150x220?text=No+Cover";
-           }
+              adminDateInput.value      = "";
+              adminIsbnInput.value      = "";
+              adminCoverInput.value     = "";
+              adminAmazonInput.value    = "";
+              adminReadInput.checked    = false;
+              if (adminDateReadInput) adminDateReadInput.value = "";
+              adminCoverPreview.src     = "https://via.placeholder.com/150x220?text=No+Cover";
+          }
          
            function openAdminForm(options) {
                const { mode, collection, book } = options;
@@ -3323,9 +3391,12 @@
                // Configure labels & visibility
                const isLibrary  = (adminFormCollection === "library");
                const isWishlist = (adminFormCollection === "wishlist");
-         
+
                adminAmazonWrapper.style.display = isWishlist ? "flex" : "none";
                adminReadWrapper.style.display   = isLibrary  ? "block" : "none";
+               if (adminDateReadWrapper) {
+                 adminDateReadWrapper.style.display = isLibrary ? "block" : "none";
+               }
          
                if (adminFormMode === "add") {
                adminFormTitle.textContent = isLibrary ? "Add Library Book" : "Add Wishlist Item";
@@ -3355,6 +3426,10 @@
                    adminAmazonInput.value = book.AmazonURL || "";
                } else {
                    adminReadInput.checked = !!book.Read;
+                   if (adminDateReadInput) {
+                     const dr = (book.DateRead || "").trim();
+                     adminDateReadInput.value = /^\d{4}-\d{2}-\d{2}$/.test(dr) ? dr : "";
+                   }
                }
                }
          
@@ -3373,21 +3448,26 @@
            const col = adminFormCollection === "wishlist" ? "wishlist" : "library";
          
            try {
-             for (const item of multiCreateItems) {
-               const payload = {
-               title: item.title,
-               authors: item.authors,
-               publisher: item.publisher,
-               date: item.date,
-               isbn: item.isbn,
-               cover: item.cover
-             };
-         
-             if (col === "wishlist") {
-               payload.amazonURL = item.amazonURL || "";
-             } else {
-               payload.read = !!item.read;
-             }
+            for (const item of multiCreateItems) {
+              const payload = {
+              title: item.title,
+              authors: item.authors,
+              publisher: item.publisher,
+              date: item.date,
+              isbn: item.isbn,
+              cover: item.cover
+            };
+
+            if (col === "wishlist") {
+              payload.amazonURL = item.amazonURL || "";
+            } else {
+              payload.read = !!item.read;
+              payload.dateRead = item.read
+                ? (item.dateRead && /^\d{4}-\d{2}-\d{2}$/.test(item.dateRead)
+                    ? item.dateRead
+                    : new Date().toISOString().slice(0,10))
+                : "";
+            }
          
              if (item.existsAlready && item.docId) {
                // UPDATE existing doc
@@ -3444,6 +3524,7 @@
                cover: "",
                amazonURL: "",
                read: false,
+               dateRead: "",
                vol: newVol,
                existsAlready: false,
                docId: null
@@ -3493,36 +3574,40 @@
            adminFormSave.addEventListener('click', async () => {
                const title     = adminTitleInput.value.trim();
                const authors   = adminAuthorsInput.value.trim();
-               const publisher = adminPublisherInput.value.trim();
-               const date      = adminDateInput.value.trim();
-               const isbn      = adminIsbnInput.value.trim();
-               const cover     = adminCoverInput.value.trim();
-               const amazonURL = adminAmazonInput.value.trim();
-               const read      = adminReadInput.checked;
-               const editingExisting = (adminFormMode === "edit" && adminFormDocId);
-               const editingCollection = adminFormCollection;
+              const publisher = adminPublisherInput.value.trim();
+              const date      = adminDateInput.value.trim();
+              const isbn      = adminIsbnInput.value.trim();
+              const cover     = adminCoverInput.value.trim();
+              const amazonURL = adminAmazonInput.value.trim();
+              const read      = adminReadInput.checked;
+              const dateRead  = (adminDateReadInput && adminDateReadInput.value.trim()) || "";
+              const editingExisting = (adminFormMode === "edit" && adminFormDocId);
+              const editingCollection = adminFormCollection;
          
                if (!title) {
                alert("Title is required.");
                return;
                }
          
-               try {
-               if (adminFormMode === "add") {
-                   if (adminFormCollection === "library") {
-                   await addDoc(collection(db, "library"), {
-                       title,
-                       authors,
-                       publisher,
-                       date,
-                       isbn,
-                       cover,
-                       read
-                   });
-                   } else {
-                   await addDoc(collection(db, "wishlist"), {
-                       title,
-                       authors,
+              try {
+              if (adminFormMode === "add") {
+                  if (adminFormCollection === "library") {
+                  await addDoc(collection(db, "library"), {
+                      title,
+                      authors,
+                      publisher,
+                      date,
+                      isbn,
+                      cover,
+                      read,
+                      dateRead: read
+                        ? (/^\d{4}-\d{2}-\d{2}$/.test(dateRead) ? dateRead : new Date().toISOString().slice(0,10))
+                        : ""
+                  });
+                  } else {
+                  await addDoc(collection(db, "wishlist"), {
+                      title,
+                      authors,
                        publisher,
                        date,
                        isbn,
@@ -3533,21 +3618,24 @@
                } else if (adminFormMode === "edit" && adminFormDocId) {
                    const colName = adminFormCollection === "library" ? "library" : "wishlist";
                    const ref = doc(db, colName, adminFormDocId);
-                   const payload = {
-                   title,
-                   authors,
-                   publisher,
-                   date,
-                   isbn,
-                   cover
-                   };
-                   if (colName === "library") {
-                   payload.read = read;
-                   } else {
-                   payload.amazonURL = amazonURL;
-                   }
-                   await updateDoc(ref, payload);
-               }
+                  const payload = {
+                  title,
+                  authors,
+                  publisher,
+                  date,
+                  isbn,
+                  cover
+                  };
+                  if (colName === "library") {
+                  payload.read = read;
+                  payload.dateRead = read
+                    ? (/^\d{4}-\d{2}-\d{2}$/.test(dateRead) ? dateRead : new Date().toISOString().slice(0,10))
+                    : "";
+                  } else {
+                  payload.amazonURL = amazonURL;
+                  }
+                  await updateDoc(ref, payload);
+              }
          
                closeAdminForm();
                if (adminFormCollection === "wishlist") {
