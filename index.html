@@ -715,6 +715,24 @@
          color: #fff;
          font-size: 12px;
          }
+         /* Custom date dropdown trio */
+         .date-select-row {
+         display: flex;
+         gap: 6px;
+         margin-top: 4px;
+         }
+         .date-select-row select {
+         flex: 1 1 0;
+         padding: 6px 8px;
+         border-radius: 6px;
+         border: 1px solid #bb7f8f;
+         background: #1e0d14;
+         color: #fff;
+         font-size: 12px;
+         }
+         .date-select-row select:focus {
+         outline: 1px solid #ff69b4;
+         }
          /* ===== SUGGESTION ROWS (Title / Authors / Publisher) ===== */
          .suggestion-row {
          display: none;
@@ -1759,6 +1777,9 @@
          const adminDateReadWrapper = document.getElementById('adminDateReadWrapper');
          const adminDateReadInput = document.getElementById('adminDateReadInput');
          const adminFormSave      = document.getElementById('adminFormSave');
+
+         attachDateDropdowns(adminDateInput);
+         attachDateDropdowns(adminDateReadInput);
          
          // Multi-create editor DOM refs
          const multiEditorOverlay       = document.getElementById('multiEditorOverlay');
@@ -1786,17 +1807,22 @@
          const multiEditorNext          = document.getElementById('multiEditorNext');
          const multiEditorSaveAll       = document.getElementById('multiEditorSaveAll');
 
-         if (multiEditorReadInput && multiEditorDateReadInput) {
-           multiEditorReadInput.addEventListener('change', () => {
-             if (multiEditorReadInput.checked) {
-               if (!multiEditorDateReadInput.value) {
-                 multiEditorDateReadInput.value = new Date().toISOString().slice(0,10);
-               }
-             } else {
-               multiEditorDateReadInput.value = "";
-             }
-           });
-         }
+         attachDateDropdowns(multiEditorDateInput);
+         attachDateDropdowns(multiEditorDateReadInput);
+
+        if (multiEditorReadInput && multiEditorDateReadInput) {
+          multiEditorReadInput.addEventListener('change', () => {
+            if (multiEditorReadInput.checked) {
+              if (multiEditorDateReadWrapper) multiEditorDateReadWrapper.style.display = "flex";
+              if (!multiEditorDateReadInput.value) {
+                setDateInputValue(multiEditorDateReadInput, new Date().toISOString().slice(0,10));
+              }
+            } else {
+              if (multiEditorDateReadWrapper) multiEditorDateReadWrapper.style.display = "none";
+              setDateInputValue(multiEditorDateReadInput, "");
+            }
+          });
+        }
          
          // Auth modal DOM refs
          const authModalOverlay      = document.getElementById('authModalOverlay');
@@ -1814,6 +1840,119 @@
          const signUpPassword        = document.getElementById('signUpPassword');
          const signUpPasswordConfirm = document.getElementById('signUpPasswordConfirm');
          
+         function formatDateMMDDYYYY(str) {
+           if (!str) return '';
+           const m = /^\s*(\d{4})-(\d{2})-(\d{2})\s*$/.exec(str);
+           if (!m) return str;
+           return `${m[2]}-${m[3]}-${m[1]}`;
+         }
+
+         function attachDateDropdowns(hiddenInput) {
+           if (!hiddenInput || hiddenInput.__hasDateSelects) return;
+           const parent = hiddenInput.parentElement;
+           if (!parent) return;
+           const row = document.createElement('div');
+           row.className = 'date-select-row';
+           parent.insertBefore(row, hiddenInput);
+           row.appendChild(hiddenInput);
+           hiddenInput.style.display = 'none';
+
+           const makeSelect = (placeholder, max) => {
+             const sel = document.createElement('select');
+             const optEmpty = document.createElement('option');
+             optEmpty.value = '';
+             optEmpty.textContent = placeholder;
+             sel.appendChild(optEmpty);
+             for (let i = 1; i <= max; i++) {
+               const opt = document.createElement('option');
+               opt.value = String(i).padStart(2, '0');
+               opt.textContent = String(i).padStart(2, '0');
+               sel.appendChild(opt);
+             }
+             return sel;
+           };
+
+           const monthSel = makeSelect('MM', 12);
+           const daySel   = makeSelect('DD', 31);
+           const yearSel  = document.createElement('select');
+           const optYEmpty = document.createElement('option');
+           optYEmpty.value = '';
+           optYEmpty.textContent = 'YYYY';
+           yearSel.appendChild(optYEmpty);
+           const nowYear = new Date().getFullYear();
+           for (let y = nowYear + 5; y >= 1950; y--) {
+             const opt = document.createElement('option');
+             opt.value = String(y);
+             opt.textContent = String(y);
+             yearSel.appendChild(opt);
+           }
+
+           row.insertBefore(monthSel, hiddenInput);
+           row.insertBefore(daySel, hiddenInput);
+           row.insertBefore(yearSel, hiddenInput);
+
+           function updateDayOptions() {
+             const y = parseInt(yearSel.value || '2000', 10);
+             const m = parseInt(monthSel.value || '1', 10);
+             const daysInMonth = new Date(y, m, 0).getDate();
+             while (daySel.options.length > 1) daySel.remove(1);
+             for (let d = 1; d <= daysInMonth; d++) {
+               const opt = document.createElement('option');
+               opt.value = String(d).padStart(2, '0');
+               opt.textContent = String(d).padStart(2, '0');
+               daySel.appendChild(opt);
+             }
+           }
+
+           function syncHidden() {
+             const m = monthSel.value;
+             const d = daySel.value;
+             const y = yearSel.value;
+             if (m && d && y) {
+               hiddenInput.value = `${y}-${m}-${d}`;
+             } else {
+               hiddenInput.value = '';
+             }
+           }
+
+           function syncSelectsFromHidden() {
+             const val = hiddenInput.value || '';
+             const m = /^\s*(\d{4})-(\d{2})-(\d{2})\s*$/.exec(val);
+             updateDayOptions();
+             if (m) {
+               yearSel.value = m[1];
+               monthSel.value = m[2];
+               updateDayOptions();
+               daySel.value = m[3];
+             } else {
+               yearSel.value = '';
+               monthSel.value = '';
+               updateDayOptions();
+               daySel.value = '';
+             }
+           }
+
+           monthSel.addEventListener('change', () => { updateDayOptions(); syncHidden(); });
+           yearSel.addEventListener('change', () => { updateDayOptions(); syncHidden(); });
+           daySel.addEventListener('change', syncHidden);
+
+           hiddenInput.__syncDateSelects = syncSelectsFromHidden;
+           hiddenInput.__setDateValue = (v) => {
+             hiddenInput.value = v || '';
+             syncSelectsFromHidden();
+           };
+           hiddenInput.__hasDateSelects = true;
+           syncSelectsFromHidden();
+         }
+
+         function setDateInputValue(input, val) {
+           if (!input) return;
+           if (input.__setDateValue) {
+             input.__setDateValue(val);
+           } else {
+             input.value = val || '';
+           }
+         }
          
          function updateMultiSelectInfo() {
            const count = multiSelectedIds.size;
@@ -2074,17 +2213,21 @@
            });
          }
 
-         if (adminReadInput && adminDateReadInput) {
-           adminReadInput.addEventListener('change', () => {
-             if (adminReadInput.checked) {
-               if (!adminDateReadInput.value) {
-                 adminDateReadInput.value = new Date().toISOString().slice(0,10);
-               }
-             } else {
-               adminDateReadInput.value = "";
-             }
-           });
-         }
+        if (adminReadInput && adminDateReadInput) {
+          const syncAdminReadDateUI = () => {
+            if (adminReadInput.checked) {
+              if (adminDateReadWrapper) adminDateReadWrapper.style.display = "block";
+              if (!adminDateReadInput.value) {
+                setDateInputValue(adminDateReadInput, new Date().toISOString().slice(0,10));
+              }
+            } else {
+              if (adminDateReadWrapper) adminDateReadWrapper.style.display = "none";
+              setDateInputValue(adminDateReadInput, "");
+            }
+          };
+          adminReadInput.addEventListener('change', syncAdminReadDateUI);
+          syncAdminReadDateUI();
+        }
          
         function switchSection(target) {
           // Block dashboard for non-admins
@@ -2593,7 +2736,7 @@
            multiEditorTitleInput.value     = item.title;
            multiEditorAuthorsInput.value   = item.authors;
            multiEditorPublisherInput.value = item.publisher;
-           multiEditorDateInput.value      = item.date;
+           setDateInputValue(multiEditorDateInput, item.date);
            multiEditorIsbnInput.value      = item.isbn;
            multiEditorCoverInput.value     = item.cover;
 
@@ -2614,10 +2757,10 @@
                multiEditorReadWrapper.style.display = "flex";
                multiEditorReadInput.checked = !!item.read;
                if (multiEditorDateReadWrapper) {
-                 multiEditorDateReadWrapper.style.display = "flex";
+                 multiEditorDateReadWrapper.style.display = item.read ? "flex" : "none";
                }
                if (multiEditorDateReadInput) {
-                 multiEditorDateReadInput.value = item.dateRead || "";
+                 setDateInputValue(multiEditorDateReadInput, item.read ? (item.dateRead || "") : "");
                }
            }
          }
@@ -2868,7 +3011,7 @@
                    (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
                    (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
                    (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '') +
-                   (b.Read && b.DateRead ? ('Read on ' + b.DateRead + '<br>') : '')
+                   (b.Read && b.DateRead ? ('Read on ' + formatDateMMDDYYYY(b.DateRead) + '<br>') : '')
                  }</div>
                  <div class="isbn">${b.ISBN || ''}</div>
              `;
@@ -3087,7 +3230,7 @@
            popupISBN.innerHTML = book.ISBN || '';
 
            if (book.kind === "library" && (book.Read === true || book.Read === "true")) {
-             const dr = book.DateRead ? ` (on ${book.DateRead})` : '';
+             const dr = book.DateRead ? ` (on ${formatDateMMDDYYYY(book.DateRead)})` : '';
              popupMeta.innerHTML += `<br><span style="color:#6fcf97;">✔ Read${dr}</span>`;
            }
          
@@ -3370,12 +3513,13 @@
                adminTitleInput.value     = "";
                adminAuthorsInput.value   = "";
                adminPublisherInput.value = "";
-              adminDateInput.value      = "";
+              setDateInputValue(adminDateInput, "");
               adminIsbnInput.value      = "";
               adminCoverInput.value     = "";
               adminAmazonInput.value    = "";
               adminReadInput.checked    = false;
-              if (adminDateReadInput) adminDateReadInput.value = "";
+              if (adminDateReadInput) setDateInputValue(adminDateReadInput, "");
+              if (adminDateReadWrapper) adminDateReadWrapper.style.display = "none";
               adminCoverPreview.src     = "https://via.placeholder.com/150x220?text=No+Cover";
           }
          
@@ -3413,9 +3557,9 @@
                // Only set date if it's already in a yyyy-mm-dd format
                const existingDate = (book.Date || "").trim();
                if (/^\d{4}-\d{2}-\d{2}$/.test(existingDate)) {
-                 adminDateInput.value = existingDate;
+                 setDateInputValue(adminDateInput, existingDate);
                } else {
-                 adminDateInput.value = "";
+                 setDateInputValue(adminDateInput, "");
                }
          
                adminIsbnInput.value      = book.ISBN || "";
@@ -3428,7 +3572,10 @@
                    adminReadInput.checked = !!book.Read;
                    if (adminDateReadInput) {
                      const dr = (book.DateRead || "").trim();
-                     adminDateReadInput.value = /^\d{4}-\d{2}-\d{2}$/.test(dr) ? dr : "";
+                     setDateInputValue(adminDateReadInput, /^\d{4}-\d{2}-\d{2}$/.test(dr) ? dr : "");
+                   }
+                   if (adminDateReadWrapper) {
+                     adminDateReadWrapper.style.display = adminReadInput.checked ? "block" : "none";
                    }
                }
                }
