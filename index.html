@@ -3,6 +3,18 @@
    <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=no">
+      <!-- Social sharing preview -->
+      <meta name="description" content="Browse Tyler's Manga Library and wishlist with covers, release tracking, and reading stats.">
+      <meta property="og:type" content="website">
+      <meta property="og:title" content="Tyler's Manga Library">
+      <meta property="og:description" content="Browse Tyler's Manga Library and wishlist with covers, release tracking, and reading stats.">
+      <meta property="og:image" content="https://tyler-manga-library.example.com/book-preview.png">
+      <meta property="og:url" content="https://tyler-manga-library.example.com/">
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="twitter:title" content="Tyler's Manga Library">
+      <meta name="twitter:description" content="Browse Tyler's Manga Library and wishlist with covers, release tracking, and reading stats.">
+      <meta name="twitter:image" content="https://tyler-manga-library.example.com/book-preview.png">
+      <meta name="theme-color" content="#1e0d14">
       <title>Tyler's Manga Library</title>
       <style>
          /* ===== BODY & BASE ===== */
@@ -375,7 +387,7 @@
          position: relative;
          width: 100%;
          height: 200px;
-         padding: 6px 4px 12px; /* give room for angled month labels */
+         padding: 6px 10px 18px; /* give room for angled month labels */
          }
          .line-chart svg {
          width: 100%;
@@ -3710,16 +3722,16 @@
              const svgNS = "http://www.w3.org/2000/svg";
              const svg = document.createElementNS(svgNS, 'svg');
              // Roomy viewBox so month labels have space
-             const viewWidth = 120;
-             const viewHeight = 80;
-             const leftPad = 8;
-             const rightPad = 8;
+             const viewWidth = 240;
+             const viewHeight = 90;
+             const leftPad = 14;
+             const rightPad = 14;
              const topPad = 8;
-             const bottomPad = 20; // space for angled month labels
+             const bottomPad = 26; // space for angled month labels
              const usableWidth = viewWidth - leftPad - rightPad;
              const usableHeight = viewHeight - topPad - bottomPad;
              svg.setAttribute('viewBox', `0 0 ${viewWidth} ${viewHeight}`);
-             svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+             svg.setAttribute('preserveAspectRatio', 'none'); // stretch to fill card width
              // grid lines
              for (let i = 0; i <= 4; i++) {
                const y = topPad + (usableHeight / 4) * i;
