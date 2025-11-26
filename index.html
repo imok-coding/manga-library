@@ -193,31 +193,31 @@
          }
          #wishlistCountdown {
          display: none;
-         padding: 8px 12px;
+         padding: 12px 16px;
          background: linear-gradient(135deg, rgba(255,182,193,0.18), rgba(255,105,180,0.18));
          border: 1px solid rgba(255,182,193,0.35);
          border-radius: 12px;
-         box-shadow: 0 4px 14px rgba(255,182,193,0.25);
+         box-shadow: 0 6px 18px rgba(255,182,193,0.3);
          text-align: center;
          }
          #wishlistCountdown .countdown-label {
-         font-size: 10px;
-         letter-spacing: 0.6px;
+         font-size: 11px;
+         letter-spacing: 0.8px;
          text-transform: uppercase;
          color: #f8d1d8;
-         margin-bottom: 2px;
-         }
-         #wishlistCountdownTitle {
-         font-size: 14px;
-         font-weight: 700;
-         color: #ffb6c1;
          margin-bottom: 4px;
          }
+         #wishlistCountdownTitle {
+         font-size: 16px;
+         font-weight: 700;
+         color: #ffb6c1;
+         margin-bottom: 6px;
+         }
          #wishlistCountdownTimer {
-         font-size: 15px;
+         font-size: 19px;
          font-weight: 700;
          color: #ffffff;
-         letter-spacing: 0.8px;
+         letter-spacing: 1px;
          }
          /* ===== DASHBOARD ===== */
          #dashboardSection {
@@ -225,21 +225,21 @@
          }
          .dashboard-grid {
          display: grid;
-         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-         gap: 18px;
-         padding: 16px;
-         max-width: 980px;
+         grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+         gap: 14px;
+         padding: 10px;
+         max-width: 1100px;
          margin: 0 auto;
          }
          .stat-card {
          background: #2b0f1d;
          border: 1px solid rgba(255,182,193,0.25);
          border-radius: 14px;
-         padding: 14px;
+         padding: 12px;
          box-shadow: 0 2px 12px rgba(255,182,193,0.18);
          display: flex;
          flex-direction: column;
-         gap: 8px;
+         gap: 6px;
          align-items: center;
          transition: transform 0.2s ease, box-shadow 0.3s ease;
          }
@@ -247,18 +247,21 @@
          grid-column: 1 / -1;
          align-items: stretch;
          }
+         .stat-card.tall {
+         min-height: 200px;
+         }
          .stat-card:hover {
          transform: translateY(-6px);
          box-shadow: 0 10px 24px rgba(255,182,193,0.28);
          }
          .stat-card h3 {
-         margin: 0;
-         font-size: 14px;
+         margin: 0 0 2px;
+         font-size: 13px;
          color: #ffb6c1;
          text-align: center;
          }
          .stat-card .stat-value {
-         font-size: 22px;
+         font-size: 20px;
          font-weight: 700;
          color: #fff;
          text-align: center;
@@ -271,6 +274,10 @@
          font-size: 12px;
          color: #f8d1d8;
          text-align: center;
+         }
+         #statCollectionValue {
+         color: #00e676;
+         text-shadow: 0 0 6px rgba(0,230,118,0.6);
          }
          .pie {
          width: 130px;
@@ -300,7 +307,11 @@
          text-align: center;
          font-size: 12px;
          font-weight: 600;
-         color: #ffb6c1;
+         color: #fff;
+         background: rgba(43,15,29,0.92);
+         border: 1px solid rgba(255,182,193,0.35);
+         border-radius: 10px;
+         padding: 6px;
          line-height: 1.35;
          opacity: 0;
          transition: opacity 0.2s ease;
@@ -318,6 +329,44 @@
          font-size: 16px;
          font-weight: 700;
          color: #fff;
+         text-shadow: 0 0 6px rgba(30,13,20,0.9);
+         }
+         .bar-chart {
+         display: flex;
+         align-items: flex-end;
+         justify-content: space-between;
+         gap: 6px;
+         width: 100%;
+         min-height: 160px;
+         padding: 6px 4px 0;
+         }
+         .bar {
+         flex: 1;
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         gap: 4px;
+         }
+         .bar .bar-fill {
+         width: 100%;
+         max-width: 20px;
+         border-radius: 10px 10px 4px 4px;
+         background: linear-gradient(180deg, #ff69b4 0%, #c2185b 100%);
+         box-shadow: 0 4px 12px rgba(255,105,180,0.4);
+         transition: height 0.35s ease, transform 0.2s ease;
+         }
+         .bar:hover .bar-fill {
+         transform: translateY(-3px);
+         }
+         .bar .bar-value {
+         font-size: 11px;
+         color: #ffb6c1;
+         }
+         .bar .bar-label {
+         font-size: 10px;
+         color: #f8d1d8;
+         letter-spacing: 0.4px;
+         text-transform: uppercase;
          }
          /* Dashboard library list */
          .dash-library {
@@ -1539,15 +1588,29 @@
                <div class="stat-value next-release" id="statNextRelease">None scheduled</div>
                <div class="stat-sub" id="statNextCountdown"></div>
             </div>
-            <div class="stat-card">
-               <h3>Collection MSRP</h3>
-               <div class="stat-value" id="statCollectionValue">$0.00</div>
-            </div>
-            <div class="stat-card wide">
-               <h3>Library Manager</h3>
-               <div class="dash-library">
-                  <div class="dash-library-list" id="dashLibraryList"></div>
-                  <div class="dash-library-details">
+               <div class="stat-card">
+                  <h3>Collection MSRP</h3>
+                  <div class="stat-value" id="statCollectionValue">$0.00</div>
+               </div>
+               <div class="stat-card">
+                  <h3 id="statCurrentYearTitle">Current Reads</h3>
+                  <div class="stat-value" id="statCurrentYearValue">0</div>
+                  <div class="stat-sub" id="statCurrentYearSub">Year-to-date</div>
+               </div>
+               <div class="stat-card">
+                  <h3>Avg Days From Purchase to Read</h3>
+                  <div class="stat-value" id="statAvgReadTime">--</div>
+                  <div class="stat-sub" id="statAvgReadTimeSub">When both dates exist</div>
+               </div>
+               <div class="stat-card wide tall">
+                  <h3>Reads Per Month <span id="statMonthlyYear"></span></h3>
+                  <div class="bar-chart" id="statMonthlyBars"></div>
+               </div>
+               <div class="stat-card wide">
+                  <h3>Library Manager</h3>
+                  <div class="dash-library">
+                     <div class="dash-library-list" id="dashLibraryList"></div>
+                     <div class="dash-library-details">
                      <div id="dashLibraryEmpty">Select a series or book to edit</div>
                      <div id="dashSeriesForm" style="display:none;">
                         <div class="dash-detail-title" id="dashSeriesTitle"></div>
@@ -1899,6 +1962,13 @@
          const statNextRelease  = document.getElementById('statNextRelease');
          const statNextCountdown= document.getElementById('statNextCountdown');
          const statCollectionValue = document.getElementById('statCollectionValue');
+         const statCurrentYearTitle = document.getElementById('statCurrentYearTitle');
+         const statCurrentYearValue = document.getElementById('statCurrentYearValue');
+         const statCurrentYearSub   = document.getElementById('statCurrentYearSub');
+         const statAvgReadTime      = document.getElementById('statAvgReadTime');
+         const statAvgReadTimeSub   = document.getElementById('statAvgReadTimeSub');
+         const statMonthlyBars      = document.getElementById('statMonthlyBars');
+         const statMonthlyYear      = document.getElementById('statMonthlyYear');
          const pieRead          = document.getElementById('pieRead');
          const pieCollection    = document.getElementById('pieCollection');
          const statReadPct      = document.getElementById('statReadPct');
@@ -1911,6 +1981,7 @@
          const dashSeriesTitle  = document.getElementById('dashSeriesTitle');
          const dashSeriesRead   = document.getElementById('dashSeriesRead');
          const dashSeriesDatePurchased = document.getElementById('dashSeriesDatePurchased');
+         const dashSeriesDatePurchasedRow = dashSeriesDatePurchased ? dashSeriesDatePurchased.parentElement : null;
          const dashSeriesMSRP   = document.getElementById('dashSeriesMSRP');
          const dashSeriesSave   = document.getElementById('dashSeriesSave');
          const dashSeriesCancel = document.getElementById('dashSeriesCancel');
@@ -2585,8 +2656,16 @@
           if (dashSeriesDatePurchased) {
             const dpValues = Array.from(new Set(group.books.map(b => (b.DatePurchased || "").trim())));
             const dpVal = dpValues.length === 1 ? dpValues[0] : "";
-            setDateInputValue(dashSeriesDatePurchased, dpVal);
-            dashSeriesDatePurchased.dataset.initialValue = dashSeriesDatePurchased.value || "";
+            if (dpValues.length <= 1) {
+              if (dashSeriesDatePurchasedRow) dashSeriesDatePurchasedRow.style.display = "flex";
+              setDateInputValue(dashSeriesDatePurchased, dpVal);
+              dashSeriesDatePurchased.dataset.initialValue = dashSeriesDatePurchased.value || "";
+            } else {
+              // Different dates across books: hide the series date control
+              if (dashSeriesDatePurchasedRow) dashSeriesDatePurchasedRow.style.display = "none";
+              setDateInputValue(dashSeriesDatePurchased, "");
+              dashSeriesDatePurchased.dataset.initialValue = "";
+            }
           }
 
           if (dashSeriesMSRP) {
@@ -3403,6 +3482,13 @@
            return isNaN(parsed) ? null : parsed;
          }
          
+         function parseYMD(dateStr) {
+           if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr.trim())) return null;
+           const [y, m, d] = dateStr.split('-').map(Number);
+           const dt = new Date(y, m - 1, d);
+           return isNaN(dt) ? null : dt;
+         }
+         
          function findNextWishlistRelease() {
            if (!wishlistItems || !wishlistItems.length) return null;
            const now = new Date();
@@ -3480,6 +3566,7 @@
          function updateDashboardStats() {
            // Skip if core stat nodes are missing; next release is optional
            if (!statTotalLibrary || !statRead || !statUnread || !statWishlist) return;
+           const currentYear = new Date().getFullYear();
            const totalLib = libraryBooks.length;
            const readCount = libraryBooks.filter(b => b.Read).length;
            const unreadCount = totalLib - readCount;
@@ -3489,14 +3576,20 @@
            statUnread.textContent = unreadCount;
            statWishlist.textContent = wishCount;
            const readPct = totalLib ? Math.round((readCount / totalLib) * 100) : 0;
-           if (pieRead) pieRead.style.setProperty('--pct', readPct);
-           if (pieRead) pieRead.dataset.label = `${readCount} read / ${unreadCount} unread (${readPct}%)`;
+           const animatePie = (node, pct, label) => {
+             if (!node) return;
+             node.style.setProperty('--pct', 0);
+             requestAnimationFrame(() => {
+               requestAnimationFrame(() => node.style.setProperty('--pct', pct));
+             });
+             node.dataset.label = label;
+           };
+           animatePie(pieRead, readPct, `${readCount} read / ${unreadCount} unread (${readPct}%)`);
            if (statReadPct) statReadPct.textContent = `${readPct}%`;
            
            const totalAll = totalLib + wishCount;
            const libPct = totalAll ? Math.round((totalLib / totalAll) * 100) : 0;
-           if (pieCollection) pieCollection.style.setProperty('--pct', libPct);
-           if (pieCollection) pieCollection.dataset.label = `${totalLib} in library / ${wishCount} in wishlist (${libPct}% library)`;
+           animatePie(pieCollection, libPct, `${totalLib} in library / ${wishCount} in wishlist (${libPct}% library)`);
            if (statCollectionPct) statCollectionPct.textContent = `${libPct}%`;
            if (statLibShare) statLibShare.textContent = totalLib;
            if (statWishShare) statWishShare.textContent = wishCount;
@@ -3506,6 +3599,71 @@
            }, 0);
            if (statCollectionValue) {
              statCollectionValue.textContent = `$${totalMsrp.toFixed(2)}`;
+           }
+           // Current year read count
+           const readThisYear = libraryBooks.filter(b => {
+             if (!b.Read || !b.DateRead) return false;
+             return b.DateRead.startsWith(`${currentYear}-`);
+           }).length;
+           if (statCurrentYearTitle) statCurrentYearTitle.textContent = `Current Reads ${currentYear}`;
+           if (statCurrentYearValue) statCurrentYearValue.textContent = readThisYear;
+           if (statCurrentYearSub) statCurrentYearSub.textContent = readThisYear ? 'Year-to-date' : 'No reads yet';
+           
+           // Average time from purchase to read
+           const diffs = [];
+           libraryBooks.forEach(b => {
+             if (!b.Read || !b.DatePurchased || !b.DateRead) return;
+             const dp = parseYMD(b.DatePurchased);
+             const dr = parseYMD(b.DateRead);
+             if (!dp || !dr) return;
+             const diffDays = Math.max(0, Math.round((dr.getTime() - dp.getTime()) / 86400000));
+             diffs.push(diffDays);
+           });
+           if (statAvgReadTime) {
+             if (diffs.length) {
+               const avg = diffs.reduce((a, b) => a + b, 0) / diffs.length;
+               statAvgReadTime.textContent = `${avg.toFixed(1)} days`;
+             } else {
+               statAvgReadTime.textContent = '--';
+             }
+           }
+           if (statAvgReadTimeSub) {
+             statAvgReadTimeSub.textContent = diffs.length
+               ? `${diffs.length} book${diffs.length === 1 ? '' : 's'} counted`
+               : 'Need purchase + read dates';
+           }
+           
+           // Reads per month chart (current year)
+           const monthCounts = Array(12).fill(0);
+           libraryBooks.forEach(b => {
+             if (!b.Read || !b.DateRead || !b.DateRead.startsWith(`${currentYear}-`)) return;
+             const dt = parseYMD(b.DateRead);
+             if (!dt) return;
+             monthCounts[dt.getMonth()] += 1;
+           });
+           if (statMonthlyYear) statMonthlyYear.textContent = `(${currentYear})`;
+           if (statMonthlyBars) {
+             statMonthlyBars.innerHTML = '';
+             const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+             const maxVal = Math.max(...monthCounts, 1);
+             monthCounts.forEach((count, idx) => {
+               const bar = document.createElement('div');
+               bar.className = 'bar';
+               const value = document.createElement('div');
+               value.className = 'bar-value';
+               value.textContent = count;
+               const fill = document.createElement('div');
+               fill.className = 'bar-fill';
+               const pct = count ? Math.max(8, (count / maxVal) * 100) : 4;
+               fill.style.height = `${pct}%`;
+               const label = document.createElement('div');
+               label.className = 'bar-label';
+               label.textContent = monthNames[idx];
+               bar.appendChild(value);
+               bar.appendChild(fill);
+               bar.appendChild(label);
+               statMonthlyBars.appendChild(bar);
+             });
            }
            if (statNextRelease) {
              if (nextWishlistRelease && nextWishlistRelease.item) {
