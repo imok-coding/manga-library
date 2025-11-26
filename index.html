@@ -337,7 +337,8 @@
          justify-content: space-between;
          gap: 6px;
          width: 100%;
-         min-height: 160px;
+         min-height: 180px;
+         height: 200px;
          padding: 6px 4px 0;
          }
          .bar {
@@ -3497,6 +3498,16 @@
            return isNaN(parsed) ? null : parsed;
          }
          
+         function resolveReadDate(book) {
+           if (!book || !book.Read) return null;
+           const candidates = [book.DateRead, book.DatePurchased, book.Date];
+           for (const c of candidates) {
+             const dt = parseFlexibleDate(c);
+             if (dt) return dt;
+           }
+           return null;
+         }
+         
          function findNextWishlistRelease() {
            if (!wishlistItems || !wishlistItems.length) return null;
            const now = new Date();
@@ -3610,8 +3621,7 @@
            }
            // Current year read count
            const readThisYear = libraryBooks.filter(b => {
-             if (!b.Read || !b.DateRead) return false;
-             const dt = parseFlexibleDate(b.DateRead);
+             const dt = resolveReadDate(b);
              return dt && dt.getFullYear() === currentYear;
            }).length;
            if (statCurrentYearTitle) statCurrentYearTitle.textContent = `Current Reads ${currentYear}`;
@@ -3645,10 +3655,8 @@
            // Reads per month chart (current year)
            const monthCounts = Array(12).fill(0);
            libraryBooks.forEach(b => {
-             if (!b.Read || !b.DateRead) return;
-             const dt = parseFlexibleDate(b.DateRead);
-             if (!dt) return;
-             if (dt.getFullYear() !== currentYear) return;
+             const dt = resolveReadDate(b);
+             if (!dt || dt.getFullYear() !== currentYear) return;
              monthCounts[dt.getMonth()] += 1;
            });
            if (statMonthlyYear) statMonthlyYear.textContent = `(${currentYear})`;
