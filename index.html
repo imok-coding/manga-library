@@ -219,21 +219,6 @@
          color: #ffffff;
          letter-spacing: 0.8px;
          }
-         @media (min-width: 900px) {
-         #wishlistHeader {
-         align-items: flex-end;
-         }
-         #wishlistSection {
-         padding-right: 240px; /* leave space for floating countdown */
-         }
-         #wishlistCountdown {
-         position: fixed;
-         top: 140px;
-         right: 22px;
-         width: 220px;
-         z-index: 8500;
-         }
-         }
          /* ===== ADMIN PANEL (floating) ===== */
          #adminBar {
          display: none; /* shown only when isAdmin = true */
@@ -1186,7 +1171,7 @@
             <button class="menu-item" data-target="library">Library</button>
             <button class="menu-item" data-target="wishlist">Wishlist</button>
          </div>
-         <div id="authSection" class="auth-section">
+         <div id="authSection" class="auth-section" style="display:none;">
             <div id="authStatus" class="auth-section-status">Not signed in</div>
             <button id="loginBtn" class="auth-btn">Sign in</button>
             <button id="logoutBtn" class="auth-btn secondary" style="display:none;">Sign out</button>
@@ -1935,6 +1920,8 @@
          
          function switchSection(target) {
            currentSectionKey = target === 'wishlist' ? 'wishlist' : 'library';
+           // Remember selection for this tab only (clears when tab closes)
+           sessionStorage.setItem('lastSection', currentSectionKey);
          
            if (target === 'library') {
              pageTitle.textContent = "Tyler's Manga Library";
@@ -1965,6 +1952,12 @@
              switchSection(target);
            });
          });
+         
+         // Restore last section for this tab on refresh; default to library on new tab
+         const savedSection = sessionStorage.getItem('lastSection');
+         if (savedSection === 'wishlist') {
+           switchSection('wishlist');
+         }
          
          // ===== SECRET SIGN-IN TRIGGER (Total Books clicked 5x) =====
          function handleSecretClick() {
@@ -3047,7 +3040,6 @@
          });
          
          function updateAdminUI() {
-           if (authSection) authSection.style.display = "block";
            if (isAdmin) {
              adminBar.style.display = "block";
            } else {
@@ -3058,7 +3050,6 @@
          
          onAuthStateChanged(auth, async (user) => {
            if (user) {
-             if (authSection) authSection.style.display = "block";
              authStatus.textContent = `Signed in as ${user.email}`;
              loginBtn.style.display = 'none';
              logoutBtn.style.display = 'inline-block';
@@ -3083,7 +3074,6 @@
              updateAdminUI();
              closeAuthModal();
            } else {
-             if (authSection) authSection.style.display = "block";
              authStatus.textContent = "Not signed in";
              loginBtn.style.display = 'inline-block';
              logoutBtn.style.display = 'none';
