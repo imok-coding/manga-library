@@ -51,14 +51,19 @@
          display: flex;
          flex-direction: column;
          justify-content: space-between;
-         background: transparent;
-         border: none;
+         background: rgba(43,15,29,0.75);
+         border: 1px solid rgba(255,182,193,0.35);
+         border-radius: 10px;
          padding: 0;
          cursor: pointer;
          z-index: 11000;
+         appearance: none;
+         -webkit-appearance: none;
+         box-shadow: 0 4px 14px rgba(0,0,0,0.45), 0 0 10px rgba(255,105,180,0.25);
          }
          .menu-toggle span {
          display: block;
+         width: 100%;
          height: 4px;
          border-radius: 4px;
          background: #ffb6c1;
@@ -354,11 +359,11 @@
          display: flex;
          align-items: flex-end;
          justify-content: space-between;
-         gap: 6px;
+         gap: 10px;
          width: 100%;
          min-height: 180px;
          height: 200px;
-         padding: 6px 4px 0;
+         padding: 10px 10px 0;
          }
          .bar {
          flex: 1;
@@ -422,9 +427,13 @@
          text-anchor: middle;
          }
          .line-value {
-         font-size: 8px;
+         font-size: 10px;
+         font-weight: 700;
          fill: #ffb6c1;
          text-anchor: middle;
+         paint-order: stroke fill;
+         stroke: #1e0d14;
+         stroke-width: 0.5;
          }
          /* Dashboard library list */
          .dash-library {
@@ -517,6 +526,9 @@
          flex-direction: column;
          color: #f8d1d8;
          font-size: 12px;
+         }
+         .dash-detail-row select {
+         min-height: 34px;
          }
          .dash-detail-row input[type="checkbox"] {
          margin-right: 6px;
@@ -950,6 +962,53 @@
          background: #1e0d14;
          color: #fff;
          font-size: 12px;
+         }
+         /* Shared input styling for dashboard and admin fields */
+         input[type="text"],
+         input[type="number"],
+         input[type="date"],
+         select,
+         textarea {
+         background: #2b0f1d;
+         border: 1px solid #bb7f8f;
+         color: #fff;
+         border-radius: 6px;
+         font-size: 12px;
+         padding: 6px 8px;
+         box-shadow: 0 0 6px rgba(255,182,193,0.2) inset;
+         appearance: none;
+         -webkit-appearance: none;
+         transition: border-color 0.15s ease, box-shadow 0.2s ease;
+         }
+         input[type="text"]:focus,
+         input[type="number"]:focus,
+         input[type="date"]:focus,
+         select:focus,
+         textarea:focus {
+         outline: 1px solid #ff69b4;
+         box-shadow: 0 0 8px rgba(255,105,180,0.45);
+         }
+         /* Scrollbar styling */
+         * {
+         scrollbar-width: thin;
+         scrollbar-color: #ff69b4 #1e0d14;
+         }
+         ::-webkit-scrollbar {
+         width: 10px;
+         height: 10px;
+         }
+         ::-webkit-scrollbar-track {
+         background: #1e0d14;
+         border-radius: 10px;
+         }
+         ::-webkit-scrollbar-thumb {
+         background: linear-gradient(180deg, #ff69b4 0%, #c2185b 100%);
+         border-radius: 10px;
+         border: 1px solid #2b0f1d;
+         box-shadow: 0 0 6px rgba(255,105,180,0.5);
+         }
+         ::-webkit-scrollbar-thumb:hover {
+         background: linear-gradient(180deg, #ffc0cb 0%, #ff69b4 100%);
          }
          /* Custom date dropdown trio */
          .date-select-row {
@@ -1660,11 +1719,11 @@
                   <div class="stat-value" id="statAvgReadTime">--</div>
                   <div class="stat-sub" id="statAvgReadTimeSub">When both dates exist</div>
                </div>
-               <div class="stat-card wide tall">
+               <div class="stat-card tall">
                   <h3>Reads Per Month <span id="statMonthlyYear"></span></h3>
                   <div class="line-chart" id="statMonthlyLine"></div>
                </div>
-               <div class="stat-card wide tall">
+               <div class="stat-card tall">
                   <h3>Reads by Day of Week (lifetime)</h3>
                   <div class="bar-chart" id="statDayOfWeekBars"></div>
                </div>
@@ -1678,6 +1737,28 @@
                         <div class="dash-detail-title" id="dashSeriesTitle"></div>
                         <div class="dash-detail-row">
                            <label><input type="checkbox" id="dashSeriesRead"> Mark series as read</label>
+                        </div>
+                        <div class="dash-detail-row">
+                           <span>Publisher</span>
+                           <input type="text" id="dashSeriesPublisher" placeholder="Set publisher for series">
+                        </div>
+                        <div class="dash-detail-row">
+                           <span>Demographic</span>
+                           <select id="dashSeriesDemographic">
+                              <option value="">Select demographic</option>
+                              <option value="Shounen">Shounen</option>
+                              <option value="Seinen">Seinen</option>
+                              <option value="Shoujo">Shoujo</option>
+                              <option value="Josei">Josei</option>
+                           </select>
+                        </div>
+                        <div class="dash-detail-row">
+                           <span>Genre</span>
+                           <input type="text" id="dashSeriesGenre" placeholder="Primary genre">
+                        </div>
+                        <div class="dash-detail-row">
+                           <span>Sub-Genre</span>
+                           <input type="text" id="dashSeriesSubGenre" placeholder="Secondary genre / theme">
                         </div>
                         <div class="dash-detail-row">
                            <span>Date Purchased</span>
@@ -2046,6 +2127,10 @@
          const dashSeriesDatePurchased = document.getElementById('dashSeriesDatePurchased');
          const dashSeriesDatePurchasedRow = dashSeriesDatePurchased ? dashSeriesDatePurchased.parentElement : null;
          const dashSeriesMSRP   = document.getElementById('dashSeriesMSRP');
+         const dashSeriesPublisher = document.getElementById('dashSeriesPublisher');
+         const dashSeriesDemographic = document.getElementById('dashSeriesDemographic');
+         const dashSeriesGenre = document.getElementById('dashSeriesGenre');
+         const dashSeriesSubGenre = document.getElementById('dashSeriesSubGenre');
          const dashSeriesSave   = document.getElementById('dashSeriesSave');
          const dashSeriesCancel = document.getElementById('dashSeriesCancel');
          const dashLibraryForm  = document.getElementById('dashLibraryForm');
@@ -2716,6 +2801,20 @@
             dashSeriesRead.indeterminate = !allRead && !allUnread;
           }
 
+          // Shared string fields (publisher, demographic, genre, subGenre)
+          const assignSharedField = (el, valuesArray) => {
+            if (!el) return;
+            const unique = Array.from(new Set(valuesArray.map(v => (v || "").trim())));
+            const val = unique.length === 1 ? unique[0] : "";
+            el.value = val;
+            el.dataset.initialValue = el.value || "";
+          };
+
+          assignSharedField(dashSeriesPublisher, group.books.map(b => b.Publisher));
+          assignSharedField(dashSeriesDemographic, group.books.map(b => b.Demographic));
+          assignSharedField(dashSeriesGenre, group.books.map(b => b.Genre));
+          assignSharedField(dashSeriesSubGenre, group.books.map(b => b.SubGenre));
+
           if (dashSeriesDatePurchased) {
             const dpValues = Array.from(new Set(group.books.map(b => (b.DatePurchased || "").trim())));
             const dpVal = dpValues.length === 1 ? dpValues[0] : "";
@@ -2841,6 +2940,15 @@
           const msrpNumber = msrpInput === "" ? "" : parseFloat(msrpInput);
           const msrpValue = msrpInput === "" ? "" : (Number.isFinite(msrpNumber) ? msrpNumber : "");
 
+          const pubVal = dashSeriesPublisher ? dashSeriesPublisher.value.trim() : "";
+          const pubChanged = dashSeriesPublisher ? (pubVal !== (dashSeriesPublisher.dataset.initialValue || "")) : false;
+          const demoVal = dashSeriesDemographic ? dashSeriesDemographic.value.trim() : "";
+          const demoChanged = dashSeriesDemographic ? (demoVal !== (dashSeriesDemographic.dataset.initialValue || "")) : false;
+          const genreVal = dashSeriesGenre ? dashSeriesGenre.value.trim() : "";
+          const genreChanged = dashSeriesGenre ? (genreVal !== (dashSeriesGenre.dataset.initialValue || "")) : false;
+          const subVal = dashSeriesSubGenre ? dashSeriesSubGenre.value.trim() : "";
+          const subChanged = dashSeriesSubGenre ? (subVal !== (dashSeriesSubGenre.dataset.initialValue || "")) : false;
+
           const updates = [];
           for (const book of group.books) {
             const payload = {};
@@ -2855,6 +2963,18 @@
             }
             if (msrpChanged) {
               payload.msrp = msrpValue;
+            }
+            if (pubChanged) {
+              payload.publisher = pubVal || "";
+            }
+            if (demoChanged) {
+              payload.demographic = demoVal || "";
+            }
+            if (genreChanged) {
+              payload.genre = genreVal || "";
+            }
+            if (subChanged) {
+              payload.subGenre = subVal || "";
             }
             if (Object.keys(payload).length) {
               updates.push(updateDoc(doc(db, "library", book.id), payload));
@@ -3729,7 +3849,7 @@
              const svgNS = "http://www.w3.org/2000/svg";
              const svg = document.createElementNS(svgNS, 'svg');
              // Roomy viewBox so month labels have space without stretching
-             const viewWidth = 200;
+             const viewWidth = 220;
              const viewHeight = 90;
              const leftPad = 12;
              const rightPad = 12;
@@ -3770,7 +3890,7 @@
                if (p.count > 0) {
                  const tv = document.createElementNS(svgNS, 'text');
                  tv.setAttribute('x', `${p.x}`);
-                 tv.setAttribute('y', `${p.y - 3}`);
+                 tv.setAttribute('y', `${p.y - 4}`);
                  tv.setAttribute('class', 'line-value');
                  tv.textContent = p.count;
                  svg.appendChild(tv);
@@ -3780,7 +3900,7 @@
                tl.setAttribute('x', `${p.x}`);
                tl.setAttribute('y', `${labelY}`);
                tl.setAttribute('class', 'line-label');
-               tl.setAttribute('transform', `rotate(-25 ${p.x} ${labelY})`);
+               tl.setAttribute('transform', `rotate(-20 ${p.x} ${labelY})`);
                tl.textContent = p.label;
                svg.appendChild(tl);
              });
@@ -3836,6 +3956,9 @@
              Title: data.title || "",
              Authors: data.authors || "Unknown",
              Publisher: data.publisher || "Unknown",
+             Demographic: data.demographic || "",
+             Genre: data.genre || "",
+             SubGenre: data.subGenre || "",
              Date: data.date || "Unknown",
              Cover: data.cover || "",
              ISBN: data.isbn || "",
