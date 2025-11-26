@@ -2697,7 +2697,8 @@
          }
          
          function updateDashboardStats() {
-           if (!statTotalLibrary || !statRead || !statUnread || !statWishlist || !statNextRelease) return;
+           // Skip if core stat nodes are missing; next release is optional
+           if (!statTotalLibrary || !statRead || !statUnread || !statWishlist) return;
            const totalLib = libraryBooks.length;
            const readCount = libraryBooks.filter(b => b.Read).length;
            const unreadCount = totalLib - readCount;
@@ -2716,10 +2717,12 @@
            if (statCollectionPct) statCollectionPct.textContent = `${libPct}%`;
            if (statLibShare) statLibShare.textContent = totalLib;
            if (statWishShare) statWishShare.textContent = wishCount;
-           if (nextWishlistRelease && nextWishlistRelease.item) {
-             statNextRelease.textContent = nextWishlistRelease.item.Title || 'Unknown';
-           } else {
-             statNextRelease.textContent = 'None scheduled';
+           if (statNextRelease) {
+             if (nextWishlistRelease && nextWishlistRelease.item) {
+               statNextRelease.textContent = nextWishlistRelease.item.Title || 'Unknown';
+             } else {
+               statNextRelease.textContent = 'None scheduled';
+             }
            }
          }
          
