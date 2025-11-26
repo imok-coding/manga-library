@@ -126,9 +126,16 @@
          border-top: 1px solid rgba(255,182,193,0.25);
          font-size: 12px;
          color: #f8d1d8;
+         display: flex;
+         flex-direction: column;
+         gap: 6px;
          }
          .auth-section-status {
-         margin-bottom: 6px;
+         margin: 0 0 2px;
+         }
+         #menuDashboard {
+         margin: 0 0 6px;
+         text-align: left;
          }
          .auth-btn {
          padding: 4px 10px;
@@ -1506,8 +1513,8 @@
             <button class="menu-item" data-target="wishlist">Wishlist</button>
          </div>
          <div id="authSection" class="auth-section" style="display:none;">
+            <button class="menu-item" id="menuDashboard" data-target="dashboard" style="display:none;">Dashboard</button>
             <div id="authStatus" class="auth-section-status">Not signed in</div>
-            <button class="menu-item" id="menuDashboard" data-target="dashboard" style="display:none; margin:6px 0;">Dashboard</button>
             <button id="loginBtn" class="auth-btn">Sign in</button>
             <button id="logoutBtn" class="auth-btn secondary" style="display:none;">Sign out</button>
          </div>
@@ -3721,17 +3728,17 @@
              const maxVal = Math.max(...monthCounts, 1);
              const svgNS = "http://www.w3.org/2000/svg";
              const svg = document.createElementNS(svgNS, 'svg');
-             // Roomy viewBox so month labels have space
-             const viewWidth = 240;
+             // Roomy viewBox so month labels have space without stretching
+             const viewWidth = 200;
              const viewHeight = 90;
-             const leftPad = 14;
-             const rightPad = 14;
+             const leftPad = 12;
+             const rightPad = 12;
              const topPad = 8;
-             const bottomPad = 26; // space for angled month labels
+             const bottomPad = 22; // space for angled month labels
              const usableWidth = viewWidth - leftPad - rightPad;
              const usableHeight = viewHeight - topPad - bottomPad;
              svg.setAttribute('viewBox', `0 0 ${viewWidth} ${viewHeight}`);
-             svg.setAttribute('preserveAspectRatio', 'none'); // stretch to fill card width
+             svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); // keep proportions while filling space
              // grid lines
              for (let i = 0; i <= 4; i++) {
                const y = topPad + (usableHeight / 4) * i;
@@ -3773,7 +3780,7 @@
                tl.setAttribute('x', `${p.x}`);
                tl.setAttribute('y', `${labelY}`);
                tl.setAttribute('class', 'line-label');
-               tl.setAttribute('transform', `rotate(-35 ${p.x} ${labelY})`);
+               tl.setAttribute('transform', `rotate(-25 ${p.x} ${labelY})`);
                tl.textContent = p.label;
                svg.appendChild(tl);
              });
