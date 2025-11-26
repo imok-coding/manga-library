@@ -3489,6 +3489,14 @@
            return isNaN(dt) ? null : dt;
          }
          
+         function parseFlexibleDate(dateStr) {
+           if (!dateStr) return null;
+           const ymd = parseYMD(dateStr.trim());
+           if (ymd) return ymd;
+           const parsed = new Date(dateStr);
+           return isNaN(parsed) ? null : parsed;
+         }
+         
          function findNextWishlistRelease() {
            if (!wishlistItems || !wishlistItems.length) return null;
            const now = new Date();
@@ -3603,7 +3611,8 @@
            // Current year read count
            const readThisYear = libraryBooks.filter(b => {
              if (!b.Read || !b.DateRead) return false;
-             return b.DateRead.startsWith(`${currentYear}-`);
+             const dt = parseFlexibleDate(b.DateRead);
+             return dt && dt.getFullYear() === currentYear;
            }).length;
            if (statCurrentYearTitle) statCurrentYearTitle.textContent = `Current Reads ${currentYear}`;
            if (statCurrentYearValue) statCurrentYearValue.textContent = readThisYear;
@@ -3613,8 +3622,8 @@
            const diffs = [];
            libraryBooks.forEach(b => {
              if (!b.Read || !b.DatePurchased || !b.DateRead) return;
-             const dp = parseYMD(b.DatePurchased);
-             const dr = parseYMD(b.DateRead);
+             const dp = parseFlexibleDate(b.DatePurchased);
+             const dr = parseFlexibleDate(b.DateRead);
              if (!dp || !dr) return;
              const diffDays = Math.max(0, Math.round((dr.getTime() - dp.getTime()) / 86400000));
              diffs.push(diffDays);
@@ -3636,9 +3645,10 @@
            // Reads per month chart (current year)
            const monthCounts = Array(12).fill(0);
            libraryBooks.forEach(b => {
-             if (!b.Read || !b.DateRead || !b.DateRead.startsWith(`${currentYear}-`)) return;
-             const dt = parseYMD(b.DateRead);
+             if (!b.Read || !b.DateRead) return;
+             const dt = parseFlexibleDate(b.DateRead);
              if (!dt) return;
+             if (dt.getFullYear() !== currentYear) return;
              monthCounts[dt.getMonth()] += 1;
            });
            if (statMonthlyYear) statMonthlyYear.textContent = `(${currentYear})`;
