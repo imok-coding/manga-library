@@ -243,6 +243,10 @@
          align-items: center;
          transition: transform 0.2s ease, box-shadow 0.3s ease;
          }
+         .stat-card.wide {
+         grid-column: 1 / -1;
+         align-items: stretch;
+         }
          .stat-card:hover {
          transform: translateY(-6px);
          box-shadow: 0 10px 24px rgba(255,182,193,0.28);
@@ -305,6 +309,79 @@
          font-size: 16px;
          font-weight: 700;
          color: #fff;
+         }
+         /* Dashboard library list */
+         .dash-library {
+         display: grid;
+         grid-template-columns: 1.1fr 1fr;
+         gap: 12px;
+         width: 100%;
+         }
+         .dash-library-list {
+         max-height: 240px;
+         overflow-y: auto;
+         border: 1px solid rgba(255,182,193,0.25);
+         border-radius: 10px;
+         padding: 8px;
+         background: rgba(43,15,29,0.5);
+         }
+         .dash-library-list button {
+         width: 100%;
+         text-align: left;
+         background: transparent;
+         border: 1px solid rgba(255,182,193,0.25);
+         color: #ffb6c1;
+         padding: 8px;
+         border-radius: 8px;
+         margin-bottom: 6px;
+         cursor: pointer;
+         }
+         .dash-library-list button.active {
+         border-color: #ff69b4;
+         box-shadow: 0 0 8px rgba(255,105,180,0.5);
+         }
+         .dash-library-details {
+         border: 1px solid rgba(255,182,193,0.25);
+         border-radius: 10px;
+         padding: 10px;
+         background: rgba(43,15,29,0.6);
+         min-height: 180px;
+         }
+         .dash-detail-title {
+         margin: 0 0 8px;
+         color: #ffb6c1;
+         font-size: 15px;
+         }
+         .dash-detail-row {
+         margin-bottom: 8px;
+         display: flex;
+         flex-direction: column;
+         color: #f8d1d8;
+         font-size: 12px;
+         }
+         .dash-detail-row input[type="checkbox"] {
+         margin-right: 6px;
+         }
+         .dash-detail-actions {
+         display: flex;
+         justify-content: flex-end;
+         gap: 8px;
+         }
+         .dash-btn {
+         padding: 6px 12px;
+         border-radius: 999px;
+         border: none;
+         cursor: pointer;
+         font-weight: 600;
+         }
+         .dash-btn.primary {
+         background: #ff69b4;
+         color: #1e0d14;
+         }
+         .dash-btn.secondary {
+         background: transparent;
+         border: 1px solid #ffb6c1;
+         color: #ffb6c1;
          }
          /* ===== ADMIN PANEL (floating) ===== */
          #adminBar {
@@ -1405,12 +1482,39 @@
                   </div>
                   <div class="stat-value"><span id="statLibShare">0</span> / <span id="statWishShare">0</span></div>
                </div>
-               <div class="stat-card">
-                  <h3>Next Wishlist Release</h3>
-                  <div class="stat-value" id="statNextRelease">None scheduled</div>
+            <div class="stat-card">
+               <h3>Next Wishlist Release</h3>
+               <div class="stat-value" id="statNextRelease">None scheduled</div>
+            </div>
+            <div class="stat-card wide">
+               <h3>Library Manager</h3>
+               <div class="dash-library">
+                  <div class="dash-library-list" id="dashLibraryList"></div>
+                  <div class="dash-library-details">
+                     <div id="dashLibraryEmpty">Select a book to edit</div>
+                     <div id="dashLibraryForm" style="display:none;">
+                        <div class="dash-detail-title" id="dashDetailTitle"></div>
+                        <div class="dash-detail-row">
+                           <label><input type="checkbox" id="dashDetailRead"> Mark as read</label>
+                        </div>
+                        <div class="dash-detail-row">
+                           <span>Date Purchased</span>
+                           <input type="date" id="dashDetailDatePurchased">
+                        </div>
+                        <div class="dash-detail-row" id="dashDetailDateReadRow">
+                           <span>Date Read</span>
+                           <input type="date" id="dashDetailDateRead">
+                        </div>
+                        <div class="dash-detail-actions">
+                           <button class="dash-btn secondary" id="dashDetailCancel">Cancel</button>
+                           <button class="dash-btn primary" id="dashDetailSave">Save Changes</button>
+                        </div>
+                     </div>
+                  </div>
                </div>
             </div>
          </div>
+      </div>
       </div>
       <!-- Admin Add/Edit Form Overlay -->
       <div id="adminFormOverlay" style="display:none;">
@@ -1667,6 +1771,7 @@
          let currentPopupBook = null;
          let currentSeriesSuggestion = null; // { baseName, suggestionVolumes, author, publisher }
          let currentSectionKey = 'library';  // 'library' or 'wishlist'
+         let dashSelectedBookId = null;
          
          // Multi-select state
          let multiSelectActive = false;
@@ -1716,6 +1821,16 @@
          const statCollectionPct= document.getElementById('statCollectionPct');
          const statLibShare     = document.getElementById('statLibShare');
          const statWishShare    = document.getElementById('statWishShare');
+         const dashLibraryList  = document.getElementById('dashLibraryList');
+         const dashLibraryEmpty = document.getElementById('dashLibraryEmpty');
+         const dashLibraryForm  = document.getElementById('dashLibraryForm');
+         const dashDetailTitle  = document.getElementById('dashDetailTitle');
+         const dashDetailRead   = document.getElementById('dashDetailRead');
+         const dashDetailDatePurchased = document.getElementById('dashDetailDatePurchased');
+         const dashDetailDateRead = document.getElementById('dashDetailDateRead');
+         const dashDetailDateReadRow = document.getElementById('dashDetailDateReadRow');
+         const dashDetailSave   = document.getElementById('dashDetailSave');
+         const dashDetailCancel = document.getElementById('dashDetailCancel');
          
          const backToTopBtn    = document.getElementById('backToTop');
          
@@ -1776,10 +1891,12 @@
          const adminReadInput     = document.getElementById('adminReadInput');
          const adminDateReadWrapper = document.getElementById('adminDateReadWrapper');
          const adminDateReadInput = document.getElementById('adminDateReadInput');
-         const adminFormSave      = document.getElementById('adminFormSave');
+        const adminFormSave      = document.getElementById('adminFormSave');
 
-         attachDateDropdowns(adminDateInput);
-         attachDateDropdowns(adminDateReadInput);
+        attachDateDropdowns(adminDateInput);
+        attachDateDropdowns(adminDateReadInput);
+        attachDateDropdowns(dashDetailDatePurchased);
+        attachDateDropdowns(dashDetailDateRead);
          
          // Multi-create editor DOM refs
          const multiEditorOverlay       = document.getElementById('multiEditorOverlay');
@@ -1857,28 +1974,36 @@
            row.appendChild(hiddenInput);
            hiddenInput.style.display = 'none';
 
-           const makeSelect = (placeholder, max) => {
+           const makeSelect = () => {
              const sel = document.createElement('select');
              const optEmpty = document.createElement('option');
              optEmpty.value = '';
-             optEmpty.textContent = placeholder;
+             optEmpty.textContent = '';
+             optEmpty.hidden = true;
+             optEmpty.disabled = true;
+             optEmpty.selected = true;
              sel.appendChild(optEmpty);
-             for (let i = 1; i <= max; i++) {
-               const opt = document.createElement('option');
-               opt.value = String(i).padStart(2, '0');
-               opt.textContent = String(i).padStart(2, '0');
-               sel.appendChild(opt);
-             }
              return sel;
            };
 
-           const monthSel = makeSelect('MM', 12);
-           const daySel   = makeSelect('DD', 31);
-           const yearSel  = document.createElement('select');
-           const optYEmpty = document.createElement('option');
-           optYEmpty.value = '';
-           optYEmpty.textContent = 'YYYY';
-           yearSel.appendChild(optYEmpty);
+           const monthSel = makeSelect();
+           const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+           monthNames.forEach((name, idx) => {
+             const opt = document.createElement('option');
+             opt.value = String(idx + 1).padStart(2, '0');
+             opt.textContent = name;
+             monthSel.appendChild(opt);
+           });
+
+           const daySel   = makeSelect();
+           for (let i = 1; i <= 31; i++) {
+             const opt = document.createElement('option');
+             opt.value = String(i).padStart(2, '0');
+             opt.textContent = String(i).padStart(2, '0');
+             daySel.appendChild(opt);
+           }
+
+           const yearSel  = makeSelect();
            const nowYear = new Date().getFullYear();
            for (let y = nowYear + 5; y >= 1950; y--) {
              const opt = document.createElement('option');
@@ -2202,16 +2327,103 @@
            }
          }
          
-         if (adminMultiCreateBtn) {
-           adminMultiCreateBtn.addEventListener("click", () => {
-             const suggestion = computeSeriesSuggestionFromTitleInput();
-             if (!suggestion) {
-               alert("Type a recognizable series title (e.g. 'Assassination Classroom, Vol. 1') so I can detect volumes.");
-               return;
-             }
-             openMultiEditorFromSuggestion(suggestion);
-           });
-         }
+        if (adminMultiCreateBtn) {
+          adminMultiCreateBtn.addEventListener("click", () => {
+            const suggestion = computeSeriesSuggestionFromTitleInput();
+            if (!suggestion) {
+              alert("Type a recognizable series title (e.g. 'Assassination Classroom, Vol. 1') so I can detect volumes.");
+              return;
+            }
+            openMultiEditorFromSuggestion(suggestion);
+          });
+        }
+
+        function renderDashboardLibraryList() {
+          if (!dashLibraryList) return;
+          dashLibraryList.innerHTML = "";
+          if (!libraryBooks.length) {
+            dashLibraryList.textContent = "No library items";
+            if (dashLibraryEmpty) dashLibraryEmpty.style.display = "block";
+            if (dashLibraryForm) dashLibraryForm.style.display = "none";
+            return;
+          }
+          libraryBooks.forEach(b => {
+            const btn = document.createElement('button');
+            btn.textContent = `${b.Title || 'Untitled'}${b.Read ? ' ✔' : ''}`;
+            if (b.id === dashSelectedBookId) btn.classList.add('active');
+            btn.addEventListener('click', () => {
+              dashSelectedBookId = b.id;
+              openDashboardDetail(b.id);
+              renderDashboardLibraryList();
+            });
+            dashLibraryList.appendChild(btn);
+          });
+        }
+
+        function openDashboardDetail(id) {
+          const book = libraryBooks.find(x => x.id === id);
+          if (!book) {
+            dashSelectedBookId = null;
+            if (dashLibraryEmpty) dashLibraryEmpty.style.display = "block";
+            if (dashLibraryForm) dashLibraryForm.style.display = "none";
+            return;
+          }
+          if (dashLibraryEmpty) dashLibraryEmpty.style.display = "none";
+          if (dashLibraryForm) dashLibraryForm.style.display = "block";
+          if (dashDetailTitle) dashDetailTitle.textContent = book.Title || "Untitled";
+          if (dashDetailRead) dashDetailRead.checked = !!book.Read;
+          if (dashDetailDatePurchased) setDateInputValue(dashDetailDatePurchased, book.DatePurchased || "");
+          if (dashDetailDateRead) setDateInputValue(dashDetailDateRead, book.Read ? (book.DateRead || "") : "");
+          if (dashDetailDateReadRow) dashDetailDateReadRow.style.display = book.Read ? "block" : "none";
+        }
+
+        if (dashDetailRead && dashDetailDateReadRow) {
+          dashDetailRead.addEventListener('change', () => {
+            if (dashDetailRead.checked) {
+              dashDetailDateReadRow.style.display = "block";
+              if (dashDetailDateRead && !dashDetailDateRead.value) {
+                setDateInputValue(dashDetailDateRead, new Date().toISOString().slice(0,10));
+              }
+            } else {
+              dashDetailDateReadRow.style.display = "none";
+              if (dashDetailDateRead) setDateInputValue(dashDetailDateRead, "");
+            }
+          });
+        }
+
+        if (dashDetailCancel) {
+          dashDetailCancel.addEventListener('click', () => {
+            dashSelectedBookId = null;
+            if (dashLibraryForm) dashLibraryForm.style.display = "none";
+            if (dashLibraryEmpty) dashLibraryEmpty.style.display = "block";
+            renderDashboardLibraryList();
+          });
+        }
+
+        if (dashDetailSave) {
+          dashDetailSave.addEventListener('click', async () => {
+            if (!dashSelectedBookId) return;
+            const readVal = dashDetailRead ? !!dashDetailRead.checked : false;
+            const dp = dashDetailDatePurchased ? dashDetailDatePurchased.value.trim() : "";
+            const drRaw = dashDetailDateRead ? dashDetailDateRead.value.trim() : "";
+            const dr = readVal ? ( /^\d{4}-\d{2}-\d{2}$/.test(drRaw) ? drRaw : new Date().toISOString().slice(0,10) ) : "";
+            const payload = {
+              datePurchased: dp || "",
+              read: readVal,
+              dateRead: dr
+            };
+            try {
+              await updateDoc(doc(db, "library", dashSelectedBookId), payload);
+              await loadLibraryFromFirestore();
+              renderDashboardLibraryList();
+              openDashboardDetail(dashSelectedBookId);
+              alert("Saved changes.");
+            } catch (err) {
+              console.error(err);
+              alert("Failed to save changes.");
+            }
+          });
+        }
 
         if (adminReadInput && adminDateReadInput) {
           const syncAdminReadDateUI = () => {
@@ -2972,19 +3184,20 @@
            libraryBooks = [];
            snap.forEach(docSnap => {
              const data = docSnap.data();
-             libraryBooks.push({
-               id: docSnap.id,
-               Title: data.title || "",
-               Authors: data.authors || "Unknown",
-               Publisher: data.publisher || "Unknown",
-               Date: data.date || "Unknown",
-               Cover: data.cover || "",
-               ISBN: data.isbn || "",
-               DateRead: data.dateRead || "",
-               Read: !!data.read,
-               kind: "library"
-             });
+           libraryBooks.push({
+             id: docSnap.id,
+             Title: data.title || "",
+             Authors: data.authors || "Unknown",
+             Publisher: data.publisher || "Unknown",
+             Date: data.date || "Unknown",
+             Cover: data.cover || "",
+             ISBN: data.isbn || "",
+             DateRead: data.dateRead || "",
+             DatePurchased: data.datePurchased || "",
+             Read: !!data.read,
+             kind: "library"
            });
+         });
          
            // Sort
            libraryBooks.sort((a, b) => {
@@ -3036,6 +3249,10 @@
         
            updateCounters();
            updateDashboardStats();
+           renderDashboardLibraryList();
+           if (dashSelectedBookId) {
+             openDashboardDetail(dashSelectedBookId);
+           }
          } // <-- properly close loadLibraryFromFirestore
          
          
