@@ -219,6 +219,33 @@
          color: #ffffff;
          letter-spacing: 0.8px;
          }
+         /* ===== DASHBOARD ===== */
+         #dashboardSection {
+         padding-top: 10px;
+         }
+         .dashboard-grid {
+         display: grid;
+         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+         gap: 14px;
+         padding: 12px;
+         }
+         .stat-card {
+         background: #2b0f1d;
+         border: 1px solid rgba(255,182,193,0.25);
+         border-radius: 12px;
+         padding: 12px;
+         box-shadow: 0 2px 10px rgba(255,182,193,0.18);
+         }
+         .stat-card h3 {
+         margin: 0 0 6px;
+         font-size: 14px;
+         color: #ffb6c1;
+         }
+         .stat-card .stat-value {
+         font-size: 22px;
+         font-weight: 700;
+         color: #fff;
+         }
          /* ===== ADMIN PANEL (floating) ===== */
          #adminBar {
          display: none; /* shown only when isAdmin = true */
@@ -1170,6 +1197,7 @@
          <div class="menu-items">
             <button class="menu-item" data-target="library">Library</button>
             <button class="menu-item" data-target="wishlist">Wishlist</button>
+            <button class="menu-item" id="menuDashboard" data-target="dashboard" style="display:none;">Dashboard</button>
          </div>
          <div id="authSection" class="auth-section" style="display:none;">
             <div id="authStatus" class="auth-section-status">Not signed in</div>
@@ -1273,6 +1301,27 @@
                id="wishlistSearchInput"
                placeholder="Search wishlist by title, author, publisher, ISBN...">
             <div class="grid" id="wishlistGrid"></div>
+         </div>
+         <!-- DASHBOARD SECTION (admins only) -->
+         <div id="dashboardSection" class="page-section hidden">
+            <div class="dashboard-grid">
+               <div class="stat-card">
+                  <h3>Total Library Books</h3>
+                  <div class="stat-value" id="statTotalLibrary">0</div>
+               </div>
+               <div class="stat-card">
+                  <h3>Read / Unread</h3>
+                  <div class="stat-value"><span id="statRead">0</span> / <span id="statUnread">0</span></div>
+               </div>
+               <div class="stat-card">
+                  <h3>Wishlist Items</h3>
+                  <div class="stat-value" id="statWishlist">0</div>
+               </div>
+               <div class="stat-card">
+                  <h3>Next Release</h3>
+                  <div class="stat-value" id="statNextRelease">n/a</div>
+               </div>
+            </div>
          </div>
       </div>
       <!-- Admin Add/Edit Form Overlay -->
@@ -1556,9 +1605,15 @@
          
          const bookGrid        = document.getElementById('bookGrid');
          const wishlistGrid    = document.getElementById('wishlistGrid');
+         const dashboardSection= document.getElementById('dashboardSection');
          
          const searchInput     = document.getElementById('searchInput');
          const wishlistSearchInput = document.getElementById('wishlistSearchInput');
+         const statTotalLibrary = document.getElementById('statTotalLibrary');
+         const statRead         = document.getElementById('statRead');
+         const statUnread       = document.getElementById('statUnread');
+         const statWishlist     = document.getElementById('statWishlist');
+         const statNextRelease  = document.getElementById('statNextRelease');
          
          const backToTopBtn    = document.getElementById('backToTop');
          
@@ -1571,6 +1626,7 @@
          const adminAddLibrary = document.getElementById('adminAddLibrary');
          const adminAddWishlist= document.getElementById('adminAddWishlist');
          const adminMultiSelect   = document.getElementById('adminMultiSelect');
+         const menuDashboard      = document.getElementById('menuDashboard');
          
          const multiSelectBar     = document.getElementById('multiSelectBar');
          const multiSelectInfo    = document.getElementById('multiSelectInfo');
@@ -1918,24 +1974,50 @@
            });
          }
          
-         function switchSection(target) {
-           currentSectionKey = target === 'wishlist' ? 'wishlist' : 'library';
-           // Remember selection for this tab only (clears when tab closes)
-           sessionStorage.setItem('lastSection', currentSectionKey);
+        function switchSection(target) {
+          // Block dashboard for non-admins
+          if (target === 'dashboard' && !isAdmin) {
+            alert('Dashboard is for admins only.');
+            return;
+          }
+          currentSectionKey = target === 'wishlist' ? 'wishlist'
+                           : target === 'dashboard' ? 'dashboard'
+                           : 'library';
+          // Remember selection for this tab only (clears when tab closes)
+          sessionStorage.setItem('lastSection', currentSectionKey);
          
-           if (target === 'library') {
-             pageTitle.textContent = "Tyler's Manga Library";
-             librarySection.classList.add('active');
-             librarySection.classList.remove('hidden');
-             wishlistSection.classList.remove('active');
-             wishlistSection.classList.add('hidden');
-           } else {
-             pageTitle.textContent = "Wishlist";
-             librarySection.classList.remove('active');
-             librarySection.classList.add('hidden');
-             wishlistSection.classList.add('active');
-             wishlistSection.classList.remove('hidden');
-           }
+          if (target === 'library') {
+            pageTitle.textContent = "Tyler's Manga Library";
+            librarySection.classList.add('active');
+            librarySection.classList.remove('hidden');
+            wishlistSection.classList.remove('active');
+            wishlistSection.classList.add('hidden');
+            if (dashboardSection) {
+              dashboardSection.classList.add('hidden');
+              dashboardSection.classList.remove('active');
+            }
+          } else if (target === 'dashboard') {
+            pageTitle.textContent = "Dashboard";
+            librarySection.classList.remove('active');
+            librarySection.classList.add('hidden');
+            wishlistSection.classList.remove('active');
+            wishlistSection.classList.add('hidden');
+            if (dashboardSection) {
+              dashboardSection.classList.add('active');
+              dashboardSection.classList.remove('hidden');
+            }
+            updateDashboardStats();
+          } else {
+            pageTitle.textContent = "Wishlist";
+            librarySection.classList.remove('active');
+            librarySection.classList.add('hidden');
+            wishlistSection.classList.add('active');
+            wishlistSection.classList.remove('hidden');
+            if (dashboardSection) {
+              dashboardSection.classList.add('hidden');
+              dashboardSection.classList.remove('active');
+            }
+          }
          
            // Reset multi-select when switching sections
            multiSelectActive = false;
@@ -1955,8 +2037,12 @@
          
          // Restore last section for this tab on refresh; default to library on new tab
          const savedSection = sessionStorage.getItem('lastSection');
-         if (savedSection === 'wishlist') {
-           switchSection('wishlist');
+         if (savedSection === 'wishlist' || savedSection === 'dashboard') {
+           if (savedSection === 'dashboard' && !isAdmin) {
+             switchSection('library');
+           } else {
+             switchSection(savedSection);
+           }
          }
          
          // ===== SECRET SIGN-IN TRIGGER (Total Books clicked 5x) =====
@@ -2567,6 +2653,23 @@
            wishlistCountdownInterval = setInterval(tick, 1000);
          }
          
+         function updateDashboardStats() {
+           if (!statTotalLibrary || !statRead || !statUnread || !statWishlist || !statNextRelease) return;
+           const totalLib = libraryBooks.length;
+           const readCount = libraryBooks.filter(b => b.Read).length;
+           const unreadCount = totalLib - readCount;
+           const wishCount = wishlistItems.length;
+           statTotalLibrary.textContent = totalLib;
+           statRead.textContent = readCount;
+           statUnread.textContent = unreadCount;
+           statWishlist.textContent = wishCount;
+           if (nextWishlistRelease && nextWishlistRelease.item) {
+             statNextRelease.textContent = nextWishlistRelease.item.Title || 'Unknown';
+           } else {
+             statNextRelease.textContent = 'None scheduled';
+           }
+         }
+         
          // ===== LOAD LIBRARY FROM FIRESTORE =====
          async function loadLibraryFromFirestore() {
            const snap = await getDocs(collection(db, "library"));
@@ -2632,8 +2735,9 @@
            totalBottom.textContent = `Total Books: ${libraryBooks.length}`;
            readTop.textContent     = `Books Read: ${readCount}`;
            readBottom.textContent  = `Books Read: ${readCount}`;
-         
+        
            updateCounters();
+           updateDashboardStats();
          } // <-- properly close loadLibraryFromFirestore
          
          
@@ -2693,8 +2797,9 @@
              // 🔧 this was missing:
            wishlistGrid.appendChild(card);
          });
-         
+        
          updateWishlistCountdown();
+         updateDashboardStats();
          searchWishlist();
         }
          
@@ -3039,7 +3144,10 @@
            }
          });
          
-         function updateAdminUI() {
+        function updateAdminUI() {
+          if (menuDashboard) {
+            menuDashboard.style.display = isAdmin ? 'block' : 'none';
+          }
            if (isAdmin) {
              adminBar.style.display = "block";
            } else {
