@@ -219,6 +219,18 @@
          color: #ffffff;
          letter-spacing: 0.8px;
          }
+         @media (min-width: 900px) {
+         #wishlistHeader {
+         align-items: flex-end;
+         }
+         #wishlistCountdown {
+         position: fixed;
+         top: 150px;
+         right: 20px;
+         width: 220px;
+         z-index: 8500;
+         }
+         }
          /* ===== ADMIN PANEL (floating) ===== */
          #adminBar {
          display: none; /* shown only when isAdmin = true */
@@ -1171,7 +1183,7 @@
             <button class="menu-item" data-target="library">Library</button>
             <button class="menu-item" data-target="wishlist">Wishlist</button>
          </div>
-         <div id="authSection" class="auth-section" style="display:none;">
+         <div id="authSection" class="auth-section">
             <div id="authStatus" class="auth-section-status">Not signed in</div>
             <button id="loginBtn" class="auth-btn">Sign in</button>
             <button id="logoutBtn" class="auth-btn secondary" style="display:none;">Sign out</button>
@@ -3032,6 +3044,7 @@
          });
          
          function updateAdminUI() {
+           if (authSection) authSection.style.display = "block";
            if (isAdmin) {
              adminBar.style.display = "block";
            } else {
@@ -3042,6 +3055,7 @@
          
          onAuthStateChanged(auth, async (user) => {
            if (user) {
+             if (authSection) authSection.style.display = "block";
              authStatus.textContent = `Signed in as ${user.email}`;
              loginBtn.style.display = 'none';
              logoutBtn.style.display = 'inline-block';
@@ -3066,6 +3080,7 @@
              updateAdminUI();
              closeAuthModal();
            } else {
+             if (authSection) authSection.style.display = "block";
              authStatus.textContent = "Not signed in";
              loginBtn.style.display = 'inline-block';
              logoutBtn.style.display = 'none';
