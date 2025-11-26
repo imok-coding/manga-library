@@ -271,6 +271,14 @@
          grid-column: 1 / -1;
          align-items: stretch;
          }
+         .stat-card.wide-2 {
+         grid-column: span 2;
+         }
+         @media (max-width: 900px) {
+         .stat-card.wide-2 {
+         grid-column: 1 / -1;
+         }
+         }
          .stat-card.tall {
          min-height: 200px;
          }
@@ -1719,11 +1727,11 @@
                   <div class="stat-value" id="statAvgReadTime">--</div>
                   <div class="stat-sub" id="statAvgReadTimeSub">When both dates exist</div>
                </div>
-               <div class="stat-card tall">
+               <div class="stat-card tall wide-2">
                   <h3>Reads Per Month <span id="statMonthlyYear"></span></h3>
                   <div class="line-chart" id="statMonthlyLine"></div>
                </div>
-               <div class="stat-card tall">
+               <div class="stat-card tall wide-2">
                   <h3>Reads by Day of Week (lifetime)</h3>
                   <div class="bar-chart" id="statDayOfWeekBars"></div>
                </div>
