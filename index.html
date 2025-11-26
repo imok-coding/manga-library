@@ -57,9 +57,14 @@
          padding: 0;
          cursor: pointer;
          z-index: 11000;
+         outline: none;
          appearance: none;
          -webkit-appearance: none;
          box-shadow: none;
+         }
+         .menu-toggle:focus-visible {
+         outline: 1px solid #ffb6c1;
+         box-shadow: 0 0 6px rgba(255,182,193,0.6);
          }
          .menu-toggle span {
          display: block;
@@ -70,13 +75,13 @@
          transition: transform 0.2s, opacity 0.2s;
          }
          .menu-toggle.active span:nth-child(1) {
-         transform: translateY(12px) translateX(1px) rotate(45deg);
+         transform: translateY(11px) rotate(45deg);
          }
          .menu-toggle.active span:nth-child(2) {
          opacity: 0;
          }
          .menu-toggle.active span:nth-child(3) {
-         transform: translateY(-10px) rotate(-45deg);
+         transform: translateY(-11px) rotate(-45deg);
          }
          /* On mobile, move button to the right */
          @media (max-width: 600px) {
@@ -243,6 +248,12 @@
          color: #ffffff;
          letter-spacing: 1px;
          }
+         #wishlistCountdownDate {
+         font-size: 12px;
+         color: #f8d1d8;
+         opacity: 0.85;
+         margin-top: 2px;
+         }
          /* ===== DASHBOARD ===== */
          #dashboardSection {
          padding-top: 10px;
@@ -290,6 +301,12 @@
          .stat-card:hover {
          transform: translateY(-6px);
          box-shadow: 0 10px 24px rgba(255,182,193,0.28);
+         }
+         .stat-duo {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+         gap: 14px;
+         grid-column: 1 / -1;
          }
          .stat-card h3 {
          margin: 0 0 2px;
@@ -344,6 +361,7 @@
          inset: 16px;
          background: #1e0d14;
          border-radius: 50%;
+         z-index: 1;
          }
          .pie::before {
          content: attr(data-label);
@@ -371,11 +389,17 @@
          opacity: 1;
          }
          .pie-label {
-         position: relative;
+         position: absolute;
+         inset: 0;
+         display: flex;
+         align-items: center;
+         justify-content: center;
          font-size: 16px;
          font-weight: 700;
          color: #fff;
          text-shadow: 0 0 6px rgba(30,13,20,0.9);
+         pointer-events: none;
+         z-index: 2;
          }
          .bar-chart {
          display: flex;
@@ -1815,6 +1839,7 @@
             <div class="stat-card">
                <h3>Next Wishlist Release</h3>
                <div class="stat-value next-release" id="statNextRelease">None scheduled</div>
+               <div class="stat-sub" id="statNextReleaseDate"></div>
                <div class="stat-sub" id="statNextCountdown"></div>
             </div>
                <div class="stat-card">
@@ -1831,13 +1856,15 @@
                   <div class="stat-value" id="statAvgReadTime">--</div>
                   <div class="stat-sub" id="statAvgReadTimeSub">When both dates exist</div>
                </div>
-               <div class="stat-card tall wide-2">
-                  <h3>Reads Per Month <span id="statMonthlyYear"></span></h3>
-                  <div class="line-chart" id="statMonthlyLine"></div>
-               </div>
-               <div class="stat-card tall wide-2">
-                  <h3>Reads by Day of Week (Lifetime)</h3>
-                  <div class="bar-chart" id="statDayOfWeekBars"></div>
+               <div class="stat-duo">
+                  <div class="stat-card tall">
+                     <h3>Reads Per Month <span id="statMonthlyYear"></span></h3>
+                     <div class="line-chart" id="statMonthlyLine"></div>
+                  </div>
+                  <div class="stat-card tall">
+                     <h3>Reads by Day of Week (lifetime)</h3>
+                     <div class="bar-chart" id="statDayOfWeekBars"></div>
+                  </div>
                </div>
                <div class="stat-card wide">
                   <h3>Library Manager</h3>
@@ -2203,6 +2230,7 @@
          const wishlistCountdownEl   = document.getElementById('wishlistCountdown');
          const wishlistCountdownTitle= document.getElementById('wishlistCountdownTitle');
          const wishlistCountdownTimer= document.getElementById('wishlistCountdownTimer');
+         const wishlistCountdownDate = document.getElementById('wishlistCountdownDate');
          
          const bookGrid        = document.getElementById('bookGrid');
          const wishlistGrid    = document.getElementById('wishlistGrid');
@@ -2215,6 +2243,7 @@
          const statUnread       = document.getElementById('statUnread');
          const statWishlist     = document.getElementById('statWishlist');
          const statNextRelease  = document.getElementById('statNextRelease');
+         const statNextReleaseDate = document.getElementById('statNextReleaseDate');
          const statNextCountdown= document.getElementById('statNextCountdown');
          const statCollectionValue = document.getElementById('statCollectionValue');
          const statCurrentYearTitle = document.getElementById('statCurrentYearTitle');
@@ -3794,6 +3823,11 @@
            const parsed = new Date(dateStr);
            return isNaN(parsed) ? null : parsed;
          }
+
+         function formatDateDisplay(dt) {
+           if (!dt) return '';
+           return dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+         }
          
          function resolveReadDate(book) {
            if (!book || !book.Read) return null;
@@ -3812,6 +3846,44 @@
              if (!val || val.toLowerCase() === 'unknown') return;
              counts.set(val, (counts.get(val) || 0) + 1);
            });
+           return Array.from(counts.entries())
+             .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+             .slice(0, topN);
+         }
+
+         function pickMostCommonValue(books, key) {
+           const counts = new Map();
+           books.forEach(b => {
+             const val = (b[key] || "").trim();
+             if (!val || val.toLowerCase() === 'unknown') return;
+             counts.set(val, (counts.get(val) || 0) + 1);
+           });
+           let bestVal = "";
+           let bestCount = 0;
+           counts.forEach((count, val) => {
+             if (count > bestCount || (count === bestCount && val.localeCompare(bestVal) < 0)) {
+               bestVal = val;
+               bestCount = count;
+             }
+           });
+           return bestVal;
+         }
+
+         function computeTopCountsBySeries(list, key, topN = 3) {
+           const seriesMap = new Map();
+           list.forEach(b => {
+             const sKey = getSeriesKey(b) || (b.id || "");
+             if (!seriesMap.has(sKey)) seriesMap.set(sKey, []);
+             seriesMap.get(sKey).push(b);
+           });
+
+           const counts = new Map();
+           seriesMap.forEach(books => {
+             const val = pickMostCommonValue(books, key);
+             if (!val) return;
+             counts.set(val, (counts.get(val) || 0) + 1);
+           });
+
            return Array.from(counts.entries())
              .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
              .slice(0, topN);
@@ -3877,7 +3949,9 @@
            wishlistCountdownTitle.textContent = `Next Release: ${next.item.Title || 'Unknown'}`;
            wishlistCountdownEl.style.display = 'block';
            if (statNextRelease) statNextRelease.textContent = next.item.Title || 'Unknown';
- 
+           if (wishlistCountdownDate) wishlistCountdownDate.textContent = formatDateDisplay(target);
+           if (statNextReleaseDate) statNextReleaseDate.textContent = formatDateDisplay(target);
+
            const target = next.date;
            const tick = () => {
              const now = new Date();
@@ -3948,9 +4022,9 @@
              statCollectionValue.textContent = `$${totalMsrp.toFixed(2)}`;
            }
            // Top lists
-           renderTopList(statTopDemographics, computeTopCounts(libraryBooks, 'Demographic'), 'No demographics yet');
-           renderTopList(statTopPublishers, computeTopCounts(libraryBooks, 'Publisher'), 'No publishers yet');
-           renderTopList(statTopGenres, computeTopCounts(libraryBooks, 'Genre'), 'No genres yet');
+           renderTopList(statTopDemographics, computeTopCountsBySeries(libraryBooks, 'Demographic'), 'No demographics yet');
+           renderTopList(statTopPublishers, computeTopCountsBySeries(libraryBooks, 'Publisher'), 'No publishers yet');
+           renderTopList(statTopGenres, computeTopCountsBySeries(libraryBooks, 'Genre'), 'No genres yet');
            // Current year read count
            const readThisYear = libraryBooks.filter(b => {
              const dt = resolveReadDate(b);
@@ -4038,12 +4112,12 @@
                c.setAttribute('class', 'line-point');
                svg.appendChild(c);
                if (p.count > 0) {
-                 const tv = document.createElementNS(svgNS, 'text');
-                 tv.setAttribute('x', `${p.x}`);
-                 tv.setAttribute('y', `${p.y - 4}`);
-                 tv.setAttribute('class', 'line-value');
-                 tv.textContent = p.count;
-                 svg.appendChild(tv);
+               const tv = document.createElementNS(svgNS, 'text');
+               tv.setAttribute('x', `${p.x}`);
+               tv.setAttribute('y', `${p.y - 8}`);
+               tv.setAttribute('class', 'line-value');
+               tv.textContent = p.count;
+               svg.appendChild(tv);
                }
                const tl = document.createElementNS(svgNS, 'text');
                const labelY = viewHeight - 5;
@@ -4056,7 +4130,7 @@
              });
              statMonthlyLine.appendChild(svg);
            }
-           // Day of week (Lifetime)
+           // Day of week (lifetime)
            if (statDayOfWeekBars) {
              statDayOfWeekBars.innerHTML = '';
              const dowCounts = Array(7).fill(0);
@@ -4089,8 +4163,12 @@
            if (statNextRelease) {
              if (nextWishlistRelease && nextWishlistRelease.item) {
                statNextRelease.textContent = nextWishlistRelease.item.Title || 'Unknown';
+               if (statNextReleaseDate) {
+                 statNextReleaseDate.textContent = formatDateDisplay(nextWishlistRelease.date);
+               }
              } else {
                statNextRelease.textContent = 'None scheduled';
+               if (statNextReleaseDate) statNextReleaseDate.textContent = '';
              }
            }
          }
@@ -4138,6 +4216,14 @@
              card.className = 'card' + (b.Read ? ' read' : '');
              card.dataset.id = b.id;
              card.dataset.kind = 'library';
+             const searchable = [
+               b.Title || '',
+               b.Authors || '',
+               b.Publisher || '',
+               b.ISBN || '',
+               b.Date || ''
+             ].join(' ').toLowerCase();
+             card.dataset.search = searchable;
              card.innerHTML = `
                  <img src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
                  <div class="title">${b.Title || ''}</div>
@@ -4212,6 +4298,14 @@
              card.className = 'card';
              card.dataset.id = b.id;
              card.dataset.kind = 'wishlist';
+             const searchable = [
+               b.Title || '',
+               b.Authors || '',
+               b.Publisher || '',
+               b.ISBN || '',
+               b.Date || ''
+             ].join(' ').toLowerCase();
+             card.dataset.search = searchable;
              card.innerHTML = `
                <img src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
                <div class="title">${b.Title || ''}</div>
@@ -4232,8 +4326,7 @@
                }
              });
          
-             // 🔧 this was missing:
-           wishlistGrid.appendChild(card);
+             wishlistGrid.appendChild(card);
          });
         
          updateWishlistCountdown();
@@ -4249,36 +4342,51 @@
          
          
          // ===== LIBRARY FILTER & COUNTERS =====
+         let searchLibTimeout = null;
+         let searchWishTimeout = null;
+
          function searchLibrary() {
            const input = searchInput.value.toLowerCase();
            const cards = bookGrid.getElementsByClassName('card');
          
            for (const card of cards) {
              const isRead = card.classList.contains('read');
+             const searchable = card.dataset.search || card.innerText.toLowerCase();
          
              let visibleBySort = false;
              if (readClickState === 0) visibleBySort = true;
              else if (readClickState === 1 && isRead) visibleBySort = true;
              else if (readClickState === 2 && !isRead) visibleBySort = true;
          
-             const visibleBySearch = input === '' || card.innerText.toLowerCase().includes(input);
+             const visibleBySearch = input === '' || searchable.includes(input);
          
              card.style.display = (visibleBySort && visibleBySearch) ? '' : 'none';
            }
          
            updateCounters();
          }
-         
+
          function searchWishlist() {
            const query = wishlistSearchInput ? wishlistSearchInput.value.toLowerCase() : '';
            const cards = wishlistGrid ? wishlistGrid.getElementsByClassName('card') : [];
           
            for (const card of cards) {
-             const visibleBySearch = query === '' || card.innerText.toLowerCase().includes(query);
+             const searchable = card.dataset.search || card.innerText.toLowerCase();
+             const visibleBySearch = query === '' || searchable.includes(query);
              card.style.display = visibleBySearch ? '' : 'none';
            }
           
            updateWishlistCounter();
+         }
+
+         function scheduleSearchLibrary() {
+           if (searchLibTimeout) clearTimeout(searchLibTimeout);
+           searchLibTimeout = setTimeout(searchLibrary, 80);
+         }
+
+         function scheduleSearchWishlist() {
+           if (searchWishTimeout) clearTimeout(searchWishTimeout);
+           searchWishTimeout = setTimeout(searchWishlist, 80);
          }
          
          function updateWishlistCounter() {
@@ -4332,10 +4440,10 @@
          readTop.addEventListener('click', toggleReadFilter);
          readBottom.addEventListener('click', toggleReadFilter);
          if (searchInput) {
-           searchInput.addEventListener('input', searchLibrary);
+           searchInput.addEventListener('input', scheduleSearchLibrary);
          }
          if (wishlistSearchInput) {
-           wishlistSearchInput.addEventListener('input', searchWishlist);
+           wishlistSearchInput.addEventListener('input', scheduleSearchWishlist);
          }
          
          // ===== POPUP =====
@@ -4971,4 +5079,3 @@
       </script>
    </body>
 </html>
-
