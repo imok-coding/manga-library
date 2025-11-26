@@ -2496,12 +2496,34 @@
               header.classList.add('active');
             }
             const readCount = group.books.filter(b => b.Read).length;
-            header.innerHTML = `
-              <span class="dash-series-chevron">▸</span>
-              <span class="dash-series-title">${group.displayName}</span>
-              <span class="dash-series-meta">${group.books.length} book${group.books.length !== 1 ? 's' : ''}${group.books.length ? ' • ' + readCount + ' read' : ''}</span>
-            `;
+
+            const chevron = document.createElement('span');
+            chevron.className = 'dash-series-chevron';
+            chevron.textContent = '▸';
+
+            const titleSpan = document.createElement('span');
+            titleSpan.className = 'dash-series-title';
+            titleSpan.textContent = group.displayName;
+
+            const metaSpan = document.createElement('span');
+            metaSpan.className = 'dash-series-meta';
+            metaSpan.textContent = `${group.books.length} book${group.books.length !== 1 ? 's' : ''}${group.books.length ? ' • ' + readCount + ' read' : ''}`;
+
+            header.appendChild(chevron);
+            header.appendChild(titleSpan);
+            header.appendChild(metaSpan);
+
+            // Select the series (without toggling expansion)
             header.addEventListener('click', () => {
+              dashSelectedSeriesKey = group.seriesKey;
+              dashSelectedBookId = null;
+              openSeriesDetail(group.seriesKey);
+              renderDashboardLibraryList();
+            });
+
+            // Only expand/collapse when clicking the chevron
+            chevron.addEventListener('click', (e) => {
+              e.stopPropagation();
               if (dashSeriesExpanded.has(group.seriesKey)) {
                 dashSeriesExpanded.delete(group.seriesKey);
               } else {
@@ -2512,6 +2534,7 @@
               openSeriesDetail(group.seriesKey);
               renderDashboardLibraryList();
             });
+
             seriesDiv.appendChild(header);
 
             const booksWrap = document.createElement('div');
