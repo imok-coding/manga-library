@@ -3050,6 +3050,7 @@
          
          onAuthStateChanged(auth, async (user) => {
            if (user) {
+             if (authSection) authSection.style.display = "block";
              authStatus.textContent = `Signed in as ${user.email}`;
              loginBtn.style.display = 'none';
              logoutBtn.style.display = 'inline-block';
@@ -3074,6 +3075,7 @@
              updateAdminUI();
              closeAuthModal();
            } else {
+             if (authSection) authSection.style.display = "none";
              authStatus.textContent = "Not signed in";
              loginBtn.style.display = 'inline-block';
              logoutBtn.style.display = 'none';
