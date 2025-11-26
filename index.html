@@ -241,6 +241,11 @@
          flex-direction: column;
          gap: 8px;
          align-items: center;
+         transition: transform 0.2s ease, box-shadow 0.3s ease;
+         }
+         .stat-card:hover {
+         transform: translateY(-6px);
+         box-shadow: 0 10px 24px rgba(255,182,193,0.28);
          }
          .stat-card h3 {
          margin: 0;
@@ -262,7 +267,8 @@
          display: grid;
          place-items: center;
          position: relative;
-         transition: background 0.6s ease;
+         transition: background 0.6s ease, transform 0.2s ease, box-shadow 0.3s ease;
+         overflow: hidden;
          }
          .pie::after {
          content: '';
@@ -270,6 +276,29 @@
          inset: 16px;
          background: #1e0d14;
          border-radius: 50%;
+         }
+         .pie::before {
+         content: attr(data-label);
+         position: absolute;
+         inset: 10px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         text-align: center;
+         font-size: 12px;
+         font-weight: 600;
+         color: #ffb6c1;
+         line-height: 1.35;
+         opacity: 0;
+         transition: opacity 0.2s ease;
+         pointer-events: none;
+         }
+         .stat-card:hover .pie {
+         transform: scale(1.05);
+         box-shadow: 0 0 18px rgba(255,105,180,0.4);
+         }
+         .pie:hover::before {
+         opacity: 1;
          }
          .pie-label {
          position: relative;
@@ -1228,10 +1257,10 @@
          <div class="menu-items">
             <button class="menu-item" data-target="library">Library</button>
             <button class="menu-item" data-target="wishlist">Wishlist</button>
-            <button class="menu-item" id="menuDashboard" data-target="dashboard" style="display:none;">Dashboard</button>
          </div>
          <div id="authSection" class="auth-section" style="display:none;">
             <div id="authStatus" class="auth-section-status">Not signed in</div>
+            <button class="menu-item" id="menuDashboard" data-target="dashboard" style="display:none; margin:6px 0;">Dashboard</button>
             <button id="loginBtn" class="auth-btn">Sign in</button>
             <button id="logoutBtn" class="auth-btn secondary" style="display:none;">Sign out</button>
          </div>
@@ -1357,6 +1386,10 @@
                      <div class="pie-label" id="statCollectionPct">0%</div>
                   </div>
                   <div class="stat-value"><span id="statLibShare">0</span> / <span id="statWishShare">0</span></div>
+               </div>
+               <div class="stat-card">
+                  <h3>Next Wishlist Release</h3>
+                  <div class="stat-value" id="statNextRelease">None scheduled</div>
                </div>
             </div>
          </div>
@@ -2709,11 +2742,13 @@
            statWishlist.textContent = wishCount;
            const readPct = totalLib ? Math.round((readCount / totalLib) * 100) : 0;
            if (pieRead) pieRead.style.setProperty('--pct', readPct);
+           if (pieRead) pieRead.dataset.label = `${readCount} read / ${unreadCount} unread (${readPct}%)`;
            if (statReadPct) statReadPct.textContent = `${readPct}%`;
            
            const totalAll = totalLib + wishCount;
            const libPct = totalAll ? Math.round((totalLib / totalAll) * 100) : 0;
            if (pieCollection) pieCollection.style.setProperty('--pct', libPct);
+           if (pieCollection) pieCollection.dataset.label = `${totalLib} in library / ${wishCount} in wishlist (${libPct}% library)`;
            if (statCollectionPct) statCollectionPct.textContent = `${libPct}%`;
            if (statLibShare) statLibShare.textContent = totalLib;
            if (statWishShare) statWishShare.textContent = wishCount;
