@@ -343,6 +343,11 @@
          color: #f8d1d8;
          text-align: center;
          }
+         #statNextCountdown {
+         font-size: 14px;
+         font-weight: 700;
+         color: #ffb6c1;
+         }
          #statCollectionValue {
          color: #00e676;
          text-shadow: 0 0 6px rgba(0,230,118,0.6);
@@ -4122,7 +4127,7 @@
                if (p.count > 0) {
                const tv = document.createElementNS(svgNS, 'text');
                tv.setAttribute('x', `${p.x}`);
-               tv.setAttribute('y', `${p.y - 8}`);
+               tv.setAttribute('y', `${p.y - 10}`);
                tv.setAttribute('class', 'line-value');
                tv.textContent = p.count;
                svg.appendChild(tv);
