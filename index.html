@@ -16,6 +16,7 @@
       <meta name="twitter:image" content="https://tyler-manga-library.example.com/book-preview.png">
       <meta name="theme-color" content="#1e0d14">
       <title>Tyler's Manga Library</title>
+      <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
       <style>
          /* ===== BODY & BASE ===== */
          body {
@@ -258,6 +259,29 @@
          /* ===== DASHBOARD ===== */
          #dashboardSection {
          padding-top: 10px;
+         }
+         #dashboardToolbar {
+         display: flex;
+         justify-content: flex-end;
+         align-items: center;
+         gap: 10px;
+         padding: 0 10px 6px;
+         }
+         #dashboardSettingsBtn {
+         width: 34px;
+         height: 34px;
+         border-radius: 50%;
+         border: 1px solid rgba(255,182,193,0.4);
+         background: #2b0f1d;
+         color: #ffb6c1;
+         cursor: pointer;
+         box-shadow: 0 0 10px rgba(255,182,193,0.25);
+         font-size: 16px;
+         transition: transform 0.15s ease, box-shadow 0.2s ease;
+         }
+         #dashboardSettingsBtn:hover {
+         transform: scale(1.05);
+         box-shadow: 0 0 14px rgba(255,182,193,0.4);
          }
          .dashboard-grid {
          display: grid;
@@ -516,8 +540,100 @@
          fill: #ffb6c1;
          text-anchor: middle;
          paint-order: stroke fill;
-         stroke: #1e0d14;
-         stroke-width: 0.5;
+         stroke: #000000;
+         stroke-width: 1.2;
+         }
+         /* Activity log */
+         .activity-log {
+         width: 100%;
+         max-height: 240px;
+         overflow-y: auto;
+         display: flex;
+         flex-direction: column;
+         gap: 6px;
+         }
+         .activity-item {
+         background: rgba(255,182,193,0.08);
+         border: 1px solid rgba(255,182,193,0.2);
+         border-radius: 8px;
+         padding: 6px 8px;
+         font-size: 12px;
+         color: #f8d1d8;
+         display: flex;
+         justify-content: space-between;
+         gap: 10px;
+         }
+         .activity-text {
+         flex: 1;
+         text-align: left;
+         }
+         .activity-time {
+         color: #eea4b7;
+         white-space: nowrap;
+         font-size: 11px;
+         }
+         .activity-empty {
+         color: #f8d1d8;
+         opacity: 0.8;
+         font-size: 12px;
+         text-align: center;
+         padding: 6px 0;
+         }
+         /* Settings popup */
+         #settingsOverlay {
+         position: fixed;
+         inset: 0;
+         background: rgba(30,13,20,0.92);
+         backdrop-filter: blur(6px);
+         display: none;
+         justify-content: center;
+         align-items: center;
+         z-index: 10060;
+         }
+         #settingsCard {
+         background: #2b0f1d;
+         border-radius: 14px;
+         padding: 16px;
+         width: 90%;
+         max-width: 360px;
+         box-shadow: 0 0 24px rgba(255,182,193,0.6);
+         position: relative;
+         color: #fff;
+         }
+         #settingsClose {
+         position: absolute;
+         top: 10px;
+         right: 10px;
+         background: rgba(255,255,255,0.08);
+         border: 1px solid rgba(255,255,255,0.2);
+         color: #fff;
+         border-radius: 6px;
+         width: 28px;
+         height: 28px;
+         cursor: pointer;
+         font-size: 18px;
+         }
+         .settings-title {
+         margin: 0 0 10px;
+         color: #ffb6c1;
+         text-align: center;
+         }
+         .settings-actions {
+         display: flex;
+         flex-direction: column;
+         gap: 8px;
+         }
+         .settings-btn {
+         padding: 10px 12px;
+         border-radius: 10px;
+         border: 1px solid rgba(255,182,193,0.35);
+         background: rgba(255,182,193,0.1);
+         color: #fff;
+         cursor: pointer;
+         font-weight: 600;
+         }
+         .settings-btn:hover {
+         background: rgba(255,182,193,0.2);
          }
          /* Dashboard library list */
          .dash-library {
@@ -1766,13 +1882,16 @@
             </form>
          </div>
       </div>
-      <div class="container">
-         <h1 id="pageTitle">Tyler's Manga Library</h1>
-         <!-- Admin bar (only shown for admin when signed in) -->
-         <div id="adminBar">
-            <span>Admin tools</span>
-            <div id="adminBarButtons">
-               <button id="adminAddLibrary">Add Library Book</button>
+         <div class="container">
+            <h1 id="pageTitle">Tyler's Manga Library</h1>
+            <div id="dashboardToolbar" style="display:none;">
+               <button id="dashboardSettingsBtn" title="Settings">⚙</button>
+            </div>
+            <!-- Admin bar (only shown for admin when signed in) -->
+            <div id="adminBar">
+               <span>Admin tools</span>
+               <div id="adminBarButtons">
+                  <button id="adminAddLibrary">Add Library Book</button>
                <button id="adminAddWishlist">Add Wishlist Item</button>
                <button id="adminMultiSelect">Multi-Select</button>
             </div>
@@ -1876,6 +1995,10 @@
                      <h3>Reads by Day of Week (lifetime)</h3>
                      <div class="bar-chart" id="statDayOfWeekBars"></div>
                   </div>
+               </div>
+               <div class="stat-card wide">
+                  <h3>Activity Log</h3>
+                  <div class="activity-log" id="activityLogList"></div>
                </div>
                <div class="stat-card wide">
                   <h3>Library Manager</h3>
@@ -2141,6 +2264,18 @@
          </div>
       </div>
       <button id="backToTop" title="Back to Top"></button>
+      <!-- Settings overlay -->
+      <div id="settingsOverlay">
+         <div id="settingsCard">
+            <button id="settingsClose" title="Close">&times;</button>
+            <h3 class="settings-title">Dashboard Settings</h3>
+            <div class="settings-actions">
+               <button id="exportJsonBtn" class="settings-btn">Export to JSON</button>
+               <button id="exportCsvBtn" class="settings-btn">Export to CSV</button>
+               <button id="exportCoversBtn" class="settings-btn">Export Covers as Zip</button>
+            </div>
+         </div>
+      </div>
       <!-- Multi-Select Action Bar -->
       <div id="multiSelectBar">
          <div id="multiSelectInfo">0 selected</div>
@@ -2210,6 +2345,7 @@
          let dashSelectedSeriesKey = null;
          let dashGroupedSeries = [];
          let dashSeriesExpanded = new Set();
+         let activityLog = [];
          
          // Multi-select state
          let multiSelectActive = false;
@@ -2298,6 +2434,14 @@
          const dashDetailCancel = document.getElementById('dashDetailCancel');
          
          const backToTopBtn    = document.getElementById('backToTop');
+         const dashboardToolbar = document.getElementById('dashboardToolbar');
+         const dashboardSettingsBtn = document.getElementById('dashboardSettingsBtn');
+         const settingsOverlay = document.getElementById('settingsOverlay');
+         const settingsClose = document.getElementById('settingsClose');
+         const exportJsonBtn = document.getElementById('exportJsonBtn');
+         const exportCsvBtn = document.getElementById('exportCsvBtn');
+         const exportCoversBtn = document.getElementById('exportCoversBtn');
+         const activityLogList = document.getElementById('activityLogList');
          
          const authSection     = document.getElementById('authSection');
          const authStatus      = document.getElementById('authStatus');
@@ -2428,6 +2572,42 @@
            const m = /^\s*(\d{4})-(\d{2})-(\d{2})\s*$/.exec(str);
            if (!m) return str;
            return `${m[2]}-${m[3]}-${m[1]}`;
+         }
+
+         function formatTimestamp(dt) {
+           return dt.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+         }
+
+         function renderActivityLog() {
+           if (!activityLogList) return;
+           activityLogList.innerHTML = '';
+           if (!activityLog.length) {
+             const empty = document.createElement('div');
+             empty.className = 'activity-empty';
+             empty.textContent = 'No recent activity';
+             activityLogList.appendChild(empty);
+             return;
+           }
+           activityLog.forEach(entry => {
+             const row = document.createElement('div');
+             row.className = 'activity-item';
+             const txt = document.createElement('div');
+             txt.className = 'activity-text';
+             txt.textContent = entry.message;
+             const time = document.createElement('div');
+             time.className = 'activity-time';
+             time.textContent = formatTimestamp(entry.ts);
+             row.appendChild(txt);
+             row.appendChild(time);
+             activityLogList.appendChild(row);
+           });
+         }
+
+         function addActivity(message) {
+           if (!message) return;
+           activityLog.unshift({ message, ts: new Date() });
+           if (activityLog.length > 100) activityLog.pop();
+           renderActivityLog();
          }
 
          function attachDateDropdowns(hiddenInput) {
@@ -2764,6 +2944,42 @@
            menuToggle.classList.toggle('active');
            menuPanel.classList.toggle('open');
          });
+
+         function openSettings() {
+           if (settingsOverlay) settingsOverlay.style.display = 'flex';
+         }
+         function closeSettings() {
+           if (settingsOverlay) settingsOverlay.style.display = 'none';
+         }
+         if (dashboardSettingsBtn) {
+           dashboardSettingsBtn.addEventListener('click', openSettings);
+         }
+         if (settingsClose) {
+           settingsClose.addEventListener('click', closeSettings);
+         }
+         if (settingsOverlay) {
+           settingsOverlay.addEventListener('click', (e) => {
+             if (e.target === settingsOverlay) closeSettings();
+           });
+         }
+         if (exportJsonBtn) {
+           exportJsonBtn.addEventListener('click', () => {
+             exportToJSON();
+             closeSettings();
+           });
+         }
+         if (exportCsvBtn) {
+           exportCsvBtn.addEventListener('click', () => {
+             exportToCSV();
+             closeSettings();
+           });
+         }
+         if (exportCoversBtn) {
+           exportCoversBtn.addEventListener('click', () => {
+             exportCoversZip();
+             // leave settings open while processing for feedback
+           });
+         }
          
            function handleTitleInputChange() {
            renderTitleSuggestions();
@@ -3070,6 +3286,10 @@
               renderDashboardLibraryList();
               openDashboardDetail(dashSelectedBookId);
               alert("Saved changes.");
+              const editedBook = libraryBooks.find(b => b.id === dashSelectedBookId);
+              if (editedBook) {
+                addActivity(`Updated "${editedBook.Title || 'Untitled'}" in library`);
+              }
             } catch (err) {
               console.error(err);
               alert("Failed to save changes.");
@@ -3147,6 +3367,8 @@
               openSeriesDetail(dashSelectedSeriesKey);
             }
             alert("Series updated.");
+            const groupName = group.displayName || 'Series';
+            addActivity(`Updated series "${groupName}" (${group.books.length} book${group.books.length === 1 ? '' : 's'})`);
           } catch (err) {
             console.error(err);
             alert("Failed to update series.");
@@ -3920,6 +4142,109 @@
              el.appendChild(row);
            });
          }
+
+         function downloadBlob(content, filename, contentType) {
+           const blob = (content instanceof Blob) ? content : new Blob([content], { type: contentType });
+           const url = URL.createObjectURL(blob);
+           const a = document.createElement('a');
+           a.href = url;
+           a.download = filename;
+           document.body.appendChild(a);
+           a.click();
+           document.body.removeChild(a);
+           URL.revokeObjectURL(url);
+         }
+
+         function exportToJSON() {
+           const payload = {
+             library: libraryBooks,
+             wishlist: wishlistItems
+           };
+           downloadBlob(JSON.stringify(payload, null, 2), 'manga-library.json', 'application/json');
+           addActivity('Exported library and wishlist to JSON');
+         }
+
+         function exportToCSV() {
+           const headers = ['Collection','Title','Authors','Publisher','Date','ISBN','Read','DateRead','DatePurchased','MSRP','Cover','AmazonURL'];
+           const rows = [headers.join(',')];
+           const esc = (val) => {
+             if (val === null || val === undefined) return '';
+             const str = String(val);
+             if (/[",\n]/.test(str)) return `"${str.replace(/"/g,'""')}"`;
+             return str;
+           };
+           libraryBooks.forEach(b => {
+             rows.push([
+               'Library',
+               esc(b.Title),
+               esc(b.Authors),
+               esc(b.Publisher),
+               esc(b.Date),
+               esc(b.ISBN),
+               b.Read ? 'Yes' : 'No',
+               esc(b.DateRead),
+               esc(b.DatePurchased),
+               esc(b.MSRP),
+               esc(b.Cover),
+               ''
+             ].join(','));
+           });
+           wishlistItems.forEach(b => {
+             rows.push([
+               'Wishlist',
+               esc(b.Title),
+               esc(b.Authors),
+               esc(b.Publisher),
+               esc(b.Date),
+               esc(b.ISBN),
+               '',
+               '',
+               '',
+               '',
+               esc(b.Cover),
+               esc(b.AmazonURL || '')
+             ].join(','));
+           });
+           downloadBlob(rows.join('\n'), 'manga-library.csv', 'text/csv');
+           addActivity('Exported library and wishlist to CSV');
+         }
+
+         async function exportCoversZip() {
+           if (typeof JSZip === 'undefined') {
+             alert('Export failed: zip library not loaded.');
+             return;
+           }
+           const all = libraryBooks.concat(wishlistItems).filter(b => b.Cover);
+           if (!all.length) {
+             alert('No covers to export.');
+             return;
+           }
+           if (exportCoversBtn) {
+             exportCoversBtn.disabled = true;
+             exportCoversBtn.textContent = 'Preparing zip...';
+           }
+           const zip = new JSZip();
+           const tasks = all.map(async (b, idx) => {
+             try {
+               const resp = await fetch(b.Cover);
+               if (!resp.ok) return;
+               const blob = await resp.blob();
+               const safeName = (b.Title || `cover-${idx+1}`).replace(/[^a-z0-9]+/gi,'-').replace(/^-+|-+$/g,'') || `cover-${idx+1}`;
+               const ext = blob.type && blob.type.includes('png') ? 'png' : 'jpg';
+               zip.file(`${safeName}.${ext}`, blob);
+             } catch (e) {
+               console.warn('Cover fetch failed for', b.Title, e);
+             }
+           });
+           await Promise.all(tasks);
+           const blob = await zip.generateAsync({ type: 'blob' });
+           downloadBlob(blob, 'manga-covers.zip', 'application/zip');
+           addActivity('Exported covers zip');
+           if (exportCoversBtn) {
+             exportCoversBtn.disabled = false;
+             exportCoversBtn.textContent = 'Export Covers as Zip';
+           }
+         }
          
          function findNextWishlistRelease() {
            if (!wishlistItems || !wishlistItems.length) return null;
@@ -4560,6 +4885,7 @@
              // keep popup open but refresh its state
              const updated = libraryBooks.find(b => b.id === currentPopupBook.id);
              if (updated) showPopup(updated);
+             addActivity(`${newVal ? 'Marked' : 'Unmarked'} "${currentPopupBook.Title || 'Untitled'}" as read`);
            } catch (err) {
              console.error(err);
              alert("Failed to update read status.");
@@ -4578,6 +4904,7 @@
              } else {
                await loadLibraryFromFirestore();
              }
+             addActivity(`Deleted "${currentPopupBook.Title || 'Untitled'}" from ${colName}`);
            } catch (err) {
              console.error(err);
              alert("Failed to delete item.");
@@ -4685,6 +5012,16 @@
              } else {
                await loadWishlistFromFirestore();
              }
+             const actionLabel = action === 'move'
+               ? `Moved ${ids.length} item(s) ${isLibraryPage ? 'to wishlist' : 'to library'}`
+               : action === 'markRead'
+                 ? `Marked ${ids.length} item(s) as read`
+                 : action === 'markUnread'
+                   ? `Marked ${ids.length} item(s) as unread`
+                   : action === 'delete'
+                     ? `Deleted ${ids.length} item(s) from ${isLibraryPage ? 'library' : 'wishlist'}`
+                     : `Updated ${ids.length} item(s)`;
+             addActivity(actionLabel);
              exitMultiSelectMode();
            } catch (err) {
              console.error('Multi-select action error:', err);
@@ -4735,8 +5072,10 @@
           }
            if (isAdmin) {
              adminBar.style.display = "block";
+             if (dashboardToolbar) dashboardToolbar.style.display = "flex";
            } else {
              adminBar.style.display = "none";
+             if (dashboardToolbar) dashboardToolbar.style.display = "none";
            }
          }
          
@@ -4791,6 +5130,7 @@
          });
          
          // ===== INITIAL LOAD =====
+         renderActivityLog();
          reloadAll();
          
            function resetAdminForm() {
@@ -4916,6 +5256,7 @@
            } else {
              await loadLibraryFromFirestore();
            }
+           addActivity(`Saved ${multiCreateItems.length} item(s) to ${col}`);
          } catch (err) {
            console.error("Multi-editor save error:", err);
            alert("Failed to save volumes. Check console for details.");
@@ -5035,6 +5376,7 @@
                         ? (/^\d{4}-\d{2}-\d{2}$/.test(dateRead) ? dateRead : new Date().toISOString().slice(0,10))
                         : ""
                   });
+                  addActivity(`Added "${title}" to library`);
                   } else {
                   await addDoc(collection(db, "wishlist"), {
                       title,
@@ -5045,6 +5387,7 @@
                        cover,
                        amazonURL
                    });
+                    addActivity(`Added "${title}" to wishlist`);
                    }
                } else if (adminFormMode === "edit" && adminFormDocId) {
                    const colName = adminFormCollection === "library" ? "library" : "wishlist";
@@ -5066,6 +5409,7 @@
                   payload.amazonURL = amazonURL;
                   }
                   await updateDoc(ref, payload);
+                  addActivity(`Edited "${title}" in ${colName}`);
               }
          
                closeAdminForm();
