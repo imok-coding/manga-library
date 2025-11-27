@@ -2346,9 +2346,16 @@
                <div class="title" id="popupTitle"></div>
                <div class="meta" id="popupMeta"></div>
                <div class="isbn" id="popupISBN"></div>
-               <button id="popupBuy" class="" style="display:none;">
-                   <img id="popupBuyLogo" class="buy-logo" alt="">
-                   <span id="popupBuyText"></span>
+               <button id="popupBuy" style="display:none;">
+                  <img id="popupBuyLogo" alt="" style="
+                    width: 22px;
+                    height: 22px;
+                    border-radius: 999px;
+                    object-fit: contain;
+                    background: #1b1b1b;
+                    padding: 2px;
+                  ">
+                  <span id="popupBuyText"></span>
                </button>
                <div id="popupAdminControls">
                   <button id="popupToggleRead">Toggle Read</button>
@@ -5030,25 +5037,46 @@
          
            if (book.AmazonURL) {
               const info = classifyStore(book.AmazonURL);
-              popupBuy.className = "buy-button";
+
+              // reset base button class & brand classes
+              popupBuy.className = "buy-button"; // optional base class if you want, or just ""
               popupBuy.classList.add(`buy-${info.store}`);
-              popupBuy.style.display = "inline-flex";
+
+              // make sure it shows
+              popupBuy.style.display = 'inline-flex';
               popupBuy.onclick = () => window.open(book.AmazonURL, '_blank');
 
-              // Inline logos so they NEVER fail
-              const amazonLogo = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 182'><path fill='%23FF9900' d='M77 0 ...'/></svg>";
-              const crunchyLogo = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%23F47521' d='M256 0c141.4 ...'/></svg>";
+              // LOGO SOURCES – use whatever paths you actually have
+              const amazonLogo = "https://bardpress.com/wp-content/uploads/2021/07/amazon-smile-logo-transparent-Transparent-Images.png";       // put your actual amazon logo file here
+              const crunchyLogo = "https://upload.wikimedia.org/wikipedia/commons/0/08/Crunchyroll_Logo.png"; // and your crunchyroll logo here
 
-              let logoFile = (info.store === "amazon") ? amazonLogo :
-                            (info.store === "crunchyroll") ? crunchyLogo :
-                            "";
+              let logoFile = "";
+              if (info.store === "amazon") {
+                logoFile = amazonLogo;
+              } else if (info.store === "crunchyroll") {
+                logoFile = crunchyLogo;
+              }
 
-              document.getElementById("popupBuyLogo").src = logoFile;
-              document.getElementById("popupBuyText").textContent = `Buy from ${info.label}`;
-           } else {
-             popupBuy.style.display = 'none';
-             popupBuy.onclick = null;
-           }
+              const logoEl = document.getElementById("popupBuyLogo");
+              const textEl = document.getElementById("popupBuyText");
+
+              if (logoEl) {
+                if (logoFile) {
+                  logoEl.src = logoFile;
+                  logoEl.style.display = "inline-block";
+                } else {
+                  // generic store: hide logo if you want
+                  logoEl.style.display = "none";
+                }
+              }
+
+              if (textEl) {
+                textEl.textContent = `Buy from ${info.label}`;
+              }
+            } else {
+              popupBuy.style.display = 'none';
+              popupBuy.onclick = null;
+            }
          
            // Admin controls
            if (isAdmin) {
