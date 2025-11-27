@@ -260,14 +260,7 @@
          #dashboardSection {
          padding-top: 10px;
          }
-         #dashboardToolbar {
-         display: flex;
-         justify-content: flex-end;
-         align-items: center;
-         gap: 10px;
-         padding: 0 10px 6px;
-         }
-         #dashboardSettingsBtn {
+         .settings-icon-btn {
          width: 34px;
          height: 34px;
          border-radius: 50%;
@@ -279,7 +272,7 @@
          font-size: 16px;
          transition: transform 0.15s ease, box-shadow 0.2s ease;
          }
-         #dashboardSettingsBtn:hover {
+         .settings-icon-btn:hover {
          transform: scale(1.05);
          box-shadow: 0 0 14px rgba(255,182,193,0.4);
          }
@@ -1884,13 +1877,11 @@
       </div>
          <div class="container">
             <h1 id="pageTitle">Tyler's Manga Library</h1>
-            <div id="dashboardToolbar" style="display:none;">
-               <button id="dashboardSettingsBtn" title="Settings">⚙</button>
-            </div>
             <!-- Admin bar (only shown for admin when signed in) -->
             <div id="adminBar">
                <span>Admin tools</span>
                <div id="adminBarButtons">
+                  <button id="adminSettingsBtn" class="settings-icon-btn" title="Settings">⚙</button>
                   <button id="adminAddLibrary">Add Library Book</button>
                <button id="adminAddWishlist">Add Wishlist Item</button>
                <button id="adminMultiSelect">Multi-Select</button>
@@ -2434,8 +2425,7 @@
          const dashDetailCancel = document.getElementById('dashDetailCancel');
          
          const backToTopBtn    = document.getElementById('backToTop');
-         const dashboardToolbar = document.getElementById('dashboardToolbar');
-         const dashboardSettingsBtn = document.getElementById('dashboardSettingsBtn');
+         const adminSettingsBtn = document.getElementById('adminSettingsBtn');
          const settingsOverlay = document.getElementById('settingsOverlay');
          const settingsClose = document.getElementById('settingsClose');
          const exportJsonBtn = document.getElementById('exportJsonBtn');
@@ -2951,8 +2941,8 @@
          function closeSettings() {
            if (settingsOverlay) settingsOverlay.style.display = 'none';
          }
-         if (dashboardSettingsBtn) {
-           dashboardSettingsBtn.addEventListener('click', openSettings);
+         if (adminSettingsBtn) {
+           adminSettingsBtn.addEventListener('click', openSettings);
          }
          if (settingsClose) {
            settingsClose.addEventListener('click', closeSettings);
@@ -5072,10 +5062,8 @@
           }
            if (isAdmin) {
              adminBar.style.display = "block";
-             if (dashboardToolbar) dashboardToolbar.style.display = "flex";
            } else {
              adminBar.style.display = "none";
-             if (dashboardToolbar) dashboardToolbar.style.display = "none";
            }
          }
          
