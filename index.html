@@ -1407,22 +1407,42 @@
          font-weight: 800;
          color: #1e0d14;
          }
-         #popupBuy.buy-amazon {
-         background: linear-gradient(135deg,#ffb347,#ff9900);
-         color: #1e0d14;
-         }
-         #popupBuy.buy-amazon .buy-icon {
-         background: #232f3e;
-         color: #ffb347;
-         }
-         #popupBuy.buy-crunchyroll {
-         background: linear-gradient(135deg,#ff974d,#f26b1d);
-         color: #1e0d14;
-         }
-         #popupBuy.buy-crunchyroll .buy-icon {
-         background: #1e0d14;
-         color: #f26b1d;
-         }
+        .buy-button {
+            margin-top: 10px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: transform 0.2s ease, box-shadow 0.25s ease;
+            box-shadow: 0 0 12px rgba(255,105,180,0.4);
+        }
+        .buy-logo {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* Hover */
+        .buy-button:hover {
+            transform: scale(1.06);
+            box-shadow: 0 0 18px rgba(255,182,193,0.6);
+        }
+
+        /* Amazon */
+        .buy-amazon {
+            background: linear-gradient(135deg,#ffb347,#ff9900);
+            color: #1e0d14;
+        }
+
+        /* Crunchyroll */
+        .buy-crunchyroll {
+            background: linear-gradient(135deg,#ff914d,#f26b1d);
+            color: #1e0d14;
+        }
          #popupBuy.buy-generic {
          background: #2b0f1d;
          color: #ffb6c1;
@@ -2326,7 +2346,10 @@
                <div class="title" id="popupTitle"></div>
                <div class="meta" id="popupMeta"></div>
                <div class="isbn" id="popupISBN"></div>
-               <button id="popupBuy">Buy on Amazon</button>
+               <button id="popupBuy" class="" style="display:none;">
+                   <img id="popupBuyLogo" class="buy-logo" alt="">
+                   <span id="popupBuyText"></span>
+               </button>
                <div id="popupAdminControls">
                   <button id="popupToggleRead">Toggle Read</button>
                   <button id="popupEdit">Edit</button>
@@ -5006,12 +5029,22 @@
            }
          
            if (book.AmazonURL) {
-             const info = classifyStore(book.AmazonURL);
-             popupBuy.classList.remove('buy-amazon','buy-crunchyroll','buy-generic');
-             popupBuy.classList.add(`buy-${info.store}`);
-             popupBuy.innerHTML = `<span class="buy-icon">${info.icon}</span>Buy from ${info.label}`;
-             popupBuy.style.display = 'inline-flex';
-             popupBuy.onclick = () => window.open(book.AmazonURL, '_blank');
+              const info = classifyStore(book.AmazonURL);
+              popupBuy.className = "buy-button";
+              popupBuy.classList.add(`buy-${info.store}`);
+              popupBuy.style.display = "inline-flex";
+              popupBuy.onclick = () => window.open(book.AmazonURL, '_blank');
+
+              // Inline logos so they NEVER fail
+              const amazonLogo = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 182'><path fill='%23FF9900' d='M77 0 ...'/></svg>";
+              const crunchyLogo = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%23F47521' d='M256 0c141.4 ...'/></svg>";
+
+              let logoFile = (info.store === "amazon") ? amazonLogo :
+                            (info.store === "crunchyroll") ? crunchyLogo :
+                            "";
+
+              document.getElementById("popupBuyLogo").src = logoFile;
+              document.getElementById("popupBuyText").textContent = `Buy from ${info.label}`;
            } else {
              popupBuy.style.display = 'none';
              popupBuy.onclick = null;
