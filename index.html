@@ -1901,9 +1901,31 @@
          height: 44px;
          }
          }
+         /* Fullscreen Background Image */
+        .bg-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("https://imgur.com/NYcQOjY.png") center center / cover no-repeat;
+            opacity: 1;
+            z-index: -2;
+        }
+
+        /* Tinted Glass Overlay */
+        .bg-wrapper::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: #1e0d14cc; /* 80% opacity glass tint */
+            backdrop-filter: blur(6px);
+            z-index: -1;
+        }
       </style>
    </head>
    <body>
+      <div class="bg-wrapper"></div>
       <button id="menuToggle" class="menu-toggle" aria-label="Menu">
       <span></span>
       <span></span>
@@ -2084,7 +2106,7 @@
                      <div class="line-chart" id="statMonthlyLine"></div>
                   </div>
                   <div class="stat-card tall">
-                     <h3>Reads by Day of Week (lifetime)</h3>
+                     <h3>Reads by Day of Week (Lifetime)</h3>
                      <div class="bar-chart" id="statDayOfWeekBars"></div>
                   </div>
                </div>
@@ -2110,7 +2132,7 @@
                         <div class="dash-detail-row">
                            <span>Demographic</span>
                            <select id="dashSeriesDemographic">
-                              <option value="">Select demographic</option>
+                              <option value="">Select Demographic</option>
                               <option value="Shounen">Shounen</option>
                               <option value="Seinen">Seinen</option>
                               <option value="Shoujo">Shoujo</option>
@@ -5657,7 +5679,6 @@
            alert("Failed to save. Check console for details.");
            }
        });
-         
          
          // expose some helpers to global (for safety if you need console access)
          window.searchLibrary = searchLibrary;
