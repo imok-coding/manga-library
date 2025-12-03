@@ -4902,7 +4902,12 @@ max-height: 90vh;
            updateMultiEditorHeader();
          
            // Position info (common)
-           multiEditorPosition.textContent = `Entry ${multiCreateIndex + 1} of ${multiCreateItems.length}`;
+           if (multiEditorMode === 'selection') {
+             const count = multiSelectionDocIds.length || dashMultiSelectedIds.size || multiCreateItems.length;
+             multiEditorPosition.textContent = `Editing ${count} selected item${count === 1 ? '' : 's'}`;
+           } else {
+             multiEditorPosition.textContent = `Entry ${multiCreateIndex + 1} of ${multiCreateItems.length}`;
+           }
          
            if (multiEditorMode === 'series' && currentSeriesSuggestion) {
                // Series / volume mode
@@ -4964,6 +4969,42 @@ max-height: 90vh;
                if (multiEditorDateReadInput) {
                  setDateInputValue(multiEditorDateReadInput, readVal ? (item.dateRead || "") : "");
                }
+           }
+
+           // Hide rows that have mixed values in multi-select mode (blank placeholders).
+           if (multiEditorMode === 'selection') {
+             const toggleRow = (el, visible) => {
+               if (!el) return;
+               el.style.display = visible ? '' : 'none';
+             };
+             const isMixed = (val) => val === "" && multiSelectionDocIds.length > 1;
+             toggleRow(multiEditorTitleInput?.parentElement, !isMixed(item.title || ""));
+             toggleRow(multiEditorAuthorsInput?.parentElement, !isMixed(item.authors || ""));
+             toggleRow(multiEditorPublisherInput?.parentElement, !isMixed(item.publisher || ""));
+             toggleRow(multiEditorDateInput?.parentElement, !isMixed(item.date || ""));
+             toggleRow(multiEditorPageCountInput?.parentElement, !isMixed((item.pageCount !== undefined && item.pageCount !== null ? String(item.pageCount) : "")));
+             toggleRow(multiEditorIsbnWrapper, !isMixed(item.isbn || "") && !isWishlist);
+             toggleRow(multiEditorCoverInput?.parentElement, !isMixed(item.cover || ""));
+             if (!isWishlist) {
+               // Read always shown (indeterminate handles mixed)
+               toggleRow(multiEditorReadWrapper, true);
+               toggleRow(multiEditorDateReadWrapper, item.read === true);
+             } else {
+               toggleRow(multiEditorAmazonWrapper, !isMixed(item.amazonURL || ""));
+             }
+             // Update header to reflect aggregation
+             multiEditorSeriesLabel.textContent = `Editing ${multiSelectionDocIds.length || dashMultiSelectedIds.size} selected items`;
+             multiEditorVolumeLabel.style.display = 'none';
+           } else {
+             // Ensure rows are visible in normal mode
+             const showRow = (el) => { if (el) el.style.display = ''; };
+             showRow(multiEditorTitleInput?.parentElement);
+             showRow(multiEditorAuthorsInput?.parentElement);
+             showRow(multiEditorPublisherInput?.parentElement);
+             showRow(multiEditorDateInput?.parentElement);
+             showRow(multiEditorPageCountInput?.parentElement);
+             showRow(multiEditorIsbnWrapper);
+             showRow(multiEditorCoverInput?.parentElement);
            }
            syncMultiEditorReadUI();
         }
