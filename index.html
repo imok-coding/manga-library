@@ -5429,12 +5429,13 @@ max-height: 90vh;
           });
           bookGrid.appendChild(libFragment);
          
-           totalTop.textContent    = `Total Books: ${libraryBooks.length}`;
-           totalBottom.textContent = `Total Books: ${libraryBooks.length}`;
-           readTop.textContent     = `Books Read: ${readCount}`;
-           readBottom.textContent  = `Books Read: ${readCount}`;
+          totalTop.textContent    = `Total Books: ${libraryBooks.length}`;
+          totalBottom.textContent = `Total Books: ${libraryBooks.length}`;
+          readTop.textContent     = `Books Read: ${readCount}`;
+          readBottom.textContent  = `Books Read: ${readCount}`;
         
-           updateCounters();
+           // Reapply current filters (search + read/unread toggle) so view stays consistent after edits/reloads
+           searchLibrary();
            updateDashboardStats();
            renderDashboardLibraryList();
            if (dashSelectedBookId) {
