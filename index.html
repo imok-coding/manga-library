@@ -2876,6 +2876,7 @@ max-height: 90vh;
          let dashMultiEditBtn = null;
          let dashListFooter = null;
          let dashListButtons = [];
+         let multiSelectionDocIds = [];
          
          // Multi-select state
          let multiSelectActive = false;
@@ -3456,6 +3457,7 @@ max-height: 90vh;
            multiSelectActive = false;
            multiSelectedIds.clear();
            multiSelectLastIndex = null;
+           multiSelectionDocIds = [];
          
           // Remove highlight from all cards
           document.querySelectorAll('.card.multi-selected').forEach(card => {
@@ -3997,6 +3999,7 @@ max-height: 90vh;
         function openDashboardMultiEdit() {
           if (!dashMultiSelectedIds.size) return;
           const ids = Array.from(dashMultiSelectedIds);
+          multiSelectionDocIds = ids.slice();
           const items = [];
           ids.forEach(id => {
             const b = libraryBooks.find(x => x.id === id);
@@ -4027,6 +4030,7 @@ max-height: 90vh;
             });
           });
           if (!items.length) return;
+          // Sort to keep a deterministic order
           items.sort((a, b) => {
             const nameCmp = (a.sortName || '').localeCompare(b.sortName || '');
             if (nameCmp !== 0) return nameCmp;
@@ -4034,8 +4038,38 @@ max-height: 90vh;
             if (volCmp !== 0) return volCmp;
             return (a.title || '').localeCompare(b.title || '');
           });
-          multiCreateItems = items;
-          multiCreateVolumes = items.map((_, i) => i + 1);
+
+          // Normalize fields for bulk editing: if values differ, blank them so the user can supply a single value.
+          const bulkFields = [
+            'title','authors','publisher','date','isbn','pageCount','cover','amazonURL',
+            'read','dateRead','rating','specialType','specialVolumes','collectiblePrice'
+          ];
+          const shared = {};
+          bulkFields.forEach(field => {
+            if (field === 'read') {
+              const first = items[0].read === true;
+              const allSame = items.every(it => (!!it.read) === first);
+              shared.read = allSame ? first : null;
+            } else {
+              const vals = items.map(it => (it[field] === undefined || it[field] === null) ? '' : String(it[field]));
+              const first = vals[0];
+              const allSame = vals.every(v => v === first);
+              shared[field] = allSame ? first : '';
+            }
+          });
+          items.forEach(it => {
+            bulkFields.forEach(field => {
+              if (field === 'read') {
+                it.read = shared.read;
+              } else {
+                it[field] = shared[field];
+              }
+            });
+          });
+
+          // Collapse into a single logical entry for UI navigation
+          multiCreateItems = [ items[0] ];
+          multiCreateVolumes = [1];
           multiCreateIndex = 0;
           multiEditorMode = 'selection';
           adminFormCollection = 'library';
@@ -4888,13 +4922,13 @@ max-height: 90vh;
            }
          
            // Common field binding
-           multiEditorTitleInput.value     = item.title;
-           multiEditorAuthorsInput.value   = item.authors;
-           multiEditorPublisherInput.value = item.publisher;
-           setDateInputValue(multiEditorDateInput, item.date);
+           multiEditorTitleInput.value     = item.title || "";
+           multiEditorAuthorsInput.value   = item.authors || "";
+           multiEditorPublisherInput.value = item.publisher || "";
+           setDateInputValue(multiEditorDateInput, item.date || "");
            if (multiEditorPageCountInput) multiEditorPageCountInput.value = (item.pageCount !== undefined && item.pageCount !== null && item.pageCount !== "") ? item.pageCount : "";
-           multiEditorIsbnInput.value      = item.isbn;
-           multiEditorCoverInput.value     = item.cover;
+           multiEditorIsbnInput.value      = item.isbn || "";
+           multiEditorCoverInput.value     = item.cover || "";
 
            multiEditorCoverPreview.src =
                item.cover || "https://via.placeholder.com/150x220?text=No+Cover";
@@ -4913,19 +4947,33 @@ max-height: 90vh;
                multiEditorAmazonWrapper.style.display = "none";
                if (multiEditorIsbnWrapper) multiEditorIsbnWrapper.style.display = "block";
                multiEditorReadWrapper.style.display = "flex";
-               multiEditorReadInput.checked = !!item.read;
-               if (multiEditorDateReadWrapper) {
-                 multiEditorDateReadWrapper.style.display = item.read ? "flex" : "none";
+               const readVal = item.read;
+               if (multiEditorReadInput) {
+                 if (readVal === null) {
+                   multiEditorReadInput.indeterminate = true;
+                   multiEditorReadInput.checked = false;
+                 } else {
+                   multiEditorReadInput.indeterminate = false;
+                   multiEditorReadInput.checked = !!readVal;
+                 }
                }
-           if (multiEditorDateReadInput) {
-             setDateInputValue(multiEditorDateReadInput, item.read ? (item.dateRead || "") : "");
-           }
+               if (multiEditorDateReadWrapper) {
+                 const showDate = readVal === true;
+                 multiEditorDateReadWrapper.style.display = showDate ? "flex" : "none";
+               }
+               if (multiEditorDateReadInput) {
+                 setDateInputValue(multiEditorDateReadInput, readVal ? (item.dateRead || "") : "");
+               }
            }
            syncMultiEditorReadUI();
         }
 
         function syncMultiEditorReadUI() {
           if (!multiEditorReadInput) return;
+          // If user interacts, clear indeterminate state
+          if (multiEditorReadInput.indeterminate) {
+            multiEditorReadInput.indeterminate = false;
+          }
           const isRead = multiEditorReadInput.checked;
           if (multiEditorDateReadWrapper) multiEditorDateReadWrapper.style.display = isRead ? "flex" : "none";
           if (!isRead && multiEditorDateReadInput) setDateInputValue(multiEditorDateReadInput, "");
@@ -5867,8 +5915,8 @@ max-height: 90vh;
          }
          
          // ===== LOAD LIBRARY FROM FIRESTORE =====
-         async function loadLibraryFromFirestore(preserveScroll = false) {
-           const priorScroll = preserveScroll ? window.scrollY : null;
+         async function loadLibraryFromFirestore(preserveScroll = false, overrideScroll = null) {
+           const priorScroll = preserveScroll ? (overrideScroll !== null ? overrideScroll : window.scrollY) : null;
            const snap = await getDocs(collection(db, "library"));
            libraryBooks = [];
            snap.forEach(docSnap => {
@@ -5971,7 +6019,9 @@ max-height: 90vh;
              openSeriesDetail(dashSelectedSeriesKey);
            }
            if (preserveScroll && priorScroll !== null) {
-             window.scrollTo(0, priorScroll);
+             requestAnimationFrame(() => {
+               window.scrollTo(0, priorScroll);
+             });
            }
          } // <-- properly close loadLibraryFromFirestore
          
@@ -6246,14 +6296,12 @@ max-height: 90vh;
            const rating = Math.max(0.5, Math.min(5, Math.round(raw * 2) / 2));
            try {
              await updateDoc(doc(db, "library", currentPopupBook.id), { rating });
-             await loadLibraryFromFirestore(true);
-             updateDashboardStats();
+             await loadLibraryFromFirestore(true, prevScroll);
              const updated = libraryBooks.find(b => b.id === currentPopupBook.id);
              if (updated) {
                addActivity(`Rated "${updated.Title || 'Untitled'}" ${rating}/5`);
                showPopup(updated);
              }
-             window.scrollTo(0, prevScroll);
            } catch (err) {
              console.error('Rating update failed', err);
              alert('Failed to update rating.');
@@ -6735,60 +6783,103 @@ max-height: 90vh;
                adminFormOverlay.style.display = "flex";
            }
            
-         multiEditorSaveAll.onclick = async () => {
-         saveCurrentMultiCreateEntry();
-         
-           const col = adminFormCollection === "wishlist" ? "wishlist" : "library";
-         
-           try {
-            for (const item of multiCreateItems) {
-           const payload = {
-              title: item.title,
-              authors: item.authors,
-              publisher: item.publisher,
-              date: item.date,
-              isbn: (col === "library") ? item.isbn : "",
-              pageCount: (item.pageCount !== undefined && item.pageCount !== null && item.pageCount !== "") ? parseInt(item.pageCount, 10) : "",
-              cover: item.cover
-            };
-
-            if (col === "wishlist") {
-              payload.amazonURL = item.amazonURL || "";
+        multiEditorSaveAll.onclick = async () => {
+        saveCurrentMultiCreateEntry();
+        
+          const col = adminFormCollection === "wishlist" ? "wishlist" : "library";
+        
+          try {
+            if (multiEditorMode === 'selection') {
+              // Bulk apply to the selected library docs
+              const base = multiCreateItems[0] || {};
+              const docIds = (multiSelectionDocIds && multiSelectionDocIds.length)
+                ? multiSelectionDocIds
+                : multiCreateItems.map(it => it.docId).filter(Boolean);
+              if (!docIds.length) {
+                alert("No documents selected to update.");
+                return;
+              }
+              const payload = {};
+              if (base.title) payload.title = base.title;
+              if (base.authors) payload.authors = base.authors;
+              if (base.publisher) payload.publisher = base.publisher;
+              if (base.date) payload.date = base.date;
+              if (base.isbn) payload.isbn = base.isbn;
+              if (base.pageCount !== undefined && base.pageCount !== null && base.pageCount !== "") {
+                const pc = parseInt(base.pageCount, 10);
+                if (Number.isFinite(pc)) payload.pageCount = pc;
+              }
+              if (base.cover) payload.cover = base.cover;
+              // Only allow read/dateRead updates if a definitive value is present
+              if (base.read !== null && base.read !== undefined) {
+                payload.read = !!base.read;
+                payload.dateRead = payload.read
+                  ? (base.dateRead && /^\d{4}-\d{2}-\d{2}$/.test(base.dateRead)
+                      ? base.dateRead
+                      : new Date().toISOString().slice(0,10))
+                  : "";
+              }
+              if (!Object.keys(payload).length) {
+                alert("No shared fields to apply. Fill a field to update all selected items.");
+                return;
+              }
+              await Promise.all(docIds.map(id => updateDoc(doc(db, col, id), payload)));
+              multiEditorOverlay.style.display = "none";
+              multiCreateActive = false;
+              await loadLibraryFromFirestore(true);
+              addActivity(`Updated ${docIds.length} selected item(s) in library`);
+              exitMultiSelectMode();
+              clearDashSelection();
             } else {
-              payload.read = !!item.read;
-              payload.dateRead = item.read
-                ? (item.dateRead && /^\d{4}-\d{2}-\d{2}$/.test(item.dateRead)
-                    ? item.dateRead
-                    : new Date().toISOString().slice(0,10))
-                : "";
+              for (const item of multiCreateItems) {
+                const payload = {
+                  title: item.title,
+                  authors: item.authors,
+                  publisher: item.publisher,
+                  date: item.date,
+                  isbn: (col === "library") ? item.isbn : "",
+                  pageCount: (item.pageCount !== undefined && item.pageCount !== null && item.pageCount !== "") ? parseInt(item.pageCount, 10) : "",
+                  cover: item.cover
+                };
+
+                if (col === "wishlist") {
+                  payload.amazonURL = item.amazonURL || "";
+                } else {
+                  payload.read = !!item.read;
+                  payload.dateRead = item.read
+                    ? (item.dateRead && /^\d{4}-\d{2}-\d{2}$/.test(item.dateRead)
+                        ? item.dateRead
+                        : new Date().toISOString().slice(0,10))
+                    : "";
+                }
+            
+                if (item.existsAlready && item.docId) {
+                  // UPDATE existing doc
+                  await updateDoc(doc(db, col, item.docId), payload);
+                } else {
+                  // ADD new doc
+                  await addDoc(collection(db, col), payload);
+                }
+              }
+            
+              multiEditorOverlay.style.display = "none";
+              multiCreateActive = false;
+              if (col === "wishlist") {
+                await loadWishlistFromFirestore(true);
+              } else {
+                await loadLibraryFromFirestore(true);
+              }
+              addActivity(`Saved ${multiCreateItems.length} item(s) to ${col}`);
+              // If this was multi-select editing, exit selection modes so clicks work normally
+              if (multiEditorMode === 'selection') {
+                exitMultiSelectMode();
+                clearDashSelection();
+              }
             }
-         
-             if (item.existsAlready && item.docId) {
-               // UPDATE existing doc
-               await updateDoc(doc(db, col, item.docId), payload);
-             } else {
-               // ADD new doc
-               await addDoc(collection(db, col), payload);
-             }
-           }
-         
-           multiEditorOverlay.style.display = "none";
-           multiCreateActive = false;
-           if (col === "wishlist") {
-             await loadWishlistFromFirestore(true);
-           } else {
-             await loadLibraryFromFirestore(true);
-           }
-           addActivity(`Saved ${multiCreateItems.length} item(s) to ${col}`);
-           // If this was multi-select editing, exit selection modes so clicks work normally
-           if (multiEditorMode === 'selection') {
-             exitMultiSelectMode();
-             clearDashSelection();
-           }
-         } catch (err) {
-           console.error("Multi-editor save error:", err);
-           alert("Failed to save volumes. Check console for details.");
-         }
+          } catch (err) {
+            console.error("Multi-editor save error:", err);
+            alert("Failed to save volumes. Check console for details.");
+          }
          };
          
          multiEditorClose.onclick = () => {
