@@ -1141,6 +1141,9 @@ max-height: 90vh;
          position: relative;
          content-visibility: auto;
          contain: content;
+         display: flex;
+         flex-direction: column;
+         gap: 4px;
          }
          .card:hover {
          transform: scale(1.05);
@@ -1173,21 +1176,24 @@ max-height: 90vh;
          }
          .card .title {
          font-weight: bold;
-         margin: 6px 8px;
+         margin: 8px 10px 2px;
          font-size: 13px;
+         line-height: 1.35;
          min-height: 36px;
          color: #ffc0cb;
          }
          .card .meta {
          font-size: 11px;
-         margin: 2px;
+         line-height: 1.4;
+         margin: 0 10px 4px;
          color: #f8d1d8;
-         padding-bottom: 8px;
+         padding-bottom: 4px;
          }
          .card .isbn {
          font-size: 10px;
          color: #eea4b7;
-         margin-top: 4px;
+         margin: 0 10px 8px;
+         line-height: 1.3;
          }
          /* ===== PAGE SECTIONS (LIBRARY vs WISHLIST) ===== */
          .page-section {
@@ -2772,6 +2778,7 @@ max-height: 90vh;
          let dashGroupedSeries = [];
          let dashSeriesExpanded = new Set();
          let activityLog = [];
+         const ACTIVITY_STORAGE_KEY = 'mangaLibraryActivityLog';
          
          // Multi-select state
          let multiSelectActive = false;
@@ -3074,11 +3081,41 @@ max-height: 90vh;
            });
          }
 
+         function saveActivityLogToStorage() {
+           try {
+             const payload = activityLog.slice(0, 100).map(entry => ({
+               message: entry.message,
+               ts: entry.ts instanceof Date ? entry.ts.toISOString() : entry.ts
+             }));
+             localStorage.setItem(ACTIVITY_STORAGE_KEY, JSON.stringify(payload));
+           } catch (err) {
+             console.warn('Failed to persist activity log', err);
+           }
+         }
+
+         function loadActivityLogFromStorage() {
+           try {
+             const raw = localStorage.getItem(ACTIVITY_STORAGE_KEY);
+             if (!raw) return;
+             const parsed = JSON.parse(raw);
+             if (!Array.isArray(parsed)) return;
+             activityLog = parsed
+               .map(entry => ({
+                 message: entry.message,
+                 ts: entry.ts ? new Date(entry.ts) : new Date()
+               }))
+               .filter(entry => entry.message);
+           } catch (err) {
+             console.warn('Failed to load activity log', err);
+           }
+         }
+
          function addActivity(message) {
            if (!message) return;
            activityLog.unshift({ message, ts: new Date() });
            if (activityLog.length > 100) activityLog.pop();
            renderActivityLog();
+           saveActivityLogToStorage();
          }
 
          function attachDateDropdowns(hiddenInput) {
@@ -3824,7 +3861,7 @@ max-height: 90vh;
             };
             try {
               await updateDoc(doc(db, "library", dashSelectedBookId), payload);
-              await loadLibraryFromFirestore();
+              await loadLibraryFromFirestore(true);
               renderDashboardLibraryList();
               openDashboardDetail(dashSelectedBookId);
               alert("Saved changes.");
@@ -3902,7 +3939,7 @@ max-height: 90vh;
 
           try {
             await Promise.all(updates);
-            await loadLibraryFromFirestore();
+            await loadLibraryFromFirestore(true);
             // Keep current selection without auto-expanding everything after save
             renderDashboardLibraryList();
             if (dashSelectedSeriesKey) {
@@ -5345,7 +5382,8 @@ max-height: 90vh;
          }
          
          // ===== LOAD LIBRARY FROM FIRESTORE =====
-         async function loadLibraryFromFirestore() {
+         async function loadLibraryFromFirestore(preserveScroll = false) {
+           const priorScroll = preserveScroll ? window.scrollY : null;
            const snap = await getDocs(collection(db, "library"));
            libraryBooks = [];
            snap.forEach(docSnap => {
@@ -5443,11 +5481,15 @@ max-height: 90vh;
            } else if (dashSelectedSeriesKey) {
              openSeriesDetail(dashSelectedSeriesKey);
            }
+           if (preserveScroll && priorScroll !== null) {
+             window.scrollTo(0, priorScroll);
+           }
          } // <-- properly close loadLibraryFromFirestore
          
          
          // ===== LOAD WISHLIST FROM FIRESTORE =====
-         async function loadWishlistFromFirestore() {
+         async function loadWishlistFromFirestore(preserveScroll = false) {
+           const priorScroll = preserveScroll ? window.scrollY : null;
            const snap = await getDocs(collection(db, "wishlist"));
            wishlistItems = [];
            snap.forEach(docSnap => {
@@ -5523,12 +5565,17 @@ max-height: 90vh;
          updateDashboardStats();
          renderReleaseCalendar();
          searchWishlist();
+         if (preserveScroll && priorScroll !== null) {
+           window.scrollTo(0, priorScroll);
+         }
         }
          
          // ===== RELOAD BOTH =====
-         async function reloadAll() {
-           await loadLibraryFromFirestore();
-           await loadWishlistFromFirestore();
+         async function reloadAll(options = {}) {
+           const preserveLibraryScroll = !!options.preserveLibraryScroll;
+           const preserveWishlistScroll = !!options.preserveWishlistScroll;
+           await loadLibraryFromFirestore(preserveLibraryScroll);
+           await loadWishlistFromFirestore(preserveWishlistScroll);
          }
          
          
@@ -5691,7 +5738,7 @@ max-height: 90vh;
            const rating = Math.max(0.5, Math.min(5, Math.round(raw * 2) / 2));
            try {
              await updateDoc(doc(db, "library", currentPopupBook.id), { rating });
-             await loadLibraryFromFirestore();
+             await loadLibraryFromFirestore(true);
              updateDashboardStats();
              const updated = libraryBooks.find(b => b.id === currentPopupBook.id);
              if (updated) {
@@ -5827,7 +5874,7 @@ max-height: 90vh;
              payload.dateRead = newVal ? new Date().toISOString().slice(0,10) : "";
              if (!newVal) payload.rating = "";
              await updateDoc(doc(db, "library", currentPopupBook.id), payload);
-             await loadLibraryFromFirestore();
+             await loadLibraryFromFirestore(true);
              // keep popup open but refresh its state
              const updated = libraryBooks.find(b => b.id === currentPopupBook.id);
              if (updated) showPopup(updated);
@@ -5846,9 +5893,9 @@ max-height: 90vh;
              await deleteDoc(doc(db, colName, currentPopupBook.id));
              popupOverlay.style.display = 'none';
              if (colName === "wishlist") {
-               await loadWishlistFromFirestore();
+               await loadWishlistFromFirestore(true);
              } else {
-               await loadLibraryFromFirestore();
+               await loadLibraryFromFirestore(true);
              }
              addActivity(`Deleted "${currentPopupBook.Title || 'Untitled'}" from ${colName}`);
            } catch (err) {
@@ -5897,6 +5944,8 @@ max-height: 90vh;
            }
          
            const isLibraryPage = (currentSectionKey === 'library');
+           const preserveLibraryScroll = isLibraryPage;
+           const preserveWishlistScroll = (currentSectionKey === 'wishlist');
          
            try {
              if (action === 'move') {
@@ -5963,11 +6012,11 @@ max-height: 90vh;
              }
          
              if (action === 'move') {
-               await reloadAll(); // both collections changed
+               await reloadAll({ preserveLibraryScroll, preserveWishlistScroll }); // both collections changed
              } else if (isLibraryPage) {
-               await loadLibraryFromFirestore();
+               await loadLibraryFromFirestore(preserveLibraryScroll);
              } else {
-               await loadWishlistFromFirestore();
+               await loadWishlistFromFirestore(preserveWishlistScroll);
              }
              const actionLabel = action === 'move'
                ? `Moved ${ids.length} item(s) ${isLibraryPage ? 'to wishlist' : 'to library'}`
@@ -6085,6 +6134,7 @@ max-height: 90vh;
          });
          
          // ===== INITIAL LOAD =====
+         loadActivityLogFromStorage();
          renderActivityLog();
          reloadAll();
          
@@ -6216,9 +6266,9 @@ max-height: 90vh;
            multiEditorOverlay.style.display = "none";
            multiCreateActive = false;
            if (col === "wishlist") {
-             await loadWishlistFromFirestore();
+             await loadWishlistFromFirestore(true);
            } else {
-             await loadLibraryFromFirestore();
+             await loadLibraryFromFirestore(true);
            }
            addActivity(`Saved ${multiCreateItems.length} item(s) to ${col}`);
          } catch (err) {
@@ -6396,9 +6446,9 @@ max-height: 90vh;
          
                closeAdminForm();
                if (adminFormCollection === "wishlist") {
-                 await loadWishlistFromFirestore();
+                 await loadWishlistFromFirestore(true);
                } else {
-                 await loadLibraryFromFirestore();
+                 await loadLibraryFromFirestore(true);
                }
 
                const popupIsOpen = popupOverlay && popupOverlay.style.display === 'flex';
