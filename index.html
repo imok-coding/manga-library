@@ -389,16 +389,16 @@
 .calendar-grid {
 display: grid;
 grid-template-columns: repeat(7, 1fr);
-grid-auto-rows: minmax(78px, auto);
+grid-template-rows: repeat(6, minmax(82px, 1fr));
 gap: 6px;
-height: auto;
-min-height: 0;
+min-height: 520px; /* keep calendar height consistent across months */
+height: 520px;
 }
-         #releaseCalendar {
-        height: auto;
+        #releaseCalendar {
+        height: 520px;
         }
          .calendar-day {
-         min-height: 60px;
+         min-height: 62px;
          border: 1px solid rgba(255,182,193,0.25);
          border-radius: 10px;
          padding: 6px;
@@ -431,7 +431,7 @@ min-height: 0;
          display: flex;
          flex-direction: column;
          gap: 4px;
-         overflow: visible;
+         overflow: hidden;
          }
          .calendar-more-btn {
          margin-top: 2px;
@@ -5567,7 +5567,7 @@ max-height: 90vh;
            if (releaseCalendar) releaseCalendar.innerHTML = '';
            const daysInMonth = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0).getDate();
            const firstWeekday = monthStart.getDay();
-           const totalCells = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
+           const totalCells = Math.max(42, Math.ceil((firstWeekday + daysInMonth) / 7) * 7);
 
            for (let i = 0; i < firstWeekday; i++) {
              const pad = document.createElement('div');
