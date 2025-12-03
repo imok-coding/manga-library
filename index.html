@@ -3340,10 +3340,6 @@ max-height: 90vh;
            const isRange = e.shiftKey && multiSelectLastIndex !== null;
            const isToggle = e.metaKey || e.ctrlKey;
 
-           if (!isRange && !isToggle) {
-             clearCardSelections();
-           }
-
            if (isRange && currentIndex !== -1 && multiSelectLastIndex !== null) {
              const start = Math.min(multiSelectLastIndex, currentIndex);
              const end = Math.max(multiSelectLastIndex, currentIndex);
@@ -3355,7 +3351,8 @@ max-height: 90vh;
            } else if (isToggle) {
              toggleCardSelection(card, id);
            } else {
-             selectCard(card, id);
+             // Default click: toggle without clearing prior selections
+             toggleCardSelection(card, id);
            }
 
            multiSelectLastIndex = currentIndex;
@@ -3782,10 +3779,6 @@ max-height: 90vh;
           const buttons = dashListButtons;
           const currentIndex = buttons.indexOf(btn);
 
-          if (!ctrl && !shift) {
-            clearDashSelection();
-          }
-
           if (shift && dashLastIndex !== null && currentIndex !== -1) {
             const start = Math.min(dashLastIndex, currentIndex);
             const end = Math.max(dashLastIndex, currentIndex);
@@ -3802,7 +3795,12 @@ max-height: 90vh;
               dashMultiSelectedIds.add(bookId);
             }
           } else {
-            dashMultiSelectedIds.add(bookId);
+            // Default click toggles without clearing existing range selections
+            if (dashMultiSelectedIds.has(bookId)) {
+              dashMultiSelectedIds.delete(bookId);
+            } else {
+              dashMultiSelectedIds.add(bookId);
+            }
           }
 
           dashLastIndex = currentIndex;
