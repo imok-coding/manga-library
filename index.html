@@ -308,6 +308,12 @@
          align-items: center;
          transition: transform 0.2s ease, box-shadow 0.3s ease;
          }
+         .stat-card.clickable {
+         cursor: pointer;
+         }
+         .stat-card.clickable:active {
+         transform: translateY(-2px);
+         }
          .stat-card.wide {
          grid-column: 1 / -1;
          align-items: stretch;
@@ -620,6 +626,16 @@ max-height: 90vh;
         .rating-stars.editable .star:hover {
         transform: scale(1.08);
         }
+         .rating-stars.editable .star.hover-preview {
+         color: #ffce80;
+         }
+         .rating-stars.editable .star.hover-preview-half {
+         background: linear-gradient(90deg, #ffce80 50%, #444 50%);
+         background-clip: text;
+         -webkit-background-clip: text;
+         -webkit-text-fill-color: transparent;
+         color: transparent;
+         }
         .rating-value {
         font-size: 13px;
         color: #f8d1d8;
@@ -891,6 +907,67 @@ max-height: 90vh;
          box-shadow: 0 0 24px rgba(255,182,193,0.6);
          position: relative;
          color: #fff;
+         }
+         /* Stat detail overlay */
+         #statDetailOverlay {
+         position: fixed;
+         inset: 0;
+         background: rgba(30,13,20,0.92);
+         backdrop-filter: blur(6px);
+         display: none;
+         justify-content: center;
+         align-items: center;
+         z-index: 10080;
+         animation: fadeIn 0.25s ease;
+         }
+         #statDetailCard {
+         background: #2b0f1d;
+         border-radius: 16px;
+         padding: 18px;
+         width: 95%;
+         max-width: 960px;
+         max-height: 90vh;
+         overflow: auto;
+         box-shadow: 0 0 24px rgba(255,182,193,0.6);
+         position: relative;
+         color: #fff;
+         }
+         #statDetailClose {
+         position: absolute;
+         top: 10px;
+         right: 10px;
+         background: rgba(255,255,255,0.08);
+         border: 1px solid rgba(255,255,255,0.2);
+         color: #fff;
+         border-radius: 6px;
+         width: 28px;
+         height: 28px;
+         cursor: pointer;
+         font-size: 18px;
+         }
+         #statDetailTitle {
+         margin: 0 0 12px;
+         color: #ffb6c1;
+         text-align: center;
+         }
+         #statDetailBody table {
+         width: 100%;
+         border-collapse: collapse;
+         font-size: 12px;
+         }
+         #statDetailBody th,
+         #statDetailBody td {
+         padding: 6px 8px;
+         border-bottom: 1px solid rgba(255,182,193,0.2);
+         text-align: left;
+         color: #f8d1d8;
+         }
+         #statDetailBody th {
+         color: #ffb6c1;
+         font-weight: 700;
+         }
+         #statDetailBody tr:hover td {
+         background: rgba(255,182,193,0.06);
          }
          #settingsClose {
          position: absolute;
@@ -2284,13 +2361,13 @@ max-height: 90vh;
                   </div>
                   <div class="stat-value"><span id="statRead">0</span> / <span id="statUnread">0</span></div>
                </div>
-               <div class="stat-card">
+               <div class="stat-card clickable" id="statCardRatings">
                   <h3>Ratings</h3>
                   <div class="stat-value" id="statAvgRating">--</div>
                   <div class="stat-sub">Average rating (read)</div>
                   <div class="stat-list" id="statTopRated"></div>
                </div>
-               <div class="stat-card">
+               <div class="stat-card clickable" id="statCardPages">
                   <h3>Page Count Read / Total</h3>
                   <div class="stat-value"><span id="statPagesRead">0</span> / <span id="statPagesTotal">0</span></div>
                   <div class="stat-sub" id="statPagesPct">0% read</div>
@@ -2302,15 +2379,15 @@ max-height: 90vh;
                   </div>
                   <div class="stat-value"><span id="statLibShare">0</span> / <span id="statWishShare">0</span></div>
                </div>
-               <div class="stat-card">
+               <div class="stat-card clickable" id="statCardDemographics">
                   <h3>Top 3 Demographics</h3>
                   <div class="stat-list" id="statTopDemographics"></div>
                </div>
-               <div class="stat-card">
+               <div class="stat-card clickable" id="statCardPublishers">
                   <h3>Top 3 Publishers</h3>
                   <div class="stat-list" id="statTopPublishers"></div>
                </div>
-               <div class="stat-card">
+               <div class="stat-card clickable" id="statCardGenres">
                   <h3>Top 3 Genres</h3>
                   <div class="stat-list" id="statTopGenres"></div>
                </div>
@@ -2320,7 +2397,7 @@ max-height: 90vh;
                <div class="stat-sub" id="statNextReleaseDate"></div>
                <div class="stat-sub" id="statNextCountdown"></div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card clickable" id="statCardPricing">
                <h3>Collection Pricing</h3>
                <div class="stat-value stat-msrp" id="statCollectionValue">$0.00</div>
                <div class="stat-value stat-paid">
@@ -2335,7 +2412,7 @@ max-height: 90vh;
                   <div class="stat-value" id="statCurrentYearValue">0</div>
                   <div class="stat-sub" id="statCurrentYearSub">Year-to-date</div>
                </div>
-               <div class="stat-card">
+               <div class="stat-card clickable" id="statCardAvgDays">
                   <h3>Avg Days From Purchase to Read</h3>
                   <div class="stat-value" id="statAvgReadTime">--</div>
                   <div class="stat-sub" id="statAvgReadTimeSub">When both dates exist</div>
@@ -2689,6 +2766,14 @@ max-height: 90vh;
             </div>
          </div>
       </div>
+      <!-- Stat Detail Overlay -->
+      <div id="statDetailOverlay">
+         <div id="statDetailCard">
+            <button id="statDetailClose" title="Close">&times;</button>
+            <h3 id="statDetailTitle">Details</h3>
+            <div id="statDetailBody"></div>
+         </div>
+      </div>
       <!-- Wishlist Calendar Overlay -->
       <div id="calendarOverlay">
          <div id="calendarCard">
@@ -2919,6 +3004,18 @@ max-height: 90vh;
          const exportCsvBtn = document.getElementById('exportCsvBtn');
          const exportCoversBtn = document.getElementById('exportCoversBtn');
          const activityLogList = document.getElementById('activityLogList');
+         const statDetailOverlay = document.getElementById('statDetailOverlay');
+         const statDetailCard = document.getElementById('statDetailCard');
+         const statDetailClose = document.getElementById('statDetailClose');
+         const statDetailTitle = document.getElementById('statDetailTitle');
+         const statDetailBody = document.getElementById('statDetailBody');
+         const statCardRatings = document.getElementById('statCardRatings');
+         const statCardPages = document.getElementById('statCardPages');
+         const statCardDemographics = document.getElementById('statCardDemographics');
+         const statCardPublishers = document.getElementById('statCardPublishers');
+         const statCardGenres = document.getElementById('statCardGenres');
+         const statCardPricing = document.getElementById('statCardPricing');
+         const statCardAvgDays = document.getElementById('statCardAvgDays');
          
          const authSection     = document.getElementById('authSection');
          const authStatus      = document.getElementById('authStatus');
@@ -3130,6 +3227,65 @@ max-height: 90vh;
            saveActivityLogToStorage();
          }
 
+         function updateRatingStarsVisual(container, rating, isHover = false) {
+           const stars = container ? Array.from(container.querySelectorAll('.star')) : [];
+           stars.forEach((star, idx) => {
+             const starValue = idx + 1;
+             star.classList.remove('filled', 'half', 'hover-preview', 'hover-preview-half');
+             if (rating >= starValue) {
+               star.classList.add(isHover ? 'hover-preview' : 'filled');
+             } else if (rating >= starValue - 0.5) {
+               star.classList.add(isHover ? 'hover-preview-half' : 'half');
+             }
+           });
+         }
+
+         function buildDetailTable(headers, rows) {
+           const table = document.createElement('table');
+           const thead = document.createElement('thead');
+           const headRow = document.createElement('tr');
+           headers.forEach(h => {
+             const th = document.createElement('th');
+             th.textContent = h;
+             headRow.appendChild(th);
+           });
+           thead.appendChild(headRow);
+           table.appendChild(thead);
+           const tbody = document.createElement('tbody');
+           rows.forEach(row => {
+             const tr = document.createElement('tr');
+             row.forEach(cell => {
+               const td = document.createElement('td');
+               td.textContent = cell;
+               tr.appendChild(td);
+             });
+             tbody.appendChild(tr);
+           });
+           table.appendChild(tbody);
+           return table;
+         }
+
+         function openStatDetail(title, contentNode) {
+           if (!statDetailOverlay || !statDetailBody || !statDetailTitle) return;
+           statDetailTitle.textContent = title || 'Details';
+           statDetailBody.innerHTML = '';
+           if (contentNode) statDetailBody.appendChild(contentNode);
+           statDetailOverlay.style.display = 'flex';
+         }
+
+         function closeStatDetail() {
+           if (statDetailOverlay) statDetailOverlay.style.display = 'none';
+         }
+
+         if (statDetailClose) {
+           statDetailClose.addEventListener('click', closeStatDetail);
+         }
+         if (statDetailOverlay) {
+           statDetailOverlay.addEventListener('click', (e) => {
+             if (e.target === statDetailOverlay) closeStatDetail();
+           });
+         }
+
          function attachDateDropdowns(hiddenInput) {
            if (!hiddenInput || hiddenInput.__hasDateSelects) return;
            const parent = hiddenInput.parentElement;
@@ -3335,14 +3491,13 @@ max-height: 90vh;
          }
 
          function handleCardMultiClick(e, card, id, sectionKey) {
-           // Only multi-select when a modifier key is held
+           // Only process when a modifier is held
            const cards = Array.from((sectionKey === 'library' ? bookGrid : wishlistGrid).querySelectorAll('.card'));
            const currentIndex = cards.indexOf(card);
-           const isRange = e.shiftKey && multiSelectLastIndex !== null;
+           const isRange = e.shiftKey && multiSelectLastIndex !== null && currentIndex !== -1;
            const isToggle = e.metaKey || e.ctrlKey;
-           let handled = false;
 
-           if (isRange && currentIndex !== -1 && multiSelectLastIndex !== null) {
+           if (isRange) {
              const start = Math.min(multiSelectLastIndex, currentIndex);
              const end = Math.max(multiSelectLastIndex, currentIndex);
              for (let i = start; i <= end; i++) {
@@ -3350,19 +3505,15 @@ max-height: 90vh;
                if (!rangeCard) continue;
                selectCard(rangeCard, rangeCard.dataset.id);
              }
-             handled = true;
            } else if (isToggle) {
              toggleCardSelection(card, id);
-             handled = true;
            } else {
-             // No modifier: just set the anchor index for future shift ranges
-             multiSelectLastIndex = currentIndex;
              return false;
            }
 
            multiSelectLastIndex = currentIndex;
            updateMultiSelectInfo();
-           return handled;
+           return true;
          }
          
          // ===== AUTH MODAL LOGIC =====
@@ -3571,6 +3722,27 @@ max-height: 90vh;
              exportCoversZip();
              // leave settings open while processing for feedback
            });
+         }
+         if (statCardRatings) {
+           statCardRatings.addEventListener('click', showRatingsDetail);
+         }
+         if (statCardPages) {
+           statCardPages.addEventListener('click', showPagesDetail);
+         }
+         if (statCardDemographics) {
+           statCardDemographics.addEventListener('click', () => showCountsDetail('Demographic', 'Demographics'));
+         }
+         if (statCardPublishers) {
+           statCardPublishers.addEventListener('click', () => showCountsDetail('Publisher', 'Publishers'));
+         }
+         if (statCardGenres) {
+           statCardGenres.addEventListener('click', () => showCountsDetail('Genre', 'Genres'));
+         }
+         if (statCardPricing) {
+           statCardPricing.addEventListener('click', showPricingDetail);
+         }
+         if (statCardAvgDays) {
+           statCardAvgDays.addEventListener('click', showAvgDaysDetail);
          }
          
            function handleTitleInputChange() {
@@ -4946,6 +5118,120 @@ max-height: 90vh;
              .slice(0, topN);
          }
 
+         function fmtCurrency(num) {
+           return `$${Number(num || 0).toFixed(2)}`;
+         }
+
+         function showRatingsDetail() {
+           const seriesMap = new Map();
+           libraryBooks.forEach(b => {
+             const ratingVal = (b.Rating !== undefined && b.Rating !== null && b.Rating !== "") ? parseFloat(b.Rating) : NaN;
+             if (!b.Read || !Number.isFinite(ratingVal) || ratingVal <= 0) return;
+             const key = getSeriesKey(b) || (b.id || "");
+             const name = getSeriesDisplayNameFromTitle(b.Title);
+             if (!seriesMap.has(key)) seriesMap.set(key, { name, sum: 0, count: 0 });
+             const entry = seriesMap.get(key);
+             entry.sum += ratingVal;
+             entry.count += 1;
+           });
+           const rows = Array.from(seriesMap.values())
+             .map(e => ({ ...e, avg: e.sum / e.count }))
+             .sort((a, b) => b.avg - a.avg || a.name.localeCompare(b.name))
+             .map(e => [e.name || 'Untitled', `${e.avg.toFixed(2)}/5`, e.count]);
+           const table = buildDetailTable(['Series', 'Avg Rating', 'Rated Books'], rows);
+           openStatDetail('Ratings', table);
+         }
+
+         function showPagesDetail() {
+           const seriesMap = new Map();
+           libraryBooks.forEach(b => {
+             const key = getSeriesKey(b) || (b.id || "");
+             const name = getSeriesDisplayNameFromTitle(b.Title);
+             if (!seriesMap.has(key)) seriesMap.set(key, { name, total: 0, read: 0, count: 0 });
+             const entry = seriesMap.get(key);
+             const pc = (b.PageCount !== undefined && b.PageCount !== null && b.PageCount !== "") ? parseInt(b.PageCount, 10) : NaN;
+             if (Number.isFinite(pc)) {
+               entry.total += pc;
+               if (b.Read) entry.read += pc;
+             }
+             entry.count += 1;
+           });
+           const rows = Array.from(seriesMap.values())
+             .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name))
+             .map(e => {
+               const pct = e.total ? `${Math.round((e.read / e.total) * 100)}%` : '--';
+               return [e.name || 'Untitled', e.read, e.total, pct, e.count];
+             });
+           const table = buildDetailTable(['Series', 'Read Pages', 'Total Pages', '% Read', 'Books'], rows);
+           openStatDetail('Pages by Series', table);
+         }
+
+         function showCountsDetail(key, title) {
+           const counts = computeTopCountsBySeries(libraryBooks, key, 9999);
+           const rows = counts.map(([label, count]) => [label || 'Unknown', count]);
+           const table = buildDetailTable([title, 'Series Count'], rows);
+           openStatDetail(title, table);
+         }
+
+         function showPricingDetail() {
+           const seriesMap = new Map();
+           libraryBooks.forEach(b => {
+             const key = getSeriesKey(b) || (b.id || "");
+             const name = getSeriesDisplayNameFromTitle(b.Title);
+             if (!seriesMap.has(key)) seriesMap.set(key, { name, msrp: 0, paid: 0, collectible: 0, count: 0 });
+             const entry = seriesMap.get(key);
+             const msrp = (b.MSRP !== undefined && b.MSRP !== null && b.MSRP !== "") ? parseFloat(b.MSRP) : NaN;
+             const paid = (b.AmountPaid !== undefined && b.AmountPaid !== null && b.AmountPaid !== "") ? parseFloat(b.AmountPaid) : NaN;
+             const collectible = (b.CollectiblePrice !== undefined && b.CollectiblePrice !== null && b.CollectiblePrice !== "") ? parseFloat(b.CollectiblePrice) : NaN;
+             if (Number.isFinite(msrp) && b.SpecialType !== "collectible") entry.msrp += msrp;
+             if (Number.isFinite(paid) && b.SpecialType !== "collectible") entry.paid += paid;
+             if (Number.isFinite(collectible) && b.SpecialType === "collectible") entry.collectible += collectible;
+             entry.count += 1;
+           });
+           const rows = Array.from(seriesMap.values())
+             .sort((a, b) => (b.msrp + b.collectible + b.paid) - (a.msrp + a.collectible + a.paid) || a.name.localeCompare(b.name))
+             .map(e => [
+               e.name || 'Untitled',
+               fmtCurrency(e.msrp),
+               fmtCurrency(e.paid),
+               e.collectible ? fmtCurrency(e.collectible) : '--',
+               e.count
+             ]);
+           const table = buildDetailTable(['Series', 'MSRP', 'Paid', 'Collectible', 'Books'], rows);
+           openStatDetail('Collection Pricing', table);
+         }
+
+         function showAvgDaysDetail() {
+           const seriesMap = new Map();
+           libraryBooks.forEach(b => {
+             if (!b.Read || !b.DatePurchased || !b.DateRead) return;
+             const dp = parseFlexibleDate(b.DatePurchased);
+             const dr = parseFlexibleDate(b.DateRead);
+             if (!dp || !dr) return;
+             const diffDays = Math.max(0, Math.round((dr.getTime() - dp.getTime()) / 86400000));
+             const key = getSeriesKey(b) || (b.id || "");
+             const name = getSeriesDisplayNameFromTitle(b.Title);
+             if (!seriesMap.has(key)) seriesMap.set(key, { name, sum: 0, count: 0, max: 0, min: null });
+             const entry = seriesMap.get(key);
+             entry.sum += diffDays;
+             entry.count += 1;
+             entry.max = Math.max(entry.max, diffDays);
+             entry.min = entry.min === null ? diffDays : Math.min(entry.min, diffDays);
+           });
+           const rows = Array.from(seriesMap.values())
+             .map(e => ({ ...e, avg: e.sum / e.count }))
+             .sort((a, b) => b.avg - a.avg || a.name.localeCompare(b.name))
+             .map(e => [
+               e.name || 'Untitled',
+               `${e.avg.toFixed(1)} days`,
+               `${e.max} days`,
+               e.min === null ? '--' : `${e.min} days`,
+               e.count
+             ]);
+           const table = buildDetailTable(['Series', 'Avg Days', 'Longest', 'Shortest', 'Reads Count'], rows);
+           openStatDetail('Avg Days from Purchase to Read', table);
+         }
+
          function renderTopList(el, items, emptyText) {
            if (!el) return;
            el.innerHTML = '';
@@ -5654,11 +5940,13 @@ max-height: 90vh;
 
             card.addEventListener('click', (e) => {
               if (multiSelectActive && isAdmin && currentSectionKey === 'library') {
-                const handled = handleCardMultiClick(e, card, b.id, 'library');
-                if (handled) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  return;
+                if (e.shiftKey || e.ctrlKey || e.metaKey) {
+                  const handled = handleCardMultiClick(e, card, b.id, 'library');
+                  if (handled) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                  }
                 }
               }
               showPopup(b);
@@ -5750,11 +6038,13 @@ max-height: 90vh;
 
             card.addEventListener('click', (e) => {
               if (multiSelectActive && isAdmin && currentSectionKey === 'wishlist') {
-                const handled = handleCardMultiClick(e, card, b.id, 'wishlist');
-                if (handled) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  return;
+                if (e.shiftKey || e.ctrlKey || e.metaKey) {
+                  const handled = handleCardMultiClick(e, card, b.id, 'wishlist');
+                  if (handled) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                  }
                 }
               }
               showPopup(b);
@@ -5904,37 +6194,52 @@ max-height: 90vh;
            }
          }
 
-         function renderPopupRating(book) {
-           if (!popupRatingStars || !popupRatingValue) return;
-           const ratingNum = (book && book.Rating !== undefined && book.Rating !== null && book.Rating !== "") ? parseFloat(book.Rating) : 0;
-           const safeRating = Number.isFinite(ratingNum) ? Math.max(0, Math.min(5, ratingNum)) : 0;
-           const isRead = book && (book.Read === true || book.Read === "true");
-           if (popupRatingRow) popupRatingRow.style.display = book ? "flex" : "none";
-           const canEdit = isAdmin && book && book.kind === "library" && isRead;
-           popupRatingStars.innerHTML = '';
-           popupRatingStars.classList.toggle('editable', !!canEdit);
-           popupRatingStars.dataset.editable = canEdit ? 'true' : 'false';
-           for (let i = 1; i <= 5; i++) {
-             const span = document.createElement('span');
-             span.className = 'star';
-             span.textContent = '★';
-             if (safeRating >= i) {
-               span.classList.add('filled');
-             } else if (safeRating >= i - 0.5) {
-               span.classList.add('half');
-             }
-             popupRatingStars.appendChild(span);
-           }
-           if (!isRead) {
-             popupRatingValue.textContent = 'Mark as read to rate';
-           } else {
-             popupRatingValue.textContent = safeRating ? `${safeRating.toFixed(1)}/5` : 'Not rated';
-           }
-         }
+        function renderPopupRating(book) {
+          if (!popupRatingStars || !popupRatingValue) return;
+          const ratingNum = (book && book.Rating !== undefined && book.Rating !== null && book.Rating !== "") ? parseFloat(book.Rating) : 0;
+          const safeRating = Number.isFinite(ratingNum) ? Math.max(0, Math.min(5, ratingNum)) : 0;
+          const isRead = book && (book.Read === true || book.Read === "true");
+          if (popupRatingRow) popupRatingRow.style.display = book ? "flex" : "none";
+          const canEdit = isAdmin && book && book.kind === "library" && isRead;
+          popupRatingStars.innerHTML = '';
+          popupRatingStars.classList.toggle('editable', !!canEdit);
+          popupRatingStars.dataset.editable = canEdit ? 'true' : 'false';
+          for (let i = 1; i <= 5; i++) {
+            const span = document.createElement('span');
+            span.className = 'star';
+            span.dataset.starIndex = i;
+            span.textContent = '★';
+            popupRatingStars.appendChild(span);
+          }
+          updateRatingStarsVisual(popupRatingStars, safeRating);
+          if (!isRead) {
+            popupRatingValue.textContent = 'Mark as read to rate';
+          } else {
+            popupRatingValue.textContent = safeRating ? `${safeRating.toFixed(1)}/5` : 'Not rated';
+          }
+
+          // Hover preview
+          if (canEdit) {
+            popupRatingStars.onmousemove = (ev) => {
+              const rect = popupRatingStars.getBoundingClientRect();
+              const x = Math.min(Math.max(0, ev.clientX - rect.left), rect.width);
+              const raw = (x / rect.width) * 5;
+              const hoverRating = Math.max(0.5, Math.min(5, Math.round(raw * 2) / 2));
+              updateRatingStarsVisual(popupRatingStars, hoverRating, true);
+            };
+            popupRatingStars.onmouseleave = () => {
+              updateRatingStarsVisual(popupRatingStars, safeRating);
+            };
+          } else {
+            popupRatingStars.onmousemove = null;
+            popupRatingStars.onmouseleave = null;
+          }
+        }
 
          async function handlePopupRatingClick(e) {
            if (!popupRatingStars || popupRatingStars.dataset.editable !== 'true') return;
            if (!currentPopupBook || currentPopupBook.kind !== "library" || !(currentPopupBook.Read === true || currentPopupBook.Read === "true")) return;
+           const prevScroll = window.scrollY;
            const rect = popupRatingStars.getBoundingClientRect();
            const x = Math.min(Math.max(0, e.clientX - rect.left), rect.width);
            const raw = (x / rect.width) * 5;
@@ -5948,6 +6253,7 @@ max-height: 90vh;
                addActivity(`Rated "${updated.Title || 'Untitled'}" ${rating}/5`);
                showPopup(updated);
              }
+             window.scrollTo(0, prevScroll);
            } catch (err) {
              console.error('Rating update failed', err);
              alert('Failed to update rating.');
