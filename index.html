@@ -609,6 +609,7 @@ max-height: 90vh;
         }
         .rating-stars .star.half {
         background: linear-gradient(90deg, #ffb74d 50%, #444 50%);
+        background-clip: text;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         color: transparent;
@@ -1002,6 +1003,11 @@ max-height: 90vh;
          border-radius: 8px;
          margin-bottom: 6px;
          cursor: pointer;
+         }
+         .dash-series-books button.multi-selected {
+         border-color: #fff59d;
+         box-shadow: 0 0 10px rgba(255, 255, 180, 0.65);
+         background: rgba(255, 255, 180, 0.1);
          }
          .dash-series-books button.active {
          border-color: #ff69b4;
@@ -2779,6 +2785,12 @@ max-height: 90vh;
          let dashSeriesExpanded = new Set();
          let activityLog = [];
          const ACTIVITY_STORAGE_KEY = 'mangaLibraryActivityLog';
+         let multiSelectLastIndex = null;
+         let dashMultiSelectedIds = new Set();
+         let dashLastIndex = null;
+         let dashMultiEditBtn = null;
+         let dashListFooter = null;
+         let dashListButtons = [];
          
          // Multi-select state
          let multiSelectActive = false;
@@ -3245,6 +3257,15 @@ max-height: 90vh;
              multiSelectInfo.textContent = `${count} selected`;
            }
          }
+
+         function clearCardSelections() {
+           multiSelectedIds.clear();
+           multiSelectLastIndex = null;
+           document.querySelectorAll('.card.multi-selected').forEach(card => {
+             card.classList.remove('multi-selected');
+           });
+           updateMultiSelectInfo();
+         }
          
          function updateMultiSelectUI() {
            // Show/hide bar
@@ -3275,14 +3296,15 @@ max-height: 90vh;
            updateMultiSelectInfo();
          }
          
-         function exitMultiSelectMode() {
+        function exitMultiSelectMode() {
            multiSelectActive = false;
            multiSelectedIds.clear();
+           multiSelectLastIndex = null;
          
-           // Remove highlight from all cards
-           document.querySelectorAll('.card.multi-selected').forEach(card => {
-             card.classList.remove('multi-selected');
-           });
+          // Remove highlight from all cards
+          document.querySelectorAll('.card.multi-selected').forEach(card => {
+            card.classList.remove('multi-selected');
+          });
          
            updateMultiSelectUI();
          }
@@ -3295,6 +3317,48 @@ max-height: 90vh;
              multiSelectedIds.add(id);
              card.classList.add('multi-selected');
            }
+           updateMultiSelectInfo();
+         }
+
+         function selectCard(card, id) {
+           if (!multiSelectedIds.has(id)) {
+             multiSelectedIds.add(id);
+             card.classList.add('multi-selected');
+           }
+         }
+
+         function deselectCard(card, id) {
+           if (multiSelectedIds.has(id)) {
+             multiSelectedIds.delete(id);
+             card.classList.remove('multi-selected');
+           }
+         }
+
+         function handleCardMultiClick(e, card, id, sectionKey) {
+           const cards = Array.from((sectionKey === 'library' ? bookGrid : wishlistGrid).querySelectorAll('.card'));
+           const currentIndex = cards.indexOf(card);
+           const isRange = e.shiftKey && multiSelectLastIndex !== null;
+           const isToggle = e.metaKey || e.ctrlKey;
+
+           if (!isRange && !isToggle) {
+             clearCardSelections();
+           }
+
+           if (isRange && currentIndex !== -1 && multiSelectLastIndex !== null) {
+             const start = Math.min(multiSelectLastIndex, currentIndex);
+             const end = Math.max(multiSelectLastIndex, currentIndex);
+             for (let i = start; i <= end; i++) {
+               const rangeCard = cards[i];
+               if (!rangeCard) continue;
+               selectCard(rangeCard, rangeCard.dataset.id);
+             }
+           } else if (isToggle) {
+             toggleCardSelection(card, id);
+           } else {
+             selectCard(card, id);
+           }
+
+           multiSelectLastIndex = currentIndex;
            updateMultiSelectInfo();
          }
          
@@ -3589,6 +3653,7 @@ max-height: 90vh;
 
         function renderDashboardLibraryList() {
           if (!dashLibraryList) return;
+          dashListButtons = [];
           buildSeriesGroups();
           dashLibraryList.innerHTML = "";
           if (!dashGroupedSeries.length) {
@@ -3657,19 +3722,147 @@ max-height: 90vh;
               const btn = document.createElement('button');
               btn.textContent = `${book.Title || 'Untitled'}${book.Read ? ' ✔' : ''}`;
               if (book.id === dashSelectedBookId) btn.classList.add('active');
+              btn.dataset.bookId = book.id;
+              dashListButtons.push(btn);
               btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                dashSelectedBookId = book.id;
-                dashSelectedSeriesKey = group.seriesKey;
-                dashSeriesExpanded.add(group.seriesKey);
-                openDashboardDetail(book.id);
-                renderDashboardLibraryList();
+                handleDashBookClick(e, btn, book.id, group.seriesKey);
               });
               booksWrap.appendChild(btn);
             });
             seriesDiv.appendChild(booksWrap);
             dashLibraryList.appendChild(seriesDiv);
           });
+
+          // Footer with multi-edit button (creates once)
+          if (!dashListFooter) {
+            dashListFooter = document.createElement('div');
+            dashListFooter.style.display = 'flex';
+            dashListFooter.style.justifyContent = 'flex-end';
+            dashListFooter.style.marginTop = '8px';
+            dashListFooter.style.gap = '8px';
+            dashMultiEditBtn = document.createElement('button');
+            dashMultiEditBtn.textContent = 'Edit Selected';
+            dashMultiEditBtn.style.padding = '6px 12px';
+            dashMultiEditBtn.style.borderRadius = '999px';
+            dashMultiEditBtn.style.border = '1px solid #ff69b4';
+            dashMultiEditBtn.style.background = '#2b0f1d';
+            dashMultiEditBtn.style.color = '#ffb6c1';
+            dashMultiEditBtn.style.cursor = 'pointer';
+            dashMultiEditBtn.style.display = 'none';
+            dashMultiEditBtn.addEventListener('click', openDashboardMultiEdit);
+            dashListFooter.appendChild(dashMultiEditBtn);
+            dashLibraryList.appendChild(dashListFooter);
+          }
+          updateDashSelectionUI();
+        }
+
+        function updateDashSelectionUI() {
+          if (!dashListButtons) return;
+          dashListButtons.forEach(btn => {
+            const id = btn.dataset.bookId;
+            btn.classList.toggle('multi-selected', dashMultiSelectedIds.has(id));
+          });
+          if (dashMultiEditBtn) {
+            dashMultiEditBtn.style.display = dashMultiSelectedIds.size > 0 ? 'inline-block' : 'none';
+          }
+        }
+
+        function clearDashSelection() {
+          dashMultiSelectedIds.clear();
+          dashLastIndex = null;
+          updateDashSelectionUI();
+        }
+
+        function handleDashBookClick(e, btn, bookId, seriesKey) {
+          const ctrl = e.metaKey || e.ctrlKey;
+          const shift = e.shiftKey;
+
+          // Build ordered list and current index
+          const buttons = dashListButtons;
+          const currentIndex = buttons.indexOf(btn);
+
+          if (!ctrl && !shift) {
+            clearDashSelection();
+          }
+
+          if (shift && dashLastIndex !== null && currentIndex !== -1) {
+            const start = Math.min(dashLastIndex, currentIndex);
+            const end = Math.max(dashLastIndex, currentIndex);
+            for (let i = start; i <= end; i++) {
+              const b = buttons[i];
+              if (b && b.dataset.bookId) {
+                dashMultiSelectedIds.add(b.dataset.bookId);
+              }
+            }
+          } else if (ctrl) {
+            if (dashMultiSelectedIds.has(bookId)) {
+              dashMultiSelectedIds.delete(bookId);
+            } else {
+              dashMultiSelectedIds.add(bookId);
+            }
+          } else {
+            dashMultiSelectedIds.add(bookId);
+          }
+
+          dashLastIndex = currentIndex;
+          updateDashSelectionUI();
+
+          // Always open detail on click to keep existing behavior
+          dashSelectedBookId = bookId;
+          dashSelectedSeriesKey = seriesKey;
+          dashSeriesExpanded.add(seriesKey);
+          openDashboardDetail(bookId);
+          renderDashboardLibraryList();
+        }
+
+        function openDashboardMultiEdit() {
+          if (!dashMultiSelectedIds.size) return;
+          const ids = Array.from(dashMultiSelectedIds);
+          const items = [];
+          ids.forEach(id => {
+            const b = libraryBooks.find(x => x.id === id);
+            if (!b) return;
+            const parsed = parseTitleForSort(b.Title);
+            const existingDate = (b.Date || "").trim();
+            const dateValue = /^\d{4}-\d{2}-\d{2}$/.test(existingDate) ? existingDate : "";
+            items.push({
+              title: b.Title || "",
+              authors: b.Authors || "",
+              publisher: b.Publisher || "",
+              date: dateValue,
+              isbn: b.ISBN || "",
+              pageCount: b.PageCount || "",
+              cover: b.Cover || "",
+              amazonURL: b.AmazonURL || "",
+              read: !!b.Read,
+              dateRead: b.DateRead || "",
+              rating: b.Rating || "",
+              specialType: b.SpecialType || "",
+              specialVolumes: b.SpecialVolumes || "",
+              collectiblePrice: b.CollectiblePrice || "",
+              sortName: parsed.name || (b.Title || "").toLowerCase(),
+              sortVol: parsed.vol || 0,
+              vol: parsed.vol || 0,
+              existsAlready: true,
+              docId: b.id
+            });
+          });
+          if (!items.length) return;
+          items.sort((a, b) => {
+            const nameCmp = (a.sortName || '').localeCompare(b.sortName || '');
+            if (nameCmp !== 0) return nameCmp;
+            const volCmp = (a.sortVol || 0) - (b.sortVol || 0);
+            if (volCmp !== 0) return volCmp;
+            return (a.title || '').localeCompare(b.title || '');
+          });
+          multiCreateItems = items;
+          multiCreateVolumes = items.map((_, i) => i + 1);
+          multiCreateIndex = 0;
+          multiEditorMode = 'selection';
+          adminFormCollection = 'library';
+          multiEditorOverlay.style.display = "flex";
+          loadCurrentMultiCreateEntry();
         }
 
         function openSeriesDetail(seriesKey) {
@@ -5457,7 +5650,7 @@ max-height: 90vh;
               if (multiSelectActive && isAdmin && currentSectionKey === 'library') {
                 e.preventDefault();
                 e.stopPropagation();
-                toggleCardSelection(card, b.id);
+                handleCardMultiClick(e, card, b.id, 'library');
               } else {
                 showPopup(b);
               }
@@ -5551,7 +5744,7 @@ max-height: 90vh;
               if (multiSelectActive && isAdmin && currentSectionKey === 'wishlist') {
                 e.preventDefault();
                 e.stopPropagation();
-                toggleCardSelection(card, b.id);
+                handleCardMultiClick(e, card, b.id, 'wishlist');
               } else {
                 showPopup(b);
               }
@@ -6271,6 +6464,11 @@ max-height: 90vh;
              await loadLibraryFromFirestore(true);
            }
            addActivity(`Saved ${multiCreateItems.length} item(s) to ${col}`);
+           // If this was multi-select editing, exit selection modes so clicks work normally
+           if (multiEditorMode === 'selection') {
+             exitMultiSelectMode();
+             clearDashSelection();
+           }
          } catch (err) {
            console.error("Multi-editor save error:", err);
            alert("Failed to save volumes. Check console for details.");
