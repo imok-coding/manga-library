@@ -380,13 +380,17 @@
          text-align: center;
          letter-spacing: 0.4px;
          }
-         .calendar-grid {
-         display: grid;
-         grid-template-columns: repeat(7, 1fr);
-         grid-template-rows: repeat(6, minmax(82px, 1fr));
-         gap: 6px;
-         min-height: 520px; /* keep calendar height consistent across months */
-         }
+.calendar-grid {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+grid-template-rows: repeat(6, minmax(82px, 1fr));
+gap: 6px;
+min-height: 520px; /* keep calendar height consistent across months */
+height: 520px;
+}
+        #releaseCalendar {
+        height: 520px;
+        }
          .calendar-day {
          min-height: 62px;
          border: 1px solid rgba(255,182,193,0.25);
@@ -456,17 +460,20 @@
          z-index: 10070;
          animation: fadeIn 0.25s ease;
          }
-         #calendarCard {
-         background: #2b0f1d;
-         border-radius: 16px;
-         padding: 22px 16px 16px;
-         width: 94%;
-         max-width: 860px;
-         box-shadow: 0 0 24px rgba(255,182,193,0.6);
-         position: relative;
-         animation: slideUp 0.25s ease;
-         color: #fff;
-         }
+#calendarCard {
+background: #2b0f1d;
+border-radius: 16px;
+padding: 22px 16px 16px;
+width: 94%;
+max-width: 860px;
+box-shadow: 0 0 24px rgba(255,182,193,0.6);
+position: relative;
+animation: slideUp 0.25s ease;
+color: #fff;
+display: flex;
+flex-direction: column;
+max-height: 90vh;
+}
          .calendar-header {
          padding-right: 52px; /* leave space for close button */
          }
@@ -529,6 +536,69 @@
          .stat-collectible {
          color: #ffd54f;
          text-shadow: 0 0 6px rgba(255,213,79,0.6);
+         }
+         .rating-row {
+         display: flex;
+         align-items: center;
+         gap: 8px;
+         justify-content: center;
+         }
+        .rating-stars {
+        display: inline-flex;
+        gap: 2px;
+        cursor: default;
+        }
+        .rating-stars .star {
+        font-size: 22px;
+        color: #444;
+        text-shadow: 0 0 6px rgba(0,0,0,0.4);
+        transition: transform 0.1s ease, color 0.2s ease;
+        }
+        .rating-stars .star.filled {
+        color: #ffb74d;
+        }
+        .rating-stars .star.half {
+        color: #ffcc80;
+        }
+        .rating-stars.editable {
+        cursor: pointer;
+        }
+        .rating-stars.editable .star:hover {
+        transform: scale(1.08);
+        }
+        .rating-value {
+        font-size: 13px;
+        color: #f8d1d8;
+        }
+         .help-tip {
+         display: inline-flex;
+         align-items: center;
+         justify-content: center;
+         width: 16px;
+         height: 16px;
+         border-radius: 50%;
+         background: rgba(255,182,193,0.2);
+         color: #ffb6c1;
+         font-size: 11px;
+         margin-left: 6px;
+         cursor: help;
+         }
+         .help-tip:hover {
+         background: rgba(255,182,193,0.35);
+         }
+         .help-tip {
+         display: inline-flex;
+         align-items: center;
+         justify-content: center;
+         width: 16px;
+         height: 16px;
+         margin-left: 6px;
+         border-radius: 50%;
+         background: rgba(255,182,193,0.2);
+         color: #ffb6c1;
+         font-size: 11px;
+         border: 1px solid rgba(255,182,193,0.4);
+         cursor: default;
          }
          .stat-sub {
          font-size: 12px;
@@ -909,6 +979,11 @@
          }
          .dash-detail-row input[type="checkbox"] {
          margin-right: 6px;
+         }
+         .inline-checkbox {
+         flex-direction: row;
+         align-items: center;
+         gap: 8px;
          }
          .dash-detail-actions {
          display: flex;
@@ -2145,6 +2220,12 @@
                   <div class="stat-value"><span id="statRead">0</span> / <span id="statUnread">0</span></div>
                </div>
                <div class="stat-card">
+                  <h3>Ratings</h3>
+                  <div class="stat-value" id="statAvgRating">--</div>
+                  <div class="stat-sub">Average rating (read)</div>
+                  <div class="stat-list" id="statTopRated"></div>
+               </div>
+               <div class="stat-card">
                   <h3>Page Count Read / Total</h3>
                   <div class="stat-value"><span id="statPagesRead">0</span> / <span id="statPagesTotal">0</span></div>
                   <div class="stat-sub" id="statPagesPct">0% read</div>
@@ -2217,7 +2298,7 @@
                      <div id="dashSeriesForm" style="display:none;">
                         <div class="dash-detail-title" id="dashSeriesTitle"></div>
                         <div class="dash-detail-row">
-                           <label><input type="checkbox" id="dashSeriesRead"> Mark series as read</label>
+                           <label class="inline-checkbox"><input type="checkbox" id="dashSeriesRead"> <span>Mark series as read</span></label>
                         </div>
                         <div class="dash-detail-row">
                            <span>Publisher</span>
@@ -2257,7 +2338,7 @@
                      <div id="dashLibraryForm" style="display:none;">
                         <div class="dash-detail-title" id="dashDetailTitle"></div>
                         <div class="dash-detail-row">
-                           <label><input type="checkbox" id="dashDetailRead"> Mark as read</label>
+                           <label class="inline-checkbox"><input type="checkbox" id="dashDetailRead"> <span>Mark as read</span></label>
                         </div>
                         <div class="dash-detail-row">
                            <span>Date Purchased</span>
@@ -2279,18 +2360,21 @@
                            <span>Amount Paid</span>
                            <input type="number" id="dashDetailPaid" step="0.01" min="0" placeholder="0.00">
                         </div>
-                        <div class="dash-detail-row" id="dashDetailRatingRow" style="display:none;">
+                         <div class="dash-detail-row" id="dashDetailRatingRow" style="display:none;">
                            <span>Star Rating</span>
                            <input type="number" id="dashDetailRating" min="0" max="5" step="0.5" placeholder="0-5" inputmode="decimal">
                         </div>
                         <div class="dash-detail-row">
-                           <label style="display:flex; align-items:center; gap:6px; width:100%;">
+                           <label class="inline-checkbox" style="width:100%;">
                            <input type="checkbox" id="dashDetailSpecialFlag">
                            <span>Special?</span>
                            </label>
                         </div>
                         <div class="dash-detail-row" id="dashDetailSpecialTypeRow" style="display:none;">
-                           <span>Special Type</span>
+                           <span style="display:flex; align-items:center; gap:6px;">
+                              <span>Special Type</span>
+                              <span class="help-tip" title="Special Edition: Omnibus/Deluxe/etc. Collectible: OOP/Rare above MSRP.">?</span>
+                           </span>
                            <select id="dashDetailSpecialType">
                               <option value="">Select type</option>
                               <option value="specialEdition">Special Edition</option>
@@ -2403,39 +2487,14 @@
                Amazon URL (wishlist only)
                <input type="text" id="adminAmazonInput" autocomplete="off" placeholder="https://www.amazon.com/...">
                </label>
-               <label id="adminReadWrapper" style="display:none;">
+               <label id="adminReadWrapper" class="inline-checkbox" style="display:none;">
                <input type="checkbox" id="adminReadInput">
-               Mark as read (library only)
+               <span>Mark as read (library only)</span>
                </label>
                <label id="adminDateReadWrapper" style="display:none;">
                Date when read (library only)
                <input type="date" id="adminDateReadInput" autocomplete="off">
                </label>
-               <label id="adminRatingWrapper" style="display:none;">
-               Star Rating (0-5, halves ok)
-               <input type="number" id="adminRatingInput" min="0" max="5" step="0.5" placeholder="e.g. 4.5">
-               </label>
-               <label id="adminSpecialFlagWrap">
-               <input type="checkbox" id="adminSpecialFlag"> Special?
-               </label>
-               <div id="adminSpecialFields" style="display:none; gap:8px; flex-direction:column;">
-                  <label>
-                  Special Type
-                  <select id="adminSpecialType">
-                     <option value="">Select type</option>
-                     <option value="specialEdition">Special Edition</option>
-                     <option value="collectible">Collectible</option>
-                  </select>
-                  </label>
-                  <label id="adminSpecialVolumesWrap" style="display:none;">
-                  Volumes contained (Special Edition)
-                  <input type="number" id="adminSpecialVolumes" min="1" step="1" placeholder="e.g. 3">
-                  </label>
-                  <label id="adminCollectiblePriceWrap" style="display:none;">
-                  Collectible price override
-                  <input type="number" id="adminCollectiblePrice" min="0" step="0.01" placeholder="0.00">
-                  </label>
-               </div>
                <div id="adminFormButtons">
                   <button id="adminFormSave">Save</button>
                </div>
@@ -2493,39 +2552,14 @@
                <input type="text" id="multiEditorAmazonInput" autocomplete="off"
                   placeholder="https://www.amazon.com/...">
                </label>
-               <label id="multiEditorReadWrapper" style="display:none;">
+               <label id="multiEditorReadWrapper" class="inline-checkbox" style="display:none;">
                <input type="checkbox" id="multiEditorReadInput">
-               Mark as read (library only)
+               <span>Mark as read (library only)</span>
                </label>
                <label id="multiEditorDateReadWrapper" style="display:none;">
                Date when read (library only)
                <input type="date" id="multiEditorDateReadInput" autocomplete="off">
                </label>
-               <label id="multiEditorRatingWrapper" style="display:none;">
-               Star Rating (0-5, halves ok)
-               <input type="number" id="multiEditorRatingInput" min="0" max="5" step="0.5">
-               </label>
-               <label id="multiEditorSpecialFlagWrap">
-               <input type="checkbox" id="multiEditorSpecialFlag"> Special?
-               </label>
-               <div id="multiEditorSpecialFields" style="display:none; gap:8px; flex-direction:column;">
-                  <label>
-                  Special Type
-                  <select id="multiEditorSpecialType">
-                     <option value="">Select type</option>
-                     <option value="specialEdition">Special Edition</option>
-                     <option value="collectible">Collectible</option>
-                  </select>
-                  </label>
-                  <label id="multiEditorSpecialVolumesWrap" style="display:none;">
-                  Volumes contained (Special Edition)
-                  <input type="number" id="multiEditorSpecialVolumes" min="1" step="1">
-                  </label>
-                  <label id="multiEditorCollectiblePriceWrap" style="display:none;">
-                  Collectible price override
-                  <input type="number" id="multiEditorCollectiblePrice" min="0" step="0.01">
-                  </label>
-               </div>
                <button id="multiEditorAddVolume"
                   type="button"
                   style="margin-top:10px; padding:6px 12px; border-radius:999px;
@@ -2553,6 +2587,10 @@
             <div class="popup-info">
                <div class="title" id="popupTitle"></div>
                <div class="meta" id="popupMeta"></div>
+               <div class="rating-row" id="popupRatingRow">
+                  <div id="popupRatingStars" class="rating-stars" aria-label="Rating"></div>
+                  <div id="popupRatingValue" class="rating-value"></div>
+               </div>
                <div class="isbn" id="popupISBN"></div>
                <button id="popupBuy" style="display:none;">
                   <img id="popupBuyLogo" alt="" style="
@@ -2729,6 +2767,8 @@
          const statPagesRead    = document.getElementById('statPagesRead');
          const statPagesTotal   = document.getElementById('statPagesTotal');
          const statPagesPct     = document.getElementById('statPagesPct');
+         const statAvgRating    = document.getElementById('statAvgRating');
+         const statTopRated     = document.getElementById('statTopRated');
          const statCurrentYearTitle = document.getElementById('statCurrentYearTitle');
          const statCurrentYearValue = document.getElementById('statCurrentYearValue');
          const statCurrentYearSub   = document.getElementById('statCurrentYearSub');
@@ -2824,6 +2864,9 @@
          const popupTitle      = document.getElementById('popupTitle');
          const popupMeta       = document.getElementById('popupMeta');
          const popupISBN       = document.getElementById('popupISBN');
+         const popupRatingRow  = document.getElementById('popupRatingRow');
+         const popupRatingStars= document.getElementById('popupRatingStars');
+         const popupRatingValue= document.getElementById('popupRatingValue');
          const popupClose      = document.getElementById('popupClose');
          const popupBuy        = document.getElementById('popupBuy');
          const popupAdmin      = document.getElementById('popupAdminControls');
@@ -2862,15 +2905,7 @@
          const adminDateReadInput = document.getElementById('adminDateReadInput');
          const adminRatingWrapper = document.getElementById('adminRatingWrapper');
          const adminRatingInput   = document.getElementById('adminRatingInput');
-         const adminSpecialFlagWrap = document.getElementById('adminSpecialFlagWrap');
-         const adminSpecialFlag   = document.getElementById('adminSpecialFlag');
-         const adminSpecialFields = document.getElementById('adminSpecialFields');
-         const adminSpecialType   = document.getElementById('adminSpecialType');
-         const adminSpecialVolumesWrap = document.getElementById('adminSpecialVolumesWrap');
-         const adminSpecialVolumes = document.getElementById('adminSpecialVolumes');
-         const adminCollectiblePriceWrap = document.getElementById('adminCollectiblePriceWrap');
-         const adminCollectiblePrice = document.getElementById('adminCollectiblePrice');
-        const adminFormSave      = document.getElementById('adminFormSave');
+         const adminFormSave      = document.getElementById('adminFormSave');
 
         attachDateDropdowns(adminDateInput);
         attachDateDropdowns(adminDateReadInput);
@@ -2901,16 +2936,6 @@
          const multiEditorReadInput     = document.getElementById('multiEditorReadInput');
          const multiEditorDateReadWrapper = document.getElementById('multiEditorDateReadWrapper');
          const multiEditorDateReadInput   = document.getElementById('multiEditorDateReadInput');
-         const multiEditorRatingWrapper = document.getElementById('multiEditorRatingWrapper');
-         const multiEditorRatingInput   = document.getElementById('multiEditorRatingInput');
-         const multiEditorSpecialFlagWrap = document.getElementById('multiEditorSpecialFlagWrap');
-         const multiEditorSpecialFlag   = document.getElementById('multiEditorSpecialFlag');
-         const multiEditorSpecialFields = document.getElementById('multiEditorSpecialFields');
-         const multiEditorSpecialType   = document.getElementById('multiEditorSpecialType');
-         const multiEditorSpecialVolumesWrap = document.getElementById('multiEditorSpecialVolumesWrap');
-         const multiEditorSpecialVolumes = document.getElementById('multiEditorSpecialVolumes');
-         const multiEditorCollectiblePriceWrap = document.getElementById('multiEditorCollectiblePriceWrap');
-         const multiEditorCollectiblePrice = document.getElementById('multiEditorCollectiblePrice');
          const multiEditorAddVolume     = document.getElementById('multiEditorAddVolume');
          const multiEditorPrev          = document.getElementById('multiEditorPrev');
          const multiEditorNext          = document.getElementById('multiEditorNext');
@@ -3426,17 +3451,16 @@
         }
 
         function getSeriesDisplayNameFromTitle(title) {
-          const t = title || "";
-          const m = t.match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*\d+)?$/i);
-          const name = m ? m[1].trim() : t.trim();
+          const name = getBaseSeriesName(title);
           return name || "Untitled";
         }
 
         function getSeriesKey(book) {
           if (!book) return "";
           const parsed = parseTitleForSort(book.Title);
-          if (parsed.vol && parsed.name) return parsed.name;
-          return (book.Title || "").trim().toLowerCase() || (book.id || "");
+          const baseName = getBaseSeriesName(book.Title).toLowerCase();
+          if (parsed.vol && baseName) return baseName;
+          return baseName || (book.Title || "").trim().toLowerCase() || (book.id || "");
         }
 
         function buildSeriesGroups() {
@@ -3848,14 +3872,11 @@
           const syncAdminReadDateUI = () => {
             if (adminReadInput.checked) {
               if (adminDateReadWrapper) adminDateReadWrapper.style.display = "block";
-              if (adminRatingWrapper) adminRatingWrapper.style.display = "block";
               if (!adminDateReadInput.value) {
                 setDateInputValue(adminDateReadInput, new Date().toISOString().slice(0,10));
               }
             } else {
               if (adminDateReadWrapper) adminDateReadWrapper.style.display = "none";
-              if (adminRatingWrapper) adminRatingWrapper.style.display = "none";
-              if (adminRatingInput) adminRatingInput.value = "";
               setDateInputValue(adminDateReadInput, "");
             }
           };
@@ -3863,23 +3884,6 @@
           syncAdminReadDateUI();
         }
 
-        function syncAdminSpecialUI() {
-          const isSpecial = adminSpecialFlag ? adminSpecialFlag.checked : false;
-          const typeVal = adminSpecialType ? adminSpecialType.value : "";
-          if (adminSpecialFields) adminSpecialFields.style.display = isSpecial ? "flex" : "none";
-          const showEdition = isSpecial && typeVal === "specialEdition";
-          const showCollectible = isSpecial && typeVal === "collectible";
-          if (adminSpecialVolumesWrap) adminSpecialVolumesWrap.style.display = showEdition ? "block" : "none";
-          if (!showEdition && adminSpecialVolumes) adminSpecialVolumes.value = "";
-          if (adminCollectiblePriceWrap) adminCollectiblePriceWrap.style.display = showCollectible ? "block" : "none";
-          if (!showCollectible && adminCollectiblePrice) adminCollectiblePrice.value = "";
-        }
-        if (adminSpecialFlag) {
-          adminSpecialFlag.addEventListener('change', syncAdminSpecialUI);
-        }
-        if (adminSpecialType) {
-          adminSpecialType.addEventListener('change', syncAdminSpecialUI);
-        }
          
         function switchSection(target) {
           // Block dashboard for non-admins
@@ -3973,13 +3977,20 @@
          totalTop.addEventListener('click', handleSecretClick);
          
          // ===== SORTING: Series → Vol # =====
+         function getBaseSeriesName(title) {
+           const t = (title || "").trim();
+           const m = t.match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*\d+(?:\s*[-–]\s*\d+)?\s*)?(?:\s*\([^)]*\))?$/i);
+           return (m ? m[1] : t).trim();
+         }
+
          function parseTitleForSort(t) {
            t = (t || "").trim();
-           const m = t.match(/^(.*?),?\s*(?:Vol\.|Volume)\s*(\d+)\b/i);
-           if (!m) return { name: t.toLowerCase(), vol: 0 };
+           const m = t.match(/^(.*?)(?:,?\s*(?:Vol\.|Volume)\s*(\d+)(?:\s*[-–]\s*\d+)?\s*)?(?:\s*\([^)]*\))?$/i);
+           const base = m ? m[1].trim().toLowerCase() : t.toLowerCase();
+           const volNum = m && m[2] ? parseInt(m[2], 10) : 0;
            return {
-             name: m[1].trim().toLowerCase(),
-             vol: parseInt(m[2] || "0", 10)
+             name: base,
+             vol: Number.isFinite(volNum) ? volNum : 0
            };
          }
          
@@ -4271,10 +4282,10 @@
                amazonURL: item.amazonURL,
                read: item.read,
                dateRead: /^\d{4}-\d{2}-\d{2}$/.test(item.dateRead || "") ? item.dateRead : "",
-               rating: item.rating || "",
-               specialType: item.specialType || "",
-               specialVolumes: item.specialVolumes || "",
-               collectiblePrice: item.collectiblePrice || "",
+               rating: "",
+               specialType: "",
+               specialVolumes: "",
+               collectiblePrice: "",
                vol: item.vol,
                existsAlready: item.existsAlready,
                docId: item.docId || null
@@ -4426,9 +4437,7 @@
                if (multiEditorDateReadWrapper) multiEditorDateReadWrapper.style.display = "none";
                if (multiEditorReadInput) multiEditorReadInput.checked = false;
                if (multiEditorDateReadInput) multiEditorDateReadInput.value = "";
-               if (multiEditorRatingWrapper) multiEditorRatingWrapper.style.display = "none";
-               if (multiEditorRatingInput) multiEditorRatingInput.value = "";
-           } else {
+            } else {
                multiEditorAmazonWrapper.style.display = "none";
                if (multiEditorIsbnWrapper) multiEditorIsbnWrapper.style.display = "block";
                multiEditorReadWrapper.style.display = "flex";
@@ -4439,22 +4448,8 @@
            if (multiEditorDateReadInput) {
              setDateInputValue(multiEditorDateReadInput, item.read ? (item.dateRead || "") : "");
            }
-           if (multiEditorRatingWrapper) multiEditorRatingWrapper.style.display = item.read ? "block" : "none";
-           if (multiEditorRatingInput) multiEditorRatingInput.value = item.read ? (item.rating || "") : "";
            }
-           if (multiEditorSpecialFlag) multiEditorSpecialFlag.checked = !!item.specialType;
-           if (multiEditorSpecialType) multiEditorSpecialType.value = item.specialType || "";
-           const isEdition = item.specialType === "specialEdition";
-           const isCollectible = item.specialType === "collectible";
-           if (multiEditorSpecialFields) multiEditorSpecialFields.style.display = item.specialType ? "flex" : "none";
-           if (multiEditorSpecialVolumesWrap) multiEditorSpecialVolumesWrap.style.display = isEdition ? "block" : "none";
-           if (multiEditorSpecialVolumes) multiEditorSpecialVolumes.value = isEdition ? (item.specialVolumes || "") : "";
-           if (multiEditorCollectiblePriceWrap) multiEditorCollectiblePriceWrap.style.display = isCollectible ? "block" : "none";
-           if (multiEditorCollectiblePrice) multiEditorCollectiblePrice.value = isCollectible
-             ? ((item.collectiblePrice !== undefined && item.collectiblePrice !== null && item.collectiblePrice !== "") ? item.collectiblePrice : "")
-             : "";
            syncMultiEditorReadUI();
-           syncMultiEditorSpecialUI();
         }
 
         function syncMultiEditorReadUI() {
@@ -4462,27 +4457,11 @@
           const isRead = multiEditorReadInput.checked;
           if (multiEditorDateReadWrapper) multiEditorDateReadWrapper.style.display = isRead ? "flex" : "none";
           if (!isRead && multiEditorDateReadInput) setDateInputValue(multiEditorDateReadInput, "");
-          if (multiEditorRatingWrapper) multiEditorRatingWrapper.style.display = isRead ? "block" : "none";
-          if (!isRead && multiEditorRatingInput) multiEditorRatingInput.value = "";
           if (isRead && multiEditorDateReadInput && !multiEditorDateReadInput.value) {
             setDateInputValue(multiEditorDateReadInput, new Date().toISOString().slice(0,10));
           }
         }
-
-        function syncMultiEditorSpecialUI() {
-          const isSpecial = multiEditorSpecialFlag ? multiEditorSpecialFlag.checked : false;
-          const typeVal = multiEditorSpecialType ? multiEditorSpecialType.value : "";
-          if (multiEditorSpecialFields) multiEditorSpecialFields.style.display = isSpecial ? "flex" : "none";
-          const showEdition = isSpecial && typeVal === "specialEdition";
-          const showCollectible = isSpecial && typeVal === "collectible";
-          if (multiEditorSpecialVolumesWrap) multiEditorSpecialVolumesWrap.style.display = showEdition ? "block" : "none";
-          if (!showEdition && multiEditorSpecialVolumes) multiEditorSpecialVolumes.value = "";
-          if (multiEditorCollectiblePriceWrap) multiEditorCollectiblePriceWrap.style.display = showCollectible ? "block" : "none";
-          if (!showCollectible && multiEditorCollectiblePrice) multiEditorCollectiblePrice.value = "";
-        }
         if (multiEditorReadInput) multiEditorReadInput.addEventListener('change', syncMultiEditorReadUI);
-        if (multiEditorSpecialFlag) multiEditorSpecialFlag.addEventListener('change', syncMultiEditorSpecialUI);
-        if (multiEditorSpecialType) multiEditorSpecialType.addEventListener('change', syncMultiEditorSpecialUI);
          
          
          
@@ -4502,47 +4481,30 @@
            }
          };
          
-         function saveCurrentMultiCreateEntry() {
-           const item = multiCreateItems[multiCreateIndex];
-           item.title = multiEditorTitleInput.value.trim();
-           item.authors = multiEditorAuthorsInput.value.trim();
-           item.publisher = multiEditorPublisherInput.value.trim();
-           item.date = multiEditorDateInput.value.trim();
-           item.pageCount = multiEditorPageCountInput.value.trim();
-           item.isbn = multiEditorIsbnInput.value.trim();
-           item.cover = multiEditorCoverInput.value.trim();
-           item.amazonURL = multiEditorAmazonInput.value.trim();
-           if (multiEditorReadInput) {
-             item.read = !!multiEditorReadInput.checked;
-           }
-           if (multiEditorDateReadInput) {
-             const dr = multiEditorDateReadInput.value.trim();
-             item.dateRead = /^\d{4}-\d{2}-\d{2}$/.test(dr) ? dr : "";
-             if (item.read && !item.dateRead) {
-               item.dateRead = new Date().toISOString().slice(0,10);
-             }
-             if (!item.read) {
-               item.dateRead = "";
-             }
-           }
-           if (multiEditorRatingInput) {
-             const r = multiEditorRatingInput.value.trim();
-             item.rating = (item.read && r !== "") ? r : "";
-           }
-           if (multiEditorSpecialFlag && multiEditorSpecialFlag.checked) {
-             item.specialType = multiEditorSpecialType ? multiEditorSpecialType.value : "";
-             item.specialVolumes = (item.specialType === "specialEdition" && multiEditorSpecialVolumes && multiEditorSpecialVolumes.value.trim() !== "")
-               ? multiEditorSpecialVolumes.value.trim()
-               : "";
-             item.collectiblePrice = (item.specialType === "collectible" && multiEditorCollectiblePrice && multiEditorCollectiblePrice.value.trim() !== "")
-               ? multiEditorCollectiblePrice.value.trim()
-               : "";
-           } else {
-             item.specialType = "";
-             item.specialVolumes = "";
-             item.collectiblePrice = "";
-           }
-         }
+        function saveCurrentMultiCreateEntry() {
+          const item = multiCreateItems[multiCreateIndex];
+          item.title = multiEditorTitleInput.value.trim();
+          item.authors = multiEditorAuthorsInput.value.trim();
+          item.publisher = multiEditorPublisherInput.value.trim();
+          item.date = multiEditorDateInput.value.trim();
+          item.pageCount = multiEditorPageCountInput.value.trim();
+          item.isbn = multiEditorIsbnInput.value.trim();
+          item.cover = multiEditorCoverInput.value.trim();
+          item.amazonURL = multiEditorAmazonInput.value.trim();
+          if (multiEditorReadInput) {
+            item.read = !!multiEditorReadInput.checked;
+          }
+          if (multiEditorDateReadInput) {
+            const dr = multiEditorDateReadInput.value.trim();
+            item.dateRead = /^\d{4}-\d{2}-\d{2}$/.test(dr) ? dr : "";
+            if (item.read && !item.dateRead) {
+              item.dateRead = new Date().toISOString().slice(0,10);
+            }
+            if (!item.read) {
+              item.dateRead = "";
+            }
+          }
+        }
          
          function openMultiCreateEditor(volumes) {
            const wrap = document.getElementById("multiCreateList");
@@ -4698,6 +4660,25 @@
                <span class="stat-rank">${idx + 1}.</span>
                <span class="stat-name">${name}</span>
                <span class="stat-count">${count}</span>
+             `;
+             el.appendChild(row);
+           });
+         }
+
+         function renderTopRated(el, items) {
+           if (!el) return;
+           el.innerHTML = '';
+           if (!items || !items.length) {
+             el.textContent = 'No rated books yet';
+             return;
+           }
+           items.forEach((item, idx) => {
+             const row = document.createElement('div');
+             row.className = 'stat-list-row';
+             row.innerHTML = `
+               <span class="stat-rank">${idx + 1}.</span>
+               <span class="stat-name">${item.Title || 'Untitled'}</span>
+               <span class="stat-count">${item.rating.toFixed(1)}/5</span>
              `;
              el.appendChild(row);
            });
@@ -5060,6 +5041,24 @@
            if (statCollectionPct) statCollectionPct.textContent = `${libPct}%`;
            if (statLibShare) statLibShare.textContent = totalLib;
            if (statWishShare) statWishShare.textContent = wishCount;
+           // Ratings
+           const ratedBooks = libraryBooks
+             .map(b => {
+               const r = (b.Rating !== undefined && b.Rating !== null && b.Rating !== "") ? parseFloat(b.Rating) : NaN;
+               return { ...b, rating: r };
+             })
+             .filter(b => b.Read && Number.isFinite(b.rating) && b.rating > 0);
+           const avgRating = ratedBooks.length
+             ? ratedBooks.reduce((sum, b) => sum + b.rating, 0) / ratedBooks.length
+             : null;
+           if (statAvgRating) {
+             statAvgRating.textContent = avgRating !== null ? `${avgRating.toFixed(2)}/5` : '--';
+           }
+           const topRated = ratedBooks
+             .slice()
+             .sort((a, b) => b.rating - a.rating || (a.Title || '').localeCompare(b.Title || ''))
+             .slice(0, 3);
+           renderTopRated(statTopRated, topRated);
            const totalMsrp = libraryBooks.reduce((sum, b) => {
              if (b.SpecialType === "collectible") return sum; // exclude collectibles from MSRP bucket
              const v = (b.MSRP !== undefined && b.MSRP !== null && b.MSRP !== "") ? parseFloat(b.MSRP) : NaN;
@@ -5572,6 +5571,59 @@
            }
          }
 
+         function renderPopupRating(book) {
+           if (!popupRatingStars || !popupRatingValue) return;
+           const ratingNum = (book && book.Rating !== undefined && book.Rating !== null && book.Rating !== "") ? parseFloat(book.Rating) : 0;
+           const safeRating = Number.isFinite(ratingNum) ? Math.max(0, Math.min(5, ratingNum)) : 0;
+           const isRead = book && (book.Read === true || book.Read === "true");
+           if (popupRatingRow) popupRatingRow.style.display = book ? "flex" : "none";
+           const canEdit = isAdmin && book && book.kind === "library" && isRead;
+           popupRatingStars.innerHTML = '';
+           popupRatingStars.classList.toggle('editable', !!canEdit);
+           popupRatingStars.dataset.editable = canEdit ? 'true' : 'false';
+           for (let i = 1; i <= 5; i++) {
+             const span = document.createElement('span');
+             span.className = 'star';
+             span.textContent = '★';
+             if (safeRating >= i) {
+               span.classList.add('filled');
+             } else if (safeRating >= i - 0.5) {
+               span.classList.add('half');
+             }
+             popupRatingStars.appendChild(span);
+           }
+           if (!isRead) {
+             popupRatingValue.textContent = 'Mark as read to rate';
+           } else {
+             popupRatingValue.textContent = safeRating ? `${safeRating.toFixed(1)}/5` : 'Not rated';
+           }
+         }
+
+         async function handlePopupRatingClick(e) {
+           if (!popupRatingStars || popupRatingStars.dataset.editable !== 'true') return;
+           if (!currentPopupBook || currentPopupBook.kind !== "library" || !(currentPopupBook.Read === true || currentPopupBook.Read === "true")) return;
+           const rect = popupRatingStars.getBoundingClientRect();
+           const x = Math.min(Math.max(0, e.clientX - rect.left), rect.width);
+           const raw = (x / rect.width) * 5;
+           const rating = Math.max(0.5, Math.min(5, Math.round(raw * 2) / 2));
+           try {
+             await updateDoc(doc(db, "library", currentPopupBook.id), { rating });
+             await loadLibraryFromFirestore();
+             updateDashboardStats();
+             const updated = libraryBooks.find(b => b.id === currentPopupBook.id);
+             if (updated) {
+               addActivity(`Rated "${updated.Title || 'Untitled'}" ${rating}/5`);
+               showPopup(updated);
+             }
+           } catch (err) {
+             console.error('Rating update failed', err);
+             alert('Failed to update rating.');
+           }
+         }
+         if (popupRatingStars) {
+           popupRatingStars.addEventListener('click', handlePopupRatingClick);
+         }
+
          function showPopup(book) {
            currentPopupBook = book;
            popupOverlay.style.display = 'flex';
@@ -5602,9 +5654,6 @@
            if (book.PageCount !== undefined && book.PageCount !== null && book.PageCount !== "" && !isNaN(book.PageCount)) {
              meta += `${book.PageCount} pages<br>`;
            }
-           if (book.kind === "library" && (book.Read === true || book.Read === "true") && book.Rating !== undefined && book.Rating !== null && book.Rating !== "") {
-             meta += `Rating: ${book.Rating}/5<br>`;
-           }
            if (book.SpecialType) {
              if (book.SpecialType === "specialEdition") {
                meta += `Special Edition${book.SpecialVolumes ? ` • ${book.SpecialVolumes} volume${book.SpecialVolumes === 1 ? '' : 's'}` : ''}<br>`;
@@ -5614,6 +5663,7 @@
            }
            popupMeta.innerHTML = meta;
            popupISBN.innerHTML = book.ISBN || '';
+           renderPopupRating(book);
 
            if (book.kind === "library" && (book.Read === true || book.Read === "true")) {
              const dr = book.DateRead ? ` (on ${formatDateMMDDYYYY(book.DateRead)})` : '';
@@ -5965,18 +6015,9 @@
               adminCoverInput.value     = "";
               adminAmazonInput.value    = "";
               adminReadInput.checked    = false;
-              if (adminDateReadInput) setDateInputValue(adminDateReadInput, "");
-              if (adminDateReadWrapper) adminDateReadWrapper.style.display = "none";
-              if (adminRatingInput) adminRatingInput.value = "";
-              if (adminRatingWrapper) adminRatingWrapper.style.display = "none";
-              if (adminSpecialFlag) adminSpecialFlag.checked = false;
-              if (adminSpecialType) adminSpecialType.value = "";
-              if (adminSpecialFields) adminSpecialFields.style.display = "none";
-              if (adminSpecialVolumes) adminSpecialVolumes.value = "";
-              if (adminSpecialVolumesWrap) adminSpecialVolumesWrap.style.display = "none";
-              if (adminCollectiblePrice) adminCollectiblePrice.value = "";
-              if (adminCollectiblePriceWrap) adminCollectiblePriceWrap.style.display = "none";
-              if (adminIsbnWrapper) adminIsbnWrapper.style.display = "block";
+             if (adminDateReadInput) setDateInputValue(adminDateReadInput, "");
+             if (adminDateReadWrapper) adminDateReadWrapper.style.display = "none";
+             if (adminIsbnWrapper) adminIsbnWrapper.style.display = "block";
           adminCoverPreview.src     = "https://via.placeholder.com/150x220?text=No+Cover";
       }
          
@@ -5999,7 +6040,7 @@
                if (adminDateReadWrapper) {
                  adminDateReadWrapper.style.display = isLibrary ? "block" : "none";
                }
-               if (adminRatingWrapper) adminRatingWrapper.style.display = (isLibrary && adminReadInput.checked) ? "block" : "none";
+               if (adminRatingWrapper) adminRatingWrapper.style.display = "none";
          
                if (adminFormMode === "add") {
                adminFormTitle.textContent = isLibrary ? "Add Library Book" : "Add Wishlist Item";
@@ -6029,7 +6070,6 @@
                if (isWishlist) {
                    adminAmazonInput.value = book.AmazonURL || "";
                    if (adminRatingWrapper) adminRatingWrapper.style.display = "none";
-                   if (adminRatingInput) adminRatingInput.value = "";
                } else {
                    adminReadInput.checked = !!book.Read;
                    if (adminDateReadInput) {
@@ -6039,30 +6079,15 @@
                    if (adminDateReadWrapper) {
                      adminDateReadWrapper.style.display = adminReadInput.checked ? "block" : "none";
                    }
-                   if (adminRatingWrapper) adminRatingWrapper.style.display = adminReadInput.checked ? "block" : "none";
-                   if (adminRatingInput) {
-                     adminRatingInput.value = (book.Read && book.Rating !== undefined && book.Rating !== null && book.Rating !== "") ? book.Rating : "";
-                   }
+                   if (adminRatingWrapper) adminRatingWrapper.style.display = "none";
                }
-               if (adminSpecialFlag) adminSpecialFlag.checked = !!book.SpecialType;
-               if (adminSpecialType) adminSpecialType.value = book.SpecialType || "";
-               const isSpecialEdition = book.SpecialType === "specialEdition";
-               const isCollectible = book.SpecialType === "collectible";
-               if (adminSpecialFields) adminSpecialFields.style.display = book.SpecialType ? "flex" : "none";
-               if (adminSpecialVolumesWrap) adminSpecialVolumesWrap.style.display = isSpecialEdition ? "block" : "none";
-               if (adminSpecialVolumes) adminSpecialVolumes.value = isSpecialEdition ? (book.SpecialVolumes || "") : "";
-               if (adminCollectiblePriceWrap) adminCollectiblePriceWrap.style.display = isCollectible ? "block" : "none";
-               if (adminCollectiblePrice) adminCollectiblePrice.value = isCollectible
-                 ? ((book.CollectiblePrice !== undefined && book.CollectiblePrice !== null && book.CollectiblePrice !== "") ? book.CollectiblePrice : "")
-                 : "";
+               // Special handling is limited to the library manager; leave blank in form.
                }
 
                // Ensure suggestions & multi-create button reflect the initial values
                renderTitleSuggestions();
                renderAuthorPublisherSuggestions();
                updateMultiCreateVisibility();
-
-               syncAdminSpecialUI();
 
 
                adminFormOverlay.style.display = "flex";
@@ -6075,19 +6100,14 @@
          
            try {
             for (const item of multiCreateItems) {
-              const specialTypeVal = item.specialType || "";
-              const payload = {
+           const payload = {
               title: item.title,
               authors: item.authors,
               publisher: item.publisher,
               date: item.date,
               isbn: (col === "library") ? item.isbn : "",
               pageCount: (item.pageCount !== undefined && item.pageCount !== null && item.pageCount !== "") ? parseInt(item.pageCount, 10) : "",
-              cover: item.cover,
-              rating: (col === "library" && item.read && item.rating !== undefined && item.rating !== null && item.rating !== "") ? parseFloat(item.rating) : "",
-              specialType: specialTypeVal,
-              specialVolumes: (specialTypeVal === "specialEdition" && item.specialVolumes !== undefined && item.specialVolumes !== null && item.specialVolumes !== "") ? parseInt(item.specialVolumes, 10) : "",
-              collectiblePrice: (specialTypeVal === "collectible" && item.collectiblePrice !== undefined && item.collectiblePrice !== null && item.collectiblePrice !== "") ? parseFloat(item.collectiblePrice) : ""
+              cover: item.cover
             };
 
             if (col === "wishlist") {
@@ -6221,18 +6241,7 @@
              const amazonURL = adminAmazonInput.value.trim();
              const read      = adminReadInput.checked;
              const dateRead  = (adminDateReadInput && adminDateReadInput.value.trim()) || "";
-             const ratingRaw = adminRatingInput ? adminRatingInput.value.trim() : "";
-             const ratingVal = (read && ratingRaw !== "") ? parseFloat(ratingRaw) : "";
-             const specialOn = adminSpecialFlag ? adminSpecialFlag.checked : false;
-             const specialTypeVal = specialOn && adminSpecialType ? adminSpecialType.value : "";
-             const specialVolRaw = adminSpecialVolumes ? adminSpecialVolumes.value.trim() : "";
-             const specialVolVal = (specialOn && specialTypeVal === "specialEdition" && specialVolRaw !== "")
-               ? parseInt(specialVolRaw, 10)
-               : "";
-             const collectibleRaw = adminCollectiblePrice ? adminCollectiblePrice.value.trim() : "";
-             const collectibleVal = (specialOn && specialTypeVal === "collectible" && collectibleRaw !== "")
-               ? parseFloat(collectibleRaw)
-               : "";
+             // rating and special fields are managed in the library manager/popup, not here
              const editingExisting = (adminFormMode === "edit" && adminFormDocId);
              const editingCollection = adminFormCollection;
              const sourceBook = editingExisting
@@ -6259,11 +6268,7 @@
                      read,
                      dateRead: read
                        ? (/^\d{4}-\d{2}-\d{2}$/.test(dateRead) ? dateRead : new Date().toISOString().slice(0,10))
-                       : "",
-                     rating: (ratingVal !== "" && Number.isFinite(ratingVal)) ? ratingVal : "",
-                     specialType: specialOn ? (specialTypeVal || "") : "",
-                     specialVolumes: specialOn && specialTypeVal === "specialEdition" && Number.isFinite(specialVolVal) ? specialVolVal : "",
-                     collectiblePrice: specialOn && specialTypeVal === "collectible" && Number.isFinite(collectibleVal) ? collectibleVal : ""
+                       : ""
                  });
                  addActivity(`Added "${title}" to library`);
                  } else {
@@ -6299,15 +6304,8 @@
                   payload.dateRead = read
                     ? (/^\d{4}-\d{2}-\d{2}$/.test(dateRead) ? dateRead : new Date().toISOString().slice(0,10))
                     : "";
-                  payload.rating = (ratingVal !== "" && Number.isFinite(ratingVal)) ? ratingVal : "";
-                  payload.specialType = specialOn ? (specialTypeVal || "") : "";
-                  payload.specialVolumes = specialOn && specialTypeVal === "specialEdition" && Number.isFinite(specialVolVal) ? specialVolVal : "";
-                  payload.collectiblePrice = specialOn && specialTypeVal === "collectible" && Number.isFinite(collectibleVal) ? collectibleVal : "";
                   } else {
                   payload.amazonURL = amazonURL;
-                  payload.specialType = specialOn ? (specialTypeVal || "") : "";
-                  payload.specialVolumes = specialOn && specialTypeVal === "specialEdition" && Number.isFinite(specialVolVal) ? specialVolVal : "";
-                  payload.collectiblePrice = specialOn && specialTypeVal === "collectible" && Number.isFinite(collectibleVal) ? collectibleVal : "";
                   }
                   await updateDoc(ref, payload);
                   addActivity(`Edited "${title}" in ${colName}`);
