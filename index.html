@@ -417,11 +417,15 @@ height: 520px;
          font-size: 11px;
          color: #ffb6c1;
          line-height: 1.3;
+         white-space: nowrap;
+         overflow: hidden;
+         text-overflow: ellipsis;
          }
          .calendar-releases {
          display: flex;
          flex-direction: column;
          gap: 4px;
+         overflow: hidden;
          }
          .calendar-more-btn {
          margin-top: 2px;
@@ -440,6 +444,52 @@ height: 520px;
          display: none;
          flex-direction: column;
          gap: 4px;
+         }
+         .calendar-day-overlay {
+         position: absolute;
+         inset: 0;
+         background: rgba(30,13,20,0.8);
+         backdrop-filter: blur(4px);
+         display: none;
+         align-items: center;
+         justify-content: center;
+         z-index: 2;
+         }
+         .calendar-day-modal {
+         background: #2b0f1d;
+         border: 1px solid rgba(255,182,193,0.35);
+         border-radius: 12px;
+         padding: 14px;
+         width: 90%;
+         max-width: 420px;
+         max-height: 70vh;
+         overflow: auto;
+         box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+         color: #fff;
+         }
+         .calendar-day-modal h4 {
+         margin: 0 0 8px;
+         color: #ffb6c1;
+         text-align: center;
+         }
+         .calendar-day-modal .release-item {
+         padding: 6px 8px;
+         border-radius: 8px;
+         border: 1px solid rgba(255,182,193,0.25);
+         background: rgba(255,182,193,0.08);
+         margin-bottom: 6px;
+         font-size: 12px;
+         color: #f8d1d8;
+         }
+         .calendar-day-close {
+         display: block;
+         margin: 8px auto 0;
+         padding: 6px 12px;
+         border-radius: 999px;
+         border: 1px solid #ffb6c1;
+         background: transparent;
+         color: #ffb6c1;
+         cursor: pointer;
          }
          .calendar-empty {
          font-size: 12px;
@@ -2640,6 +2690,13 @@ max-height: 90vh;
             </div>
             <div id="releaseCalendar" class="calendar-grid"></div>
             <div id="releaseCalendarEmpty" class="calendar-empty">No releases this month.</div>
+            <div id="calendarDayOverlay" class="calendar-day-overlay">
+               <div class="calendar-day-modal">
+                  <h4 id="calendarDayTitle"></h4>
+                  <div id="calendarDayList"></div>
+                  <button id="calendarDayClose" class="calendar-day-close">Close</button>
+               </div>
+            </div>
          </div>
       </div>
       <!-- Multi-Select Action Bar -->
@@ -2787,6 +2844,10 @@ max-height: 90vh;
          const calendarNextBtn      = document.getElementById('calendarNext');
          const calendarOverlay      = document.getElementById('calendarOverlay');
          const calendarClose        = document.getElementById('calendarClose');
+         const calendarDayOverlay   = document.getElementById('calendarDayOverlay');
+         const calendarDayTitle     = document.getElementById('calendarDayTitle');
+         const calendarDayList      = document.getElementById('calendarDayList');
+         const calendarDayClose     = document.getElementById('calendarDayClose');
          const statNextCard         = document.getElementById('statNextCard');
          const pieRead          = document.getElementById('pieRead');
          const pieCollection    = document.getElementById('pieCollection');
@@ -4669,7 +4730,7 @@ max-height: 90vh;
            if (!el) return;
            el.innerHTML = '';
            if (!items || !items.length) {
-             el.textContent = 'No rated books yet';
+             el.textContent = 'No rated series yet';
              return;
            }
            items.forEach((item, idx) => {
@@ -4677,8 +4738,8 @@ max-height: 90vh;
              row.className = 'stat-list-row';
              row.innerHTML = `
                <span class="stat-rank">${idx + 1}.</span>
-               <span class="stat-name">${item.Title || 'Untitled'}</span>
-               <span class="stat-count">${item.rating.toFixed(1)}/5</span>
+               <span class="stat-name">${item.name || 'Untitled Series'}</span>
+               <span class="stat-count">${item.avg.toFixed(2)}/5</span>
              `;
              el.appendChild(row);
            });
@@ -4888,29 +4949,15 @@ max-height: 90vh;
              });
 
              if (releasesForDay.length > MAX_VISIBLE) {
-               const hiddenList = document.createElement('div');
-               hiddenList.className = 'calendar-more-list';
-               hiddenList.style.display = 'none';
-               releasesForDay.slice(MAX_VISIBLE).forEach(r => {
-                 const chip = document.createElement('div');
-                 chip.className = 'calendar-release';
-                 chip.textContent = r.item.Title || 'Untitled';
-                 hiddenList.appendChild(chip);
-               });
-
                const moreCount = releasesForDay.length - MAX_VISIBLE;
                const toggle = document.createElement('button');
                toggle.type = 'button';
                toggle.className = 'calendar-more-btn';
                toggle.textContent = `+${moreCount} more`;
                toggle.addEventListener('click', () => {
-                 const isOpen = hiddenList.style.display === 'flex';
-                 hiddenList.style.display = isOpen ? 'none' : 'flex';
-                 toggle.textContent = isOpen ? `+${moreCount} more` : 'Hide';
+                 openCalendarDayModal(formatDateDisplay(new Date(monthStart.getFullYear(), monthStart.getMonth(), day)), releasesForDay);
                });
-
                releaseWrap.appendChild(toggle);
-               releaseWrap.appendChild(hiddenList);
              }
 
              cell.appendChild(releaseWrap);
@@ -4947,7 +4994,29 @@ max-height: 90vh;
          function closeCalendarOverlay() {
            if (calendarOverlay) {
              calendarOverlay.style.display = 'none';
+             closeCalendarDayModal();
            }
+         }
+
+         function openCalendarDayModal(label, entries) {
+           if (!calendarDayOverlay || !calendarDayList || !calendarDayTitle) return;
+           calendarDayTitle.textContent = label || 'Releases';
+           calendarDayList.innerHTML = '';
+           (entries || []).forEach((entry) => {
+             const div = document.createElement('div');
+             div.className = 'release-item';
+             div.textContent = entry.item.Title || 'Untitled';
+             calendarDayList.appendChild(div);
+           });
+           calendarDayOverlay.style.display = 'flex';
+         }
+
+         function closeCalendarDayModal() {
+           if (calendarDayOverlay) calendarDayOverlay.style.display = 'none';
+         }
+
+         if (calendarDayClose) {
+           calendarDayClose.addEventListener('click', closeCalendarDayModal);
          }
          
          function stopWishlistCountdown() {
@@ -5041,22 +5110,32 @@ max-height: 90vh;
            if (statCollectionPct) statCollectionPct.textContent = `${libPct}%`;
            if (statLibShare) statLibShare.textContent = totalLib;
            if (statWishShare) statWishShare.textContent = wishCount;
-           // Ratings
-           const ratedBooks = libraryBooks
-             .map(b => {
-               const r = (b.Rating !== undefined && b.Rating !== null && b.Rating !== "") ? parseFloat(b.Rating) : NaN;
-               return { ...b, rating: r };
-             })
-             .filter(b => b.Read && Number.isFinite(b.rating) && b.rating > 0);
-           const avgRating = ratedBooks.length
-             ? ratedBooks.reduce((sum, b) => sum + b.rating, 0) / ratedBooks.length
+           // Ratings (series average, read books only)
+           const seriesRatingMap = new Map();
+           libraryBooks.forEach(b => {
+             const ratingVal = (b.Rating !== undefined && b.Rating !== null && b.Rating !== "") ? parseFloat(b.Rating) : NaN;
+             if (!b.Read || !Number.isFinite(ratingVal) || ratingVal <= 0) return;
+             const key = getSeriesKey(b) || (b.id || "");
+             const display = getSeriesDisplayNameFromTitle(b.Title);
+             if (!seriesRatingMap.has(key)) {
+               seriesRatingMap.set(key, { name: display, sum: 0, count: 0 });
+             }
+             const entry = seriesRatingMap.get(key);
+             entry.sum += ratingVal;
+             entry.count += 1;
+           });
+           const seriesRatings = Array.from(seriesRatingMap.values())
+             .map(e => ({ name: e.name, avg: e.sum / e.count, count: e.count }))
+             .filter(e => Number.isFinite(e.avg));
+           const avgRating = seriesRatings.length
+             ? seriesRatings.reduce((s, e) => s + e.avg, 0) / seriesRatings.length
              : null;
            if (statAvgRating) {
              statAvgRating.textContent = avgRating !== null ? `${avgRating.toFixed(2)}/5` : '--';
            }
-           const topRated = ratedBooks
+           const topRated = seriesRatings
              .slice()
-             .sort((a, b) => b.rating - a.rating || (a.Title || '').localeCompare(b.Title || ''))
+             .sort((a, b) => b.avg - a.avg || (a.name || '').localeCompare(b.name || ''))
              .slice(0, 3);
            renderTopRated(statTopRated, topRated);
            const totalMsrp = libraryBooks.reduce((sum, b) => {
