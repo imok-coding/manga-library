@@ -5593,39 +5593,31 @@ max-height: 90vh;
              const releaseWrap = document.createElement('div');
              releaseWrap.className = 'calendar-releases';
 
+            const dayLabel = `${monthName} ${day}`;
+            const openDayPopup = () => openCalendarDayModal(dayLabel, releasesForDay);
+
             releasesForDay.slice(0, MAX_VISIBLE).forEach(r => {
               const chip = document.createElement('div');
               chip.className = 'calendar-release';
               chip.textContent = r.item.Title || 'Untitled';
+              chip.title = r.item.Title || 'Untitled';
+              chip.setAttribute('aria-label', chip.title);
+              chip.addEventListener('mouseenter', () => {
+                // Browser tooltip handles the hover text; no-op hook kept for clarity.
+              });
+              chip.addEventListener('click', openDayPopup);
               releaseWrap.appendChild(chip);
             });
 
             if (releasesForDay.length > MAX_VISIBLE) {
               const moreCount = releasesForDay.length - MAX_VISIBLE;
-              const hiddenList = document.createElement('div');
-              hiddenList.className = 'calendar-more-list';
-              hiddenList.style.display = 'none';
-              releasesForDay.slice(MAX_VISIBLE).forEach(r => {
-                const chip = document.createElement('div');
-                chip.className = 'calendar-release';
-                chip.textContent = r.item.Title || 'Untitled';
-                hiddenList.appendChild(chip);
-              });
-
               const toggle = document.createElement('button');
               toggle.type = 'button';
               toggle.className = 'calendar-more-btn';
-              const setLabel = (expanded) => {
-                toggle.textContent = expanded ? 'Hide extra' : `+${moreCount} more`;
-              };
-              setLabel(false);
-              toggle.addEventListener('click', () => {
-                const expanded = hiddenList.style.display === 'flex';
-                hiddenList.style.display = expanded ? 'none' : 'flex';
-                setLabel(!expanded);
-              });
+              toggle.textContent = `+${moreCount} more`;
+              toggle.title = 'Show all releases on this day';
+              toggle.addEventListener('click', openDayPopup);
               releaseWrap.appendChild(toggle);
-              releaseWrap.appendChild(hiddenList);
             }
 
              cell.appendChild(releaseWrap);
