@@ -15,6 +15,8 @@
       <meta name="twitter:description" content="Browse Tyler's Manga Library and wishlist with covers, release tracking, and reading stats.">
       <meta name="twitter:image" content="">
       <meta name="theme-color" content="#1e0d14">
+      <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+      <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
       <link rel="icon" type="image/png" sizes="32x32" href="https://imgur.com/mS65QNF.png">
       <link rel="icon" type="image/png" sizes="16x16" href="https://imgur.com/ZCidbKE.png">
       <link rel="apple-touch-icon" href="https://imgur.com/OjYXltp.png">
@@ -33,6 +35,10 @@
          }
          html {
          scroll-behavior: smooth;
+         }
+         /* Improve touch responsiveness on tap targets */
+         button, .menu-item, .auth-btn, .settings-btn, .dash-btn, .multi-select-btn {
+         touch-action: manipulation;
          }
          .container {
          max-width: 1200px;
@@ -377,7 +383,9 @@
          .calendar-grid {
          display: grid;
          grid-template-columns: repeat(7, 1fr);
+         grid-template-rows: repeat(6, minmax(82px, 1fr));
          gap: 6px;
+         min-height: 520px; /* keep calendar height consistent across months */
          }
          .calendar-day {
          min-height: 62px;
@@ -406,6 +414,29 @@
          color: #ffb6c1;
          line-height: 1.3;
          }
+         .calendar-releases {
+         display: flex;
+         flex-direction: column;
+         gap: 4px;
+         }
+         .calendar-more-btn {
+         margin-top: 2px;
+         padding: 3px 6px;
+         border-radius: 6px;
+         border: 1px dashed rgba(255,182,193,0.5);
+         background: transparent;
+         color: #ffb6c1;
+         font-size: 11px;
+         cursor: pointer;
+         }
+         .calendar-more-btn:hover {
+         background: rgba(255,105,180,0.1);
+         }
+         .calendar-more-list {
+         display: none;
+         flex-direction: column;
+         gap: 4px;
+         }
          .calendar-empty {
          font-size: 12px;
          color: #f8d1d8;
@@ -428,7 +459,7 @@
          #calendarCard {
          background: #2b0f1d;
          border-radius: 16px;
-         padding: 16px;
+         padding: 22px 16px 16px;
          width: 94%;
          max-width: 860px;
          box-shadow: 0 0 24px rgba(255,182,193,0.6);
@@ -436,10 +467,13 @@
          animation: slideUp 0.25s ease;
          color: #fff;
          }
+         .calendar-header {
+         padding-right: 52px; /* leave space for close button */
+         }
          #calendarClose {
          position: absolute;
-         top: 10px;
-         right: 10px;
+         top: 12px;
+         right: 12px;
          background: rgba(255,255,255,0.08);
          border: 1px solid rgba(255,255,255,0.2);
          color: #fff;
@@ -475,6 +509,26 @@
          .stat-card .stat-value.next-release {
          font-size: 16px;
          line-height: 1.3;
+         }
+         .stat-msrp {
+         color: #00e676;
+         text-shadow: 0 0 6px rgba(0,230,118,0.6);
+         }
+         .stat-paid {
+         display: flex;
+         gap: 8px;
+         align-items: baseline;
+         color: #ff8a80;
+         text-shadow: 0 0 6px rgba(255,138,128,0.4);
+         font-size: 18px;
+         }
+         .stat-paid-pct {
+         font-size: 12px;
+         color: #f8d1d8;
+         }
+         .stat-collectible {
+         color: #ffd54f;
+         text-shadow: 0 0 6px rgba(255,213,79,0.6);
          }
          .stat-sub {
          font-size: 12px;
@@ -957,6 +1011,8 @@
          width: 100%;
          max-width: 150px;
          position: relative;
+         content-visibility: auto;
+         contain: content;
          }
          .card:hover {
          transform: scale(1.05);
@@ -1827,6 +1883,7 @@
          @media (max-width: 600px) {
          body {
          padding-bottom: 72px; /* leave space for sticky bars/buttons */
+         background-attachment: scroll; /* avoid costly fixed repaints on mobile */
          }
          .container {
          padding: 12px;
@@ -1913,6 +1970,8 @@
          }
          #adminFormFields input[type="text"],
          #adminFormFields input[type="date"],
+         #adminFormFields input[type="number"],
+         #adminFormFields select,
          #adminAmazonInput {
          width: 100%;
          font-size: 13px;
@@ -2086,6 +2145,11 @@
                   <div class="stat-value"><span id="statRead">0</span> / <span id="statUnread">0</span></div>
                </div>
                <div class="stat-card">
+                  <h3>Page Count Read / Total</h3>
+                  <div class="stat-value"><span id="statPagesRead">0</span> / <span id="statPagesTotal">0</span></div>
+                  <div class="stat-sub" id="statPagesPct">0% read</div>
+               </div>
+               <div class="stat-card">
                   <h3>Library vs Wishlist</h3>
                   <div class="pie" id="pieCollection" style="--pct:0;">
                      <div class="pie-label" id="statCollectionPct">0%</div>
@@ -2111,8 +2175,14 @@
                <div class="stat-sub" id="statNextCountdown"></div>
             </div>
             <div class="stat-card">
-               <h3>Collection MSRP</h3>
-               <div class="stat-value" id="statCollectionValue">$0.00</div>
+               <h3>Collection Pricing</h3>
+               <div class="stat-value stat-msrp" id="statCollectionValue">$0.00</div>
+               <div class="stat-value stat-paid">
+                  <span id="statCollectionPaid">$0.00</span>
+                  <span class="stat-paid-pct" id="statCollectionPaidPct">(0% off)</span>
+               </div>
+               <div class="stat-value stat-collectible" id="statCollectibleValue">$0.00</div>
+               <div class="stat-sub">MSRP • Paid • Collectible overrides</div>
             </div>
                <div class="stat-card">
                   <h3 id="statCurrentYearTitle">Current Reads</h3>
@@ -2198,8 +2268,42 @@
                            <input type="date" id="dashDetailDateRead">
                         </div>
                         <div class="dash-detail-row">
+                           <span>Page Count</span>
+                           <input type="number" id="dashDetailPageCount" min="0" step="1" inputmode="numeric">
+                        </div>
+                        <div class="dash-detail-row">
                            <span>MSRP (per book)</span>
                            <input type="number" id="dashDetailMSRP" step="0.01" min="0" placeholder="0.00">
+                        </div>
+                        <div class="dash-detail-row">
+                           <span>Amount Paid</span>
+                           <input type="number" id="dashDetailPaid" step="0.01" min="0" placeholder="0.00">
+                        </div>
+                        <div class="dash-detail-row" id="dashDetailRatingRow" style="display:none;">
+                           <span>Star Rating</span>
+                           <input type="number" id="dashDetailRating" min="0" max="5" step="0.5" placeholder="0-5" inputmode="decimal">
+                        </div>
+                        <div class="dash-detail-row">
+                           <label style="display:flex; align-items:center; gap:6px; width:100%;">
+                           <input type="checkbox" id="dashDetailSpecialFlag">
+                           <span>Special?</span>
+                           </label>
+                        </div>
+                        <div class="dash-detail-row" id="dashDetailSpecialTypeRow" style="display:none;">
+                           <span>Special Type</span>
+                           <select id="dashDetailSpecialType">
+                              <option value="">Select type</option>
+                              <option value="specialEdition">Special Edition</option>
+                              <option value="collectible">Collectible</option>
+                           </select>
+                        </div>
+                        <div class="dash-detail-row" id="dashDetailSpecialVolumesRow" style="display:none;">
+                           <span>Volumes Contained</span>
+                           <input type="number" id="dashDetailSpecialVolumes" min="1" step="1">
+                        </div>
+                        <div class="dash-detail-row" id="dashDetailCollectiblePriceRow" style="display:none;">
+                           <span>Collectible Price</span>
+                           <input type="number" id="dashDetailCollectiblePrice" min="0" step="0.01" placeholder="0.00">
                         </div>
                         <div class="dash-detail-actions">
                            <button class="dash-btn secondary" id="dashDetailCancel">Cancel</button>
@@ -2284,7 +2388,11 @@
                <input type="date" id="adminDateInput" autocomplete="off">
                </label>
                <label>
-               ISBN
+               Page Count
+               <input type="number" id="adminPageCountInput" autocomplete="off" min="0" step="1" inputmode="numeric" placeholder="e.g. 192">
+               </label>
+               <label id="adminIsbnWrapper">
+               ISBN (library only)
                <input type="text" id="adminIsbnInput" autocomplete="off">
                </label>
                <label>
@@ -2303,6 +2411,31 @@
                Date when read (library only)
                <input type="date" id="adminDateReadInput" autocomplete="off">
                </label>
+               <label id="adminRatingWrapper" style="display:none;">
+               Star Rating (0-5, halves ok)
+               <input type="number" id="adminRatingInput" min="0" max="5" step="0.5" placeholder="e.g. 4.5">
+               </label>
+               <label id="adminSpecialFlagWrap">
+               <input type="checkbox" id="adminSpecialFlag"> Special?
+               </label>
+               <div id="adminSpecialFields" style="display:none; gap:8px; flex-direction:column;">
+                  <label>
+                  Special Type
+                  <select id="adminSpecialType">
+                     <option value="">Select type</option>
+                     <option value="specialEdition">Special Edition</option>
+                     <option value="collectible">Collectible</option>
+                  </select>
+                  </label>
+                  <label id="adminSpecialVolumesWrap" style="display:none;">
+                  Volumes contained (Special Edition)
+                  <input type="number" id="adminSpecialVolumes" min="1" step="1" placeholder="e.g. 3">
+                  </label>
+                  <label id="adminCollectiblePriceWrap" style="display:none;">
+                  Collectible price override
+                  <input type="number" id="adminCollectiblePrice" min="0" step="0.01" placeholder="0.00">
+                  </label>
+               </div>
                <div id="adminFormButtons">
                   <button id="adminFormSave">Save</button>
                </div>
@@ -2343,7 +2476,11 @@
                <input type="date" id="multiEditorDateInput" autocomplete="off">
                </label>
                <label>
-               ISBN
+               Page Count
+               <input type="number" id="multiEditorPageCountInput" autocomplete="off" min="0" step="1" inputmode="numeric">
+               </label>
+               <label id="multiEditorIsbnWrapper">
+               ISBN (library only)
                <input type="text" id="multiEditorIsbnInput" autocomplete="off">
                </label>
                <label>
@@ -2364,6 +2501,31 @@
                Date when read (library only)
                <input type="date" id="multiEditorDateReadInput" autocomplete="off">
                </label>
+               <label id="multiEditorRatingWrapper" style="display:none;">
+               Star Rating (0-5, halves ok)
+               <input type="number" id="multiEditorRatingInput" min="0" max="5" step="0.5">
+               </label>
+               <label id="multiEditorSpecialFlagWrap">
+               <input type="checkbox" id="multiEditorSpecialFlag"> Special?
+               </label>
+               <div id="multiEditorSpecialFields" style="display:none; gap:8px; flex-direction:column;">
+                  <label>
+                  Special Type
+                  <select id="multiEditorSpecialType">
+                     <option value="">Select type</option>
+                     <option value="specialEdition">Special Edition</option>
+                     <option value="collectible">Collectible</option>
+                  </select>
+                  </label>
+                  <label id="multiEditorSpecialVolumesWrap" style="display:none;">
+                  Volumes contained (Special Edition)
+                  <input type="number" id="multiEditorSpecialVolumes" min="1" step="1">
+                  </label>
+                  <label id="multiEditorCollectiblePriceWrap" style="display:none;">
+                  Collectible price override
+                  <input type="number" id="multiEditorCollectiblePrice" min="0" step="0.01">
+                  </label>
+               </div>
                <button id="multiEditorAddVolume"
                   type="button"
                   style="margin-top:10px; padding:6px 12px; border-radius:999px;
@@ -2561,6 +2723,12 @@
          const statNextReleaseDate = document.getElementById('statNextReleaseDate');
          const statNextCountdown= document.getElementById('statNextCountdown');
          const statCollectionValue = document.getElementById('statCollectionValue');
+         const statCollectionPaid = document.getElementById('statCollectionPaid');
+         const statCollectionPaidPct = document.getElementById('statCollectionPaidPct');
+         const statCollectibleValue = document.getElementById('statCollectibleValue');
+         const statPagesRead    = document.getElementById('statPagesRead');
+         const statPagesTotal   = document.getElementById('statPagesTotal');
+         const statPagesPct     = document.getElementById('statPagesPct');
          const statCurrentYearTitle = document.getElementById('statCurrentYearTitle');
          const statCurrentYearValue = document.getElementById('statCurrentYearValue');
          const statCurrentYearSub   = document.getElementById('statCurrentYearSub');
@@ -2606,6 +2774,17 @@
          const dashDetailDatePurchased = document.getElementById('dashDetailDatePurchased');
          const dashDetailDateRead = document.getElementById('dashDetailDateRead');
          const dashDetailDateReadRow = document.getElementById('dashDetailDateReadRow');
+         const dashDetailPaid = document.getElementById('dashDetailPaid');
+         const dashDetailPageCount = document.getElementById('dashDetailPageCount');
+         const dashDetailRatingRow = document.getElementById('dashDetailRatingRow');
+         const dashDetailRating = document.getElementById('dashDetailRating');
+         const dashDetailSpecialFlag = document.getElementById('dashDetailSpecialFlag');
+         const dashDetailSpecialTypeRow = document.getElementById('dashDetailSpecialTypeRow');
+         const dashDetailSpecialType = document.getElementById('dashDetailSpecialType');
+         const dashDetailSpecialVolumesRow = document.getElementById('dashDetailSpecialVolumesRow');
+         const dashDetailSpecialVolumes = document.getElementById('dashDetailSpecialVolumes');
+         const dashDetailCollectiblePriceRow = document.getElementById('dashDetailCollectiblePriceRow');
+         const dashDetailCollectiblePrice = document.getElementById('dashDetailCollectiblePrice');
          const dashDetailSave   = document.getElementById('dashDetailSave');
          const dashDetailCancel = document.getElementById('dashDetailCancel');
          
@@ -2651,6 +2830,10 @@
          const popupToggleRead = document.getElementById('popupToggleRead');
          const popupEdit       = document.getElementById('popupEdit');
          const popupDelete     = document.getElementById('popupDelete');
+         if (popupImage) {
+           popupImage.loading = 'lazy';
+           popupImage.decoding = 'async';
+         }
          
          // Admin form DOM refs
          const adminFormOverlay   = document.getElementById('adminFormOverlay');
@@ -2667,6 +2850,8 @@
          const adminPublisherSuggestions= document.getElementById('adminPublisherSuggestions');
          const adminMultiCreateBtn      = document.getElementById('adminMultiCreateBtn');
          const adminDateInput     = document.getElementById('adminDateInput');
+         const adminPageCountInput= document.getElementById('adminPageCountInput');
+         const adminIsbnWrapper   = document.getElementById('adminIsbnWrapper');
          const adminIsbnInput     = document.getElementById('adminIsbnInput');
          const adminCoverInput    = document.getElementById('adminCoverInput');
          const adminAmazonWrapper = document.getElementById('adminAmazonWrapper');
@@ -2675,6 +2860,16 @@
          const adminReadInput     = document.getElementById('adminReadInput');
          const adminDateReadWrapper = document.getElementById('adminDateReadWrapper');
          const adminDateReadInput = document.getElementById('adminDateReadInput');
+         const adminRatingWrapper = document.getElementById('adminRatingWrapper');
+         const adminRatingInput   = document.getElementById('adminRatingInput');
+         const adminSpecialFlagWrap = document.getElementById('adminSpecialFlagWrap');
+         const adminSpecialFlag   = document.getElementById('adminSpecialFlag');
+         const adminSpecialFields = document.getElementById('adminSpecialFields');
+         const adminSpecialType   = document.getElementById('adminSpecialType');
+         const adminSpecialVolumesWrap = document.getElementById('adminSpecialVolumesWrap');
+         const adminSpecialVolumes = document.getElementById('adminSpecialVolumes');
+         const adminCollectiblePriceWrap = document.getElementById('adminCollectiblePriceWrap');
+         const adminCollectiblePrice = document.getElementById('adminCollectiblePrice');
         const adminFormSave      = document.getElementById('adminFormSave');
 
         attachDateDropdowns(adminDateInput);
@@ -2696,6 +2891,8 @@
          const multiEditorAuthorsInput  = document.getElementById('multiEditorAuthorsInput');
          const multiEditorPublisherInput= document.getElementById('multiEditorPublisherInput');
          const multiEditorDateInput     = document.getElementById('multiEditorDateInput');
+         const multiEditorPageCountInput= document.getElementById('multiEditorPageCountInput');
+         const multiEditorIsbnWrapper   = document.getElementById('multiEditorIsbnWrapper');
          const multiEditorIsbnInput     = document.getElementById('multiEditorIsbnInput');
          const multiEditorCoverInput    = document.getElementById('multiEditorCoverInput');
          const multiEditorAmazonWrapper = document.getElementById('multiEditorAmazonWrapper');
@@ -2704,6 +2901,16 @@
          const multiEditorReadInput     = document.getElementById('multiEditorReadInput');
          const multiEditorDateReadWrapper = document.getElementById('multiEditorDateReadWrapper');
          const multiEditorDateReadInput   = document.getElementById('multiEditorDateReadInput');
+         const multiEditorRatingWrapper = document.getElementById('multiEditorRatingWrapper');
+         const multiEditorRatingInput   = document.getElementById('multiEditorRatingInput');
+         const multiEditorSpecialFlagWrap = document.getElementById('multiEditorSpecialFlagWrap');
+         const multiEditorSpecialFlag   = document.getElementById('multiEditorSpecialFlag');
+         const multiEditorSpecialFields = document.getElementById('multiEditorSpecialFields');
+         const multiEditorSpecialType   = document.getElementById('multiEditorSpecialType');
+         const multiEditorSpecialVolumesWrap = document.getElementById('multiEditorSpecialVolumesWrap');
+         const multiEditorSpecialVolumes = document.getElementById('multiEditorSpecialVolumes');
+         const multiEditorCollectiblePriceWrap = document.getElementById('multiEditorCollectiblePriceWrap');
+         const multiEditorCollectiblePrice = document.getElementById('multiEditorCollectiblePrice');
          const multiEditorAddVolume     = document.getElementById('multiEditorAddVolume');
          const multiEditorPrev          = document.getElementById('multiEditorPrev');
          const multiEditorNext          = document.getElementById('multiEditorNext');
@@ -3426,17 +3633,36 @@
           if (dashDetailDateRead) setDateInputValue(dashDetailDateRead, book.Read ? (book.DateRead || "") : "");
           if (dashDetailDateReadRow) dashDetailDateReadRow.style.display = book.Read ? "block" : "none";
           if (dashDetailMSRP) dashDetailMSRP.value = (book.MSRP !== undefined && book.MSRP !== null && book.MSRP !== "") ? book.MSRP : "";
+          if (dashDetailPaid) dashDetailPaid.value = (book.AmountPaid !== undefined && book.AmountPaid !== null && book.AmountPaid !== "") ? book.AmountPaid : "";
+          if (dashDetailPageCount) dashDetailPageCount.value = (book.PageCount !== undefined && book.PageCount !== null && book.PageCount !== "") ? book.PageCount : "";
+          if (dashDetailRatingRow) dashDetailRatingRow.style.display = book.Read ? "flex" : "none";
+          if (dashDetailRating) dashDetailRating.value = (book.Read && book.Rating !== undefined && book.Rating !== null && book.Rating !== "") ? book.Rating : "";
+          if (dashDetailSpecialFlag) dashDetailSpecialFlag.checked = !!book.SpecialType;
+          if (dashDetailSpecialType) dashDetailSpecialType.value = book.SpecialType || "";
+          if (dashDetailSpecialTypeRow) dashDetailSpecialTypeRow.style.display = dashDetailSpecialFlag && dashDetailSpecialFlag.checked ? "flex" : "none";
+          const isSpecialEdition = (book.SpecialType === "specialEdition");
+          const isCollectible = (book.SpecialType === "collectible");
+          if (dashDetailSpecialVolumesRow) dashDetailSpecialVolumesRow.style.display = isSpecialEdition ? "flex" : "none";
+          if (dashDetailSpecialVolumes) dashDetailSpecialVolumes.value = isSpecialEdition ? (book.SpecialVolumes || "") : "";
+          if (dashDetailCollectiblePriceRow) dashDetailCollectiblePriceRow.style.display = isCollectible ? "flex" : "none";
+          if (dashDetailCollectiblePrice) dashDetailCollectiblePrice.value = isCollectible
+            ? ((book.CollectiblePrice !== undefined && book.CollectiblePrice !== null && book.CollectiblePrice !== "") ? book.CollectiblePrice : "")
+            : "";
+          syncDashSpecialUI();
         }
 
         if (dashDetailRead && dashDetailDateReadRow) {
           dashDetailRead.addEventListener('change', () => {
             if (dashDetailRead.checked) {
               dashDetailDateReadRow.style.display = "block";
+              if (dashDetailRatingRow) dashDetailRatingRow.style.display = "flex";
               if (dashDetailDateRead && !dashDetailDateRead.value) {
                 setDateInputValue(dashDetailDateRead, new Date().toISOString().slice(0,10));
               }
             } else {
               dashDetailDateReadRow.style.display = "none";
+              if (dashDetailRatingRow) dashDetailRatingRow.style.display = "none";
+              if (dashDetailRating) dashDetailRating.value = "";
               if (dashDetailDateRead) setDateInputValue(dashDetailDateRead, "");
             }
           });
@@ -3446,6 +3672,24 @@
           dashSeriesRead.addEventListener('change', () => {
             dashSeriesRead.indeterminate = false;
           });
+        }
+
+        function syncDashSpecialUI() {
+          const isSpecial = dashDetailSpecialFlag ? dashDetailSpecialFlag.checked : false;
+          const typeVal = dashDetailSpecialType ? dashDetailSpecialType.value : "";
+          if (dashDetailSpecialTypeRow) dashDetailSpecialTypeRow.style.display = isSpecial ? "flex" : "none";
+          const showEdition = isSpecial && typeVal === "specialEdition";
+          const showCollectible = isSpecial && typeVal === "collectible";
+          if (dashDetailSpecialVolumesRow) dashDetailSpecialVolumesRow.style.display = showEdition ? "flex" : "none";
+          if (dashDetailCollectiblePriceRow) dashDetailCollectiblePriceRow.style.display = showCollectible ? "flex" : "none";
+          if (!showEdition && dashDetailSpecialVolumes) dashDetailSpecialVolumes.value = "";
+          if (!showCollectible && dashDetailCollectiblePrice) dashDetailCollectiblePrice.value = "";
+        }
+        if (dashDetailSpecialFlag) {
+          dashDetailSpecialFlag.addEventListener('change', syncDashSpecialUI);
+        }
+        if (dashDetailSpecialType) {
+          dashDetailSpecialType.addEventListener('change', syncDashSpecialUI);
         }
 
         if (dashDetailCancel) {
@@ -3466,11 +3710,29 @@
             const dr = readVal ? ( /^\d{4}-\d{2}-\d{2}$/.test(drRaw) ? drRaw : new Date().toISOString().slice(0,10) ) : "";
             const msrpRaw = dashDetailMSRP ? dashDetailMSRP.value.trim() : "";
             const msrpNum = msrpRaw === "" ? "" : parseFloat(msrpRaw);
+            const paidRaw = dashDetailPaid ? dashDetailPaid.value.trim() : "";
+            const paidNum = paidRaw === "" ? "" : parseFloat(paidRaw);
+            const pageRaw = dashDetailPageCount ? dashDetailPageCount.value.trim() : "";
+            const pageNum = pageRaw === "" ? "" : parseInt(pageRaw, 10);
+            const ratingRaw = dashDetailRating ? dashDetailRating.value.trim() : "";
+            const ratingVal = readVal && ratingRaw !== "" ? parseFloat(ratingRaw) : "";
+            const specialOn = dashDetailSpecialFlag ? !!dashDetailSpecialFlag.checked : false;
+            const specialTypeVal = specialOn && dashDetailSpecialType ? dashDetailSpecialType.value : "";
+            const specialVolRaw = dashDetailSpecialVolumes ? dashDetailSpecialVolumes.value.trim() : "";
+            const specialVolVal = specialOn && specialTypeVal === "specialEdition" && specialVolRaw !== "" ? parseInt(specialVolRaw, 10) : "";
+            const collectibleRaw = dashDetailCollectiblePrice ? dashDetailCollectiblePrice.value.trim() : "";
+            const collectibleVal = specialOn && specialTypeVal === "collectible" && collectibleRaw !== "" ? parseFloat(collectibleRaw) : "";
             const payload = {
               datePurchased: dp || "",
               read: readVal,
               dateRead: dr,
-              msrp: msrpRaw === "" ? "" : (Number.isFinite(msrpNum) ? msrpNum : "")
+              msrp: msrpRaw === "" ? "" : (Number.isFinite(msrpNum) ? msrpNum : ""),
+              amountPaid: paidRaw === "" ? "" : (Number.isFinite(paidNum) ? paidNum : ""),
+              pageCount: pageRaw === "" ? "" : (Number.isFinite(pageNum) ? pageNum : ""),
+              rating: (ratingVal !== "" && Number.isFinite(ratingVal)) ? ratingVal : "",
+              specialType: specialOn ? (specialTypeVal || "") : "",
+              specialVolumes: specialOn && specialTypeVal === "specialEdition" && Number.isFinite(specialVolVal) ? specialVolVal : "",
+              collectiblePrice: specialOn && specialTypeVal === "collectible" && Number.isFinite(collectibleVal) ? collectibleVal : ""
             };
             try {
               await updateDoc(doc(db, "library", dashSelectedBookId), payload);
@@ -3586,16 +3848,37 @@
           const syncAdminReadDateUI = () => {
             if (adminReadInput.checked) {
               if (adminDateReadWrapper) adminDateReadWrapper.style.display = "block";
+              if (adminRatingWrapper) adminRatingWrapper.style.display = "block";
               if (!adminDateReadInput.value) {
                 setDateInputValue(adminDateReadInput, new Date().toISOString().slice(0,10));
               }
             } else {
               if (adminDateReadWrapper) adminDateReadWrapper.style.display = "none";
+              if (adminRatingWrapper) adminRatingWrapper.style.display = "none";
+              if (adminRatingInput) adminRatingInput.value = "";
               setDateInputValue(adminDateReadInput, "");
             }
           };
           adminReadInput.addEventListener('change', syncAdminReadDateUI);
           syncAdminReadDateUI();
+        }
+
+        function syncAdminSpecialUI() {
+          const isSpecial = adminSpecialFlag ? adminSpecialFlag.checked : false;
+          const typeVal = adminSpecialType ? adminSpecialType.value : "";
+          if (adminSpecialFields) adminSpecialFields.style.display = isSpecial ? "flex" : "none";
+          const showEdition = isSpecial && typeVal === "specialEdition";
+          const showCollectible = isSpecial && typeVal === "collectible";
+          if (adminSpecialVolumesWrap) adminSpecialVolumesWrap.style.display = showEdition ? "block" : "none";
+          if (!showEdition && adminSpecialVolumes) adminSpecialVolumes.value = "";
+          if (adminCollectiblePriceWrap) adminCollectiblePriceWrap.style.display = showCollectible ? "block" : "none";
+          if (!showCollectible && adminCollectiblePrice) adminCollectiblePrice.value = "";
+        }
+        if (adminSpecialFlag) {
+          adminSpecialFlag.addEventListener('change', syncAdminSpecialUI);
+        }
+        if (adminSpecialType) {
+          adminSpecialType.addEventListener('change', syncAdminSpecialUI);
         }
          
         function switchSection(target) {
@@ -3924,10 +4207,15 @@
                       publisher: b.Publisher,
                       date: b.Date,
                       isbn: b.ISBN,
+                      pageCount: b.PageCount || "",
                       cover: b.Cover,
                       amazonURL: b.AmazonURL || "",
                       read: !!b.Read,
                       dateRead: b.DateRead || "",
+                      rating: b.Rating || "",
+                      specialType: b.SpecialType || "",
+                      specialVolumes: b.SpecialVolumes || "",
+                      collectiblePrice: b.CollectiblePrice || "",
                       existsAlready: true,
                       docId: b.id
                   });
@@ -3941,16 +4229,21 @@
                        vol: v,
                        title: `${s.displayName || s.baseName}, Vol. ${v}`,
                        authors: s.author || "",
-                       publisher: s.publisher || "",
-                       date: "",
-                       isbn: "",
-                       cover: "",
-                       amazonURL: "",
-                       read: false,
-                       dateRead: "",
-                       existsAlready: false,
-                       docId: null
-                   });
+                      publisher: s.publisher || "",
+                      date: "",
+                      isbn: "",
+                      pageCount: "",
+                      cover: "",
+                      amazonURL: "",
+                      read: false,
+                      dateRead: "",
+                      rating: "",
+                      specialType: "",
+                      specialVolumes: "",
+                      collectiblePrice: "",
+                      existsAlready: false,
+                      docId: null
+                  });
                }
            });
          
@@ -3973,10 +4266,15 @@
                publisher: item.publisher,
                date: /^\d{4}-\d{2}-\d{2}$/.test(item.date) ? item.date : "",
                isbn: item.isbn,
+               pageCount: item.pageCount || "",
                cover: item.cover,
                amazonURL: item.amazonURL,
                read: item.read,
                dateRead: /^\d{4}-\d{2}-\d{2}$/.test(item.dateRead || "") ? item.dateRead : "",
+               rating: item.rating || "",
+               specialType: item.specialType || "",
+               specialVolumes: item.specialVolumes || "",
+               collectiblePrice: item.collectiblePrice || "",
                vol: item.vol,
                existsAlready: item.existsAlready,
                docId: item.docId || null
@@ -4020,10 +4318,15 @@
                   publisher: b.Publisher || "",
                   date: dateValue,
                   isbn: b.ISBN || "",
+                  pageCount: b.PageCount || "",
                   cover: b.Cover || "",
                   amazonURL: b.AmazonURL || "",
                   read: !!b.Read,
                   dateRead: b.DateRead || "",
+                  rating: b.Rating || "",
+                  specialType: b.SpecialType || "",
+                  specialVolumes: b.SpecialVolumes || "",
+                  collectiblePrice: b.CollectiblePrice || "",
                   // Capture parsed sort info so numeric volumes stay in order (1,2,3...10)
                   sortName: parsed.name || (b.Title || "").toLowerCase(),
                   sortVol: parsed.vol || 0,
@@ -4106,6 +4409,7 @@
            multiEditorAuthorsInput.value   = item.authors;
            multiEditorPublisherInput.value = item.publisher;
            setDateInputValue(multiEditorDateInput, item.date);
+           if (multiEditorPageCountInput) multiEditorPageCountInput.value = (item.pageCount !== undefined && item.pageCount !== null && item.pageCount !== "") ? item.pageCount : "";
            multiEditorIsbnInput.value      = item.isbn;
            multiEditorCoverInput.value     = item.cover;
 
@@ -4117,22 +4421,68 @@
            if (isWishlist) {
                multiEditorAmazonWrapper.style.display = "flex";
                multiEditorAmazonInput.value = item.amazonURL || "";
+               if (multiEditorIsbnWrapper) multiEditorIsbnWrapper.style.display = "none";
                multiEditorReadWrapper.style.display = "none";
                if (multiEditorDateReadWrapper) multiEditorDateReadWrapper.style.display = "none";
                if (multiEditorReadInput) multiEditorReadInput.checked = false;
                if (multiEditorDateReadInput) multiEditorDateReadInput.value = "";
+               if (multiEditorRatingWrapper) multiEditorRatingWrapper.style.display = "none";
+               if (multiEditorRatingInput) multiEditorRatingInput.value = "";
            } else {
                multiEditorAmazonWrapper.style.display = "none";
+               if (multiEditorIsbnWrapper) multiEditorIsbnWrapper.style.display = "block";
                multiEditorReadWrapper.style.display = "flex";
                multiEditorReadInput.checked = !!item.read;
                if (multiEditorDateReadWrapper) {
                  multiEditorDateReadWrapper.style.display = item.read ? "flex" : "none";
                }
-               if (multiEditorDateReadInput) {
-                 setDateInputValue(multiEditorDateReadInput, item.read ? (item.dateRead || "") : "");
-               }
+           if (multiEditorDateReadInput) {
+             setDateInputValue(multiEditorDateReadInput, item.read ? (item.dateRead || "") : "");
            }
-         }
+           if (multiEditorRatingWrapper) multiEditorRatingWrapper.style.display = item.read ? "block" : "none";
+           if (multiEditorRatingInput) multiEditorRatingInput.value = item.read ? (item.rating || "") : "";
+           }
+           if (multiEditorSpecialFlag) multiEditorSpecialFlag.checked = !!item.specialType;
+           if (multiEditorSpecialType) multiEditorSpecialType.value = item.specialType || "";
+           const isEdition = item.specialType === "specialEdition";
+           const isCollectible = item.specialType === "collectible";
+           if (multiEditorSpecialFields) multiEditorSpecialFields.style.display = item.specialType ? "flex" : "none";
+           if (multiEditorSpecialVolumesWrap) multiEditorSpecialVolumesWrap.style.display = isEdition ? "block" : "none";
+           if (multiEditorSpecialVolumes) multiEditorSpecialVolumes.value = isEdition ? (item.specialVolumes || "") : "";
+           if (multiEditorCollectiblePriceWrap) multiEditorCollectiblePriceWrap.style.display = isCollectible ? "block" : "none";
+           if (multiEditorCollectiblePrice) multiEditorCollectiblePrice.value = isCollectible
+             ? ((item.collectiblePrice !== undefined && item.collectiblePrice !== null && item.collectiblePrice !== "") ? item.collectiblePrice : "")
+             : "";
+           syncMultiEditorReadUI();
+           syncMultiEditorSpecialUI();
+        }
+
+        function syncMultiEditorReadUI() {
+          if (!multiEditorReadInput) return;
+          const isRead = multiEditorReadInput.checked;
+          if (multiEditorDateReadWrapper) multiEditorDateReadWrapper.style.display = isRead ? "flex" : "none";
+          if (!isRead && multiEditorDateReadInput) setDateInputValue(multiEditorDateReadInput, "");
+          if (multiEditorRatingWrapper) multiEditorRatingWrapper.style.display = isRead ? "block" : "none";
+          if (!isRead && multiEditorRatingInput) multiEditorRatingInput.value = "";
+          if (isRead && multiEditorDateReadInput && !multiEditorDateReadInput.value) {
+            setDateInputValue(multiEditorDateReadInput, new Date().toISOString().slice(0,10));
+          }
+        }
+
+        function syncMultiEditorSpecialUI() {
+          const isSpecial = multiEditorSpecialFlag ? multiEditorSpecialFlag.checked : false;
+          const typeVal = multiEditorSpecialType ? multiEditorSpecialType.value : "";
+          if (multiEditorSpecialFields) multiEditorSpecialFields.style.display = isSpecial ? "flex" : "none";
+          const showEdition = isSpecial && typeVal === "specialEdition";
+          const showCollectible = isSpecial && typeVal === "collectible";
+          if (multiEditorSpecialVolumesWrap) multiEditorSpecialVolumesWrap.style.display = showEdition ? "block" : "none";
+          if (!showEdition && multiEditorSpecialVolumes) multiEditorSpecialVolumes.value = "";
+          if (multiEditorCollectiblePriceWrap) multiEditorCollectiblePriceWrap.style.display = showCollectible ? "block" : "none";
+          if (!showCollectible && multiEditorCollectiblePrice) multiEditorCollectiblePrice.value = "";
+        }
+        if (multiEditorReadInput) multiEditorReadInput.addEventListener('change', syncMultiEditorReadUI);
+        if (multiEditorSpecialFlag) multiEditorSpecialFlag.addEventListener('change', syncMultiEditorSpecialUI);
+        if (multiEditorSpecialType) multiEditorSpecialType.addEventListener('change', syncMultiEditorSpecialUI);
          
          
          
@@ -4158,6 +4508,7 @@
            item.authors = multiEditorAuthorsInput.value.trim();
            item.publisher = multiEditorPublisherInput.value.trim();
            item.date = multiEditorDateInput.value.trim();
+           item.pageCount = multiEditorPageCountInput.value.trim();
            item.isbn = multiEditorIsbnInput.value.trim();
            item.cover = multiEditorCoverInput.value.trim();
            item.amazonURL = multiEditorAmazonInput.value.trim();
@@ -4173,6 +4524,23 @@
              if (!item.read) {
                item.dateRead = "";
              }
+           }
+           if (multiEditorRatingInput) {
+             const r = multiEditorRatingInput.value.trim();
+             item.rating = (item.read && r !== "") ? r : "";
+           }
+           if (multiEditorSpecialFlag && multiEditorSpecialFlag.checked) {
+             item.specialType = multiEditorSpecialType ? multiEditorSpecialType.value : "";
+             item.specialVolumes = (item.specialType === "specialEdition" && multiEditorSpecialVolumes && multiEditorSpecialVolumes.value.trim() !== "")
+               ? multiEditorSpecialVolumes.value.trim()
+               : "";
+             item.collectiblePrice = (item.specialType === "collectible" && multiEditorCollectiblePrice && multiEditorCollectiblePrice.value.trim() !== "")
+               ? multiEditorCollectiblePrice.value.trim()
+               : "";
+           } else {
+             item.specialType = "";
+             item.specialVolumes = "";
+             item.collectiblePrice = "";
            }
          }
          
@@ -4357,7 +4725,7 @@
          }
 
          function exportToCSV() {
-           const headers = ['Collection','Title','Authors','Publisher','Date','ISBN','Read','DateRead','DatePurchased','MSRP','Cover','AmazonURL'];
+           const headers = ['Collection','Title','Authors','Publisher','Date','ISBN','PageCount','Rating','Read','DateRead','DatePurchased','MSRP','AmountPaid','SpecialType','SpecialVolumes','CollectiblePrice','Cover','AmazonURL'];
            const rows = [headers.join(',')];
            const esc = (val) => {
              if (val === null || val === undefined) return '';
@@ -4373,10 +4741,16 @@
                esc(b.Publisher),
                esc(b.Date),
                esc(b.ISBN),
+               esc(b.PageCount),
+               esc(b.Rating),
                b.Read ? 'Yes' : 'No',
                esc(b.DateRead),
                esc(b.DatePurchased),
                esc(b.MSRP),
+               esc(b.AmountPaid),
+               esc(b.SpecialType),
+               esc(b.SpecialVolumes),
+               esc(b.CollectiblePrice),
                esc(b.Cover),
                ''
              ].join(','));
@@ -4389,10 +4763,16 @@
                esc(b.Publisher),
                esc(b.Date),
                esc(b.ISBN),
+               esc(b.PageCount),
+               esc(b.Rating),
                '',
                '',
                '',
                '',
+               '',
+               esc(b.SpecialType),
+               esc(b.SpecialVolumes),
+               esc(b.CollectiblePrice),
                esc(b.Cover),
                esc(b.AmazonURL || '')
              ].join(','));
@@ -4494,6 +4874,7 @@
            if (releaseCalendar) releaseCalendar.innerHTML = '';
            const daysInMonth = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0).getDate();
            const firstWeekday = monthStart.getDay();
+           const totalCells = Math.max(42, Math.ceil((firstWeekday + daysInMonth) / 7) * 7);
 
            for (let i = 0; i < firstWeekday; i++) {
              const pad = document.createElement('div');
@@ -4502,6 +4883,7 @@
            }
 
            let placedReleaseCount = 0;
+           const MAX_VISIBLE = 3;
 
            for (let day = 1; day <= daysInMonth; day++) {
              const cell = document.createElement('div');
@@ -4514,21 +4896,52 @@
              const releasesForDay = monthReleases.filter(r => r.date.getDate() === day);
              placedReleaseCount += releasesForDay.length;
 
-             releasesForDay.slice(0, 3).forEach(r => {
+             const releaseWrap = document.createElement('div');
+             releaseWrap.className = 'calendar-releases';
+
+             releasesForDay.slice(0, MAX_VISIBLE).forEach(r => {
                const chip = document.createElement('div');
                chip.className = 'calendar-release';
                chip.textContent = r.item.Title || 'Untitled';
-               cell.appendChild(chip);
+               releaseWrap.appendChild(chip);
              });
 
-             if (releasesForDay.length > 3) {
-               const more = document.createElement('div');
-               more.className = 'calendar-release';
-               more.textContent = `+${releasesForDay.length - 3} more`;
-               cell.appendChild(more);
+             if (releasesForDay.length > MAX_VISIBLE) {
+               const hiddenList = document.createElement('div');
+               hiddenList.className = 'calendar-more-list';
+               hiddenList.style.display = 'none';
+               releasesForDay.slice(MAX_VISIBLE).forEach(r => {
+                 const chip = document.createElement('div');
+                 chip.className = 'calendar-release';
+                 chip.textContent = r.item.Title || 'Untitled';
+                 hiddenList.appendChild(chip);
+               });
+
+               const moreCount = releasesForDay.length - MAX_VISIBLE;
+               const toggle = document.createElement('button');
+               toggle.type = 'button';
+               toggle.className = 'calendar-more-btn';
+               toggle.textContent = `+${moreCount} more`;
+               toggle.addEventListener('click', () => {
+                 const isOpen = hiddenList.style.display === 'flex';
+                 hiddenList.style.display = isOpen ? 'none' : 'flex';
+                 toggle.textContent = isOpen ? `+${moreCount} more` : 'Hide';
+               });
+
+               releaseWrap.appendChild(toggle);
+               releaseWrap.appendChild(hiddenList);
              }
 
+             cell.appendChild(releaseWrap);
              releaseCalendar.appendChild(cell);
+           }
+
+           const usedCells = firstWeekday + daysInMonth;
+           const trailingPads = totalCells - usedCells;
+           for (let i = 0; i < trailingPads; i++) {
+             const pad = document.createElement('div');
+             pad.className = 'calendar-day pad';
+             releaseCalendar.appendChild(pad);
            }
 
            if (releaseCalendarEmpty) {
@@ -4648,11 +5061,52 @@
            if (statLibShare) statLibShare.textContent = totalLib;
            if (statWishShare) statWishShare.textContent = wishCount;
            const totalMsrp = libraryBooks.reduce((sum, b) => {
+             if (b.SpecialType === "collectible") return sum; // exclude collectibles from MSRP bucket
              const v = (b.MSRP !== undefined && b.MSRP !== null && b.MSRP !== "") ? parseFloat(b.MSRP) : NaN;
              return Number.isFinite(v) ? sum + v : sum;
            }, 0);
            if (statCollectionValue) {
              statCollectionValue.textContent = `$${totalMsrp.toFixed(2)}`;
+           }
+           const collectibleValue = libraryBooks.reduce((sum, b) => {
+             const v = (b.CollectiblePrice !== undefined && b.CollectiblePrice !== null && b.CollectiblePrice !== "") ? parseFloat(b.CollectiblePrice) : NaN;
+             return Number.isFinite(v) ? sum + v : sum;
+           }, 0);
+           if (statCollectibleValue) {
+             statCollectibleValue.textContent = `$${collectibleValue.toFixed(2)}`;
+           }
+           const totalPaid = libraryBooks.reduce((sum, b) => {
+             if (b.SpecialType === "collectible") return sum; // exclude collectibles from paid vs MSRP calcs
+             const v = (b.AmountPaid !== undefined && b.AmountPaid !== null && b.AmountPaid !== "") ? parseFloat(b.AmountPaid) : NaN;
+             return Number.isFinite(v) ? sum + v : sum;
+           }, 0);
+           if (statCollectionPaid) {
+             statCollectionPaid.textContent = `$${totalPaid.toFixed(2)}`;
+           }
+           if (statCollectionPaidPct) {
+             if (totalMsrp > 0) {
+               const pctOff = ((totalMsrp - totalPaid) / totalMsrp) * 100;
+               const fmt = pctOff >= 0 ? `${pctOff.toFixed(1)}% off` : `${Math.abs(pctOff).toFixed(1)}% over`;
+               statCollectionPaidPct.textContent = `(${fmt})`;
+             } else {
+               statCollectionPaidPct.textContent = '(--% off)';
+             }
+           }
+
+           const totalPages = libraryBooks.reduce((sum, b) => {
+             const pc = (b.PageCount !== undefined && b.PageCount !== null && b.PageCount !== "") ? parseInt(b.PageCount, 10) : NaN;
+             return Number.isFinite(pc) ? sum + pc : sum;
+           }, 0);
+           const readPages = libraryBooks.reduce((sum, b) => {
+             if (!b.Read) return sum;
+             const pc = (b.PageCount !== undefined && b.PageCount !== null && b.PageCount !== "") ? parseInt(b.PageCount, 10) : NaN;
+             return Number.isFinite(pc) ? sum + pc : sum;
+           }, 0);
+           if (statPagesRead) statPagesRead.textContent = readPages;
+           if (statPagesTotal) statPagesTotal.textContent = totalPages;
+           if (statPagesPct) {
+             const pct = totalPages ? Math.round((readPages / totalPages) * 100) : 0;
+             statPagesPct.textContent = `${pct}% read`;
            }
            // Top lists
            renderTopList(statTopDemographics, computeTopCountsBySeries(libraryBooks, 'Demographic'), 'No demographics yet');
@@ -4826,9 +5280,15 @@
              Date: data.date || "Unknown",
              Cover: data.cover || "",
              ISBN: data.isbn || "",
+             PageCount: (data.pageCount !== undefined && data.pageCount !== null) ? data.pageCount : "",
+             Rating: (data.rating !== undefined && data.rating !== null) ? data.rating : "",
+             AmountPaid: (data.amountPaid !== undefined && data.amountPaid !== null) ? data.amountPaid : "",
              DateRead: data.dateRead || "",
              DatePurchased: data.datePurchased || "",
              MSRP: (data.msrp !== undefined && data.msrp !== null) ? data.msrp : "",
+             SpecialType: data.specialType || "",
+             SpecialVolumes: (data.specialVolumes !== undefined && data.specialVolumes !== null) ? data.specialVolumes : "",
+             CollectiblePrice: (data.collectiblePrice !== undefined && data.collectiblePrice !== null) ? data.collectiblePrice : "",
              Read: !!data.read,
              kind: "library"
            });
@@ -4842,48 +5302,51 @@
              return cmp !== 0 ? cmp : (aP.vol - bP.vol);
            });
          
-           // Render
-           bookGrid.innerHTML = "";
-           let readCount = 0;
-           libraryBooks.forEach(b => {
-             if (b.Read) readCount++;
-         
-             const card = document.createElement('div');
-             card.className = 'card' + (b.Read ? ' read' : '');
-             card.dataset.id = b.id;
-             card.dataset.kind = 'library';
-             const searchable = [
-               b.Title || '',
-               b.Authors || '',
-               b.Publisher || '',
-               b.ISBN || '',
-               b.Date || ''
-             ].join(' ').toLowerCase();
-             card.dataset.search = searchable;
-             card.innerHTML = `
-                 <img src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
-                 <div class="title">${b.Title || ''}</div>
-                 <div class="meta">${
-                   (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
-                   (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
-                   (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '') +
-                   (b.Read && b.DateRead ? ('Read on ' + formatDateMMDDYYYY(b.DateRead) + '<br>') : '')
-                 }</div>
-                 <div class="isbn">${b.ISBN || ''}</div>
-             `;
-         
-             card.addEventListener('click', (e) => {
-               if (multiSelectActive && isAdmin && currentSectionKey === 'library') {
-                 e.preventDefault();
-                 e.stopPropagation();
-                 toggleCardSelection(card, b.id);
-               } else {
-                 showPopup(b);
-               }
-             });
-         
-             bookGrid.appendChild(card);
-           });
+          // Render
+          bookGrid.innerHTML = "";
+          const libFragment = document.createDocumentFragment();
+          let readCount = 0;
+          libraryBooks.forEach(b => {
+            if (b.Read) readCount++;
+
+            const card = document.createElement('div');
+            card.className = 'card' + (b.Read ? ' read' : '');
+            card.dataset.id = b.id;
+            card.dataset.kind = 'library';
+            const searchable = [
+              b.Title || '',
+             b.Authors || '',
+             b.Publisher || '',
+             b.ISBN || '',
+             b.Date || '',
+             (b.PageCount !== undefined && b.PageCount !== null ? String(b.PageCount) : '')
+            ].join(' ').toLowerCase();
+            card.dataset.search = searchable;
+            card.innerHTML = `
+                <img loading="lazy" decoding="async" src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
+                <div class="title">${b.Title || ''}</div>
+                <div class="meta">${
+                  (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
+                  (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
+                  (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '') +
+                  (b.Read && b.DateRead ? ('Read on ' + formatDateMMDDYYYY(b.DateRead) + '<br>') : '')
+                }</div>
+                <div class="isbn">${b.ISBN || ''}</div>
+            `;
+
+            card.addEventListener('click', (e) => {
+              if (multiSelectActive && isAdmin && currentSectionKey === 'library') {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleCardSelection(card, b.id);
+              } else {
+                showPopup(b);
+              }
+            });
+
+            libFragment.appendChild(card);
+          });
+          bookGrid.appendChild(libFragment);
          
            totalTop.textContent    = `Total Books: ${libraryBooks.length}`;
            totalBottom.textContent = `Total Books: ${libraryBooks.length}`;
@@ -4915,6 +5378,12 @@
                Date: data.date || "Unknown",
                Cover: data.cover || "",
                ISBN: data.isbn || "",
+               PageCount: (data.pageCount !== undefined && data.pageCount !== null) ? data.pageCount : "",
+               Rating: (data.rating !== undefined && data.rating !== null) ? data.rating : "",
+               AmountPaid: (data.amountPaid !== undefined && data.amountPaid !== null) ? data.amountPaid : "",
+               SpecialType: data.specialType || "",
+               SpecialVolumes: (data.specialVolumes !== undefined && data.specialVolumes !== null) ? data.specialVolumes : "",
+               CollectiblePrice: (data.collectiblePrice !== undefined && data.collectiblePrice !== null) ? data.collectiblePrice : "",
                AmazonURL: data.amazonURL || "",
                kind: "wishlist"
              });
@@ -4928,42 +5397,45 @@
              return cmp !== 0 ? cmp : (aP.vol - bP.vol);
            });
          
-           wishlistGrid.innerHTML = "";
-           wishlistItems.forEach(b => {
-             const card = document.createElement('div');
-             card.className = 'card';
-             card.dataset.id = b.id;
-             card.dataset.kind = 'wishlist';
-             const searchable = [
-               b.Title || '',
-               b.Authors || '',
-               b.Publisher || '',
-               b.ISBN || '',
-               b.Date || ''
-             ].join(' ').toLowerCase();
-             card.dataset.search = searchable;
-             card.innerHTML = `
-               <img src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
-               <div class="title">${b.Title || ''}</div>
-               <div class="meta">${
-                 (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
-                 (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
-                 (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '')
-               }</div>
-             `;
-         
-             card.addEventListener('click', (e) => {
-               if (multiSelectActive && isAdmin && currentSectionKey === 'wishlist') {
-                 e.preventDefault();
-                 e.stopPropagation();
-                 toggleCardSelection(card, b.id);
-               } else {
-                 showPopup(b);
-               }
-             });
-         
-             wishlistGrid.appendChild(card);
-         });
+          wishlistGrid.innerHTML = "";
+          const wishFragment = document.createDocumentFragment();
+          wishlistItems.forEach(b => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.dataset.id = b.id;
+            card.dataset.kind = 'wishlist';
+            const searchable = [
+              b.Title || '',
+              b.Authors || '',
+              b.Publisher || '',
+              b.ISBN || '',
+              b.Date || '',
+              (b.PageCount !== undefined && b.PageCount !== null ? String(b.PageCount) : '')
+            ].join(' ').toLowerCase();
+            card.dataset.search = searchable;
+            card.innerHTML = `
+              <img loading="lazy" decoding="async" src="${b.Cover || 'https://via.placeholder.com/150x220?text=No+Cover'}" alt="Cover">
+              <div class="title">${b.Title || ''}</div>
+              <div class="meta">${
+                (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
+                (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
+                (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '')
+              }</div>
+            `;
+
+            card.addEventListener('click', (e) => {
+              if (multiSelectActive && isAdmin && currentSectionKey === 'wishlist') {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleCardSelection(card, b.id);
+              } else {
+                showPopup(b);
+              }
+            });
+
+            wishFragment.appendChild(card);
+        });
+        wishlistGrid.appendChild(wishFragment);
         
          updateWishlistCountdown();
          updateDashboardStats();
@@ -5127,6 +5599,19 @@
            if (book.Authors && book.Authors !== 'Unknown') meta += book.Authors + '<br>';
            if (book.Publisher && book.Publisher !== 'Unknown') meta += book.Publisher + '<br>';
            if (book.Date && book.Date !== 'Unknown') meta += book.Date + '<br>';
+           if (book.PageCount !== undefined && book.PageCount !== null && book.PageCount !== "" && !isNaN(book.PageCount)) {
+             meta += `${book.PageCount} pages<br>`;
+           }
+           if (book.kind === "library" && (book.Read === true || book.Read === "true") && book.Rating !== undefined && book.Rating !== null && book.Rating !== "") {
+             meta += `Rating: ${book.Rating}/5<br>`;
+           }
+           if (book.SpecialType) {
+             if (book.SpecialType === "specialEdition") {
+               meta += `Special Edition${book.SpecialVolumes ? ` • ${book.SpecialVolumes} volume${book.SpecialVolumes === 1 ? '' : 's'}` : ''}<br>`;
+             } else if (book.SpecialType === "collectible") {
+               meta += `Collectible${book.CollectiblePrice ? ` • $${Number(book.CollectiblePrice).toFixed(2)} override` : ''}<br>`;
+             }
+           }
            popupMeta.innerHTML = meta;
            popupISBN.innerHTML = book.ISBN || '';
 
@@ -5207,6 +5692,7 @@
            try {
              const payload = { read: newVal };
              payload.dateRead = newVal ? new Date().toISOString().slice(0,10) : "";
+             if (!newVal) payload.rating = "";
              await updateDoc(doc(db, "library", currentPopupBook.id), payload);
              await loadLibraryFromFirestore();
              // keep popup open but refresh its state
@@ -5286,18 +5772,23 @@
                  for (const id of ids) {
                    const b = libraryBooks.find(x => x.id === id);
                    if (!b) continue;
-                   const payload = {
-                     title: b.Title,
-                     authors: b.Authors,
-                     publisher: b.Publisher,
-                     date: b.Date,
-                     isbn: b.ISBN,
-                     cover: b.Cover,
-                     amazonURL: b.AmazonURL || ''
-                   };
-                   await addDoc(collection(db, "wishlist"), payload);
-                   await deleteDoc(doc(db, "library", id));
-                 }
+                 const payload = {
+                   title: b.Title,
+                   authors: b.Authors,
+                   publisher: b.Publisher,
+                   date: b.Date,
+                   isbn: b.ISBN,
+                   pageCount: b.PageCount || "",
+                   cover: b.Cover,
+                   amazonURL: b.AmazonURL || '',
+                   specialType: b.SpecialType || "",
+                   specialVolumes: b.SpecialVolumes || "",
+                   collectiblePrice: b.CollectiblePrice || "",
+                   rating: b.Rating || ""
+                  };
+                  await addDoc(collection(db, "wishlist"), payload);
+                  await deleteDoc(doc(db, "library", id));
+                }
                } else {
                  if (!confirm(`Move ${ids.length} item(s) to Library?`)) return;
                  for (const id of ids) {
@@ -5309,8 +5800,14 @@
                      publisher: b.Publisher,
                      date: b.Date,
                      isbn: b.ISBN,
+                     pageCount: b.PageCount || "",
                      cover: b.Cover,
-                     read: false
+                     amountPaid: "",
+                     read: false,
+                     rating: "",
+                     specialType: b.SpecialType || "",
+                     specialVolumes: b.SpecialVolumes || "",
+                     collectiblePrice: b.CollectiblePrice || ""
                    };
                    await addDoc(collection(db, "library"), payload);
                    await deleteDoc(doc(db, "wishlist", id));
@@ -5322,7 +5819,7 @@
               }
             } else if (action === 'markUnread' && isLibraryPage) {
               for (const id of ids) {
-                await updateDoc(doc(db, "library", id), { read: false, dateRead: "" });
+                await updateDoc(doc(db, "library", id), { read: false, dateRead: "", rating: "" });
               }
             } else if (action === 'delete') {
                const colName = isLibraryPage ? "library" : "wishlist";
@@ -5449,7 +5946,7 @@
            } else {
              backToTopBtn.classList.remove('show');
            }
-         });
+         }, { passive: true });
          backToTopBtn.addEventListener('click', () => {
            window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
          });
@@ -5458,19 +5955,30 @@
          renderActivityLog();
          reloadAll();
          
-           function resetAdminForm() {
-               adminTitleInput.value     = "";
-               adminAuthorsInput.value   = "";
-               adminPublisherInput.value = "";
-              setDateInputValue(adminDateInput, "");
+          function resetAdminForm() {
+              adminTitleInput.value     = "";
+              adminAuthorsInput.value   = "";
+              adminPublisherInput.value = "";
+             setDateInputValue(adminDateInput, "");
+             if (adminPageCountInput) adminPageCountInput.value = "";
               adminIsbnInput.value      = "";
               adminCoverInput.value     = "";
               adminAmazonInput.value    = "";
               adminReadInput.checked    = false;
               if (adminDateReadInput) setDateInputValue(adminDateReadInput, "");
               if (adminDateReadWrapper) adminDateReadWrapper.style.display = "none";
-              adminCoverPreview.src     = "https://via.placeholder.com/150x220?text=No+Cover";
-          }
+              if (adminRatingInput) adminRatingInput.value = "";
+              if (adminRatingWrapper) adminRatingWrapper.style.display = "none";
+              if (adminSpecialFlag) adminSpecialFlag.checked = false;
+              if (adminSpecialType) adminSpecialType.value = "";
+              if (adminSpecialFields) adminSpecialFields.style.display = "none";
+              if (adminSpecialVolumes) adminSpecialVolumes.value = "";
+              if (adminSpecialVolumesWrap) adminSpecialVolumesWrap.style.display = "none";
+              if (adminCollectiblePrice) adminCollectiblePrice.value = "";
+              if (adminCollectiblePriceWrap) adminCollectiblePriceWrap.style.display = "none";
+              if (adminIsbnWrapper) adminIsbnWrapper.style.display = "block";
+          adminCoverPreview.src     = "https://via.placeholder.com/150x220?text=No+Cover";
+      }
          
            function openAdminForm(options) {
                const { mode, collection, book } = options;
@@ -5480,16 +5988,18 @@
                adminFormDocId      = book ? book.id : null;
          
                resetAdminForm();
-         
+
                // Configure labels & visibility
                const isLibrary  = (adminFormCollection === "library");
                const isWishlist = (adminFormCollection === "wishlist");
 
                adminAmazonWrapper.style.display = isWishlist ? "flex" : "none";
                adminReadWrapper.style.display   = isLibrary  ? "block" : "none";
+               if (adminIsbnWrapper) adminIsbnWrapper.style.display = isLibrary ? "block" : "none";
                if (adminDateReadWrapper) {
                  adminDateReadWrapper.style.display = isLibrary ? "block" : "none";
                }
+               if (adminRatingWrapper) adminRatingWrapper.style.display = (isLibrary && adminReadInput.checked) ? "block" : "none";
          
                if (adminFormMode === "add") {
                adminFormTitle.textContent = isLibrary ? "Add Library Book" : "Add Wishlist Item";
@@ -5510,13 +6020,16 @@
                } else {
                  setDateInputValue(adminDateInput, "");
                }
-         
+
                adminIsbnInput.value      = book.ISBN || "";
                adminCoverInput.value     = book.Cover || "";
                adminCoverPreview.src     = book.Cover || "https://via.placeholder.com/150x220?text=No+Cover";
-         
+               if (adminPageCountInput) adminPageCountInput.value = (book.PageCount !== undefined && book.PageCount !== null && book.PageCount !== "") ? book.PageCount : "";
+
                if (isWishlist) {
                    adminAmazonInput.value = book.AmazonURL || "";
+                   if (adminRatingWrapper) adminRatingWrapper.style.display = "none";
+                   if (adminRatingInput) adminRatingInput.value = "";
                } else {
                    adminReadInput.checked = !!book.Read;
                    if (adminDateReadInput) {
@@ -5526,15 +6039,32 @@
                    if (adminDateReadWrapper) {
                      adminDateReadWrapper.style.display = adminReadInput.checked ? "block" : "none";
                    }
+                   if (adminRatingWrapper) adminRatingWrapper.style.display = adminReadInput.checked ? "block" : "none";
+                   if (adminRatingInput) {
+                     adminRatingInput.value = (book.Read && book.Rating !== undefined && book.Rating !== null && book.Rating !== "") ? book.Rating : "";
+                   }
                }
+               if (adminSpecialFlag) adminSpecialFlag.checked = !!book.SpecialType;
+               if (adminSpecialType) adminSpecialType.value = book.SpecialType || "";
+               const isSpecialEdition = book.SpecialType === "specialEdition";
+               const isCollectible = book.SpecialType === "collectible";
+               if (adminSpecialFields) adminSpecialFields.style.display = book.SpecialType ? "flex" : "none";
+               if (adminSpecialVolumesWrap) adminSpecialVolumesWrap.style.display = isSpecialEdition ? "block" : "none";
+               if (adminSpecialVolumes) adminSpecialVolumes.value = isSpecialEdition ? (book.SpecialVolumes || "") : "";
+               if (adminCollectiblePriceWrap) adminCollectiblePriceWrap.style.display = isCollectible ? "block" : "none";
+               if (adminCollectiblePrice) adminCollectiblePrice.value = isCollectible
+                 ? ((book.CollectiblePrice !== undefined && book.CollectiblePrice !== null && book.CollectiblePrice !== "") ? book.CollectiblePrice : "")
+                 : "";
                }
-         
+
                // Ensure suggestions & multi-create button reflect the initial values
                renderTitleSuggestions();
                renderAuthorPublisherSuggestions();
                updateMultiCreateVisibility();
-         
-         
+
+               syncAdminSpecialUI();
+
+
                adminFormOverlay.style.display = "flex";
            }
            
@@ -5545,13 +6075,19 @@
          
            try {
             for (const item of multiCreateItems) {
+              const specialTypeVal = item.specialType || "";
               const payload = {
               title: item.title,
               authors: item.authors,
               publisher: item.publisher,
               date: item.date,
-              isbn: item.isbn,
-              cover: item.cover
+              isbn: (col === "library") ? item.isbn : "",
+              pageCount: (item.pageCount !== undefined && item.pageCount !== null && item.pageCount !== "") ? parseInt(item.pageCount, 10) : "",
+              cover: item.cover,
+              rating: (col === "library" && item.read && item.rating !== undefined && item.rating !== null && item.rating !== "") ? parseFloat(item.rating) : "",
+              specialType: specialTypeVal,
+              specialVolumes: (specialTypeVal === "specialEdition" && item.specialVolumes !== undefined && item.specialVolumes !== null && item.specialVolumes !== "") ? parseInt(item.specialVolumes, 10) : "",
+              collectiblePrice: (specialTypeVal === "collectible" && item.collectiblePrice !== undefined && item.collectiblePrice !== null && item.collectiblePrice !== "") ? parseFloat(item.collectiblePrice) : ""
             };
 
             if (col === "wishlist") {
@@ -5622,6 +6158,11 @@
                amazonURL: "",
                read: false,
                dateRead: "",
+               pageCount: "",
+               rating: "",
+               specialType: "",
+               specialVolumes: "",
+               collectiblePrice: "",
                vol: newVol,
                existsAlready: false,
                docId: null
@@ -5669,48 +6210,75 @@
                });
          
            adminFormSave.addEventListener('click', async () => {
-               const title     = adminTitleInput.value.trim();
-               const authors   = adminAuthorsInput.value.trim();
-              const publisher = adminPublisherInput.value.trim();
-              const date      = adminDateInput.value.trim();
-              const isbn      = adminIsbnInput.value.trim();
-              const cover     = adminCoverInput.value.trim();
-              const amazonURL = adminAmazonInput.value.trim();
-              const read      = adminReadInput.checked;
-              const dateRead  = (adminDateReadInput && adminDateReadInput.value.trim()) || "";
-              const editingExisting = (adminFormMode === "edit" && adminFormDocId);
-              const editingCollection = adminFormCollection;
+              const title     = adminTitleInput.value.trim();
+              const authors   = adminAuthorsInput.value.trim();
+             const publisher = adminPublisherInput.value.trim();
+             const date      = adminDateInput.value.trim();
+             const isbn      = adminIsbnInput.value.trim();
+             const pageCountRaw = adminPageCountInput ? adminPageCountInput.value.trim() : "";
+             const pageCountVal = pageCountRaw === "" ? "" : parseInt(pageCountRaw, 10);
+             const cover     = adminCoverInput.value.trim();
+             const amazonURL = adminAmazonInput.value.trim();
+             const read      = adminReadInput.checked;
+             const dateRead  = (adminDateReadInput && adminDateReadInput.value.trim()) || "";
+             const ratingRaw = adminRatingInput ? adminRatingInput.value.trim() : "";
+             const ratingVal = (read && ratingRaw !== "") ? parseFloat(ratingRaw) : "";
+             const specialOn = adminSpecialFlag ? adminSpecialFlag.checked : false;
+             const specialTypeVal = specialOn && adminSpecialType ? adminSpecialType.value : "";
+             const specialVolRaw = adminSpecialVolumes ? adminSpecialVolumes.value.trim() : "";
+             const specialVolVal = (specialOn && specialTypeVal === "specialEdition" && specialVolRaw !== "")
+               ? parseInt(specialVolRaw, 10)
+               : "";
+             const collectibleRaw = adminCollectiblePrice ? adminCollectiblePrice.value.trim() : "";
+             const collectibleVal = (specialOn && specialTypeVal === "collectible" && collectibleRaw !== "")
+               ? parseFloat(collectibleRaw)
+               : "";
+             const editingExisting = (adminFormMode === "edit" && adminFormDocId);
+             const editingCollection = adminFormCollection;
+             const sourceBook = editingExisting
+               ? (editingCollection === "library" ? libraryBooks : wishlistItems).find(b => b.id === adminFormDocId)
+               : null;
          
                if (!title) {
                alert("Title is required.");
                return;
                }
          
-              try {
-              if (adminFormMode === "add") {
-                  if (adminFormCollection === "library") {
-                  await addDoc(collection(db, "library"), {
-                      title,
-                      authors,
-                      publisher,
-                      date,
-                      isbn,
-                      cover,
-                      read,
-                      dateRead: read
-                        ? (/^\d{4}-\d{2}-\d{2}$/.test(dateRead) ? dateRead : new Date().toISOString().slice(0,10))
-                        : ""
-                  });
-                  addActivity(`Added "${title}" to library`);
-                  } else {
+             try {
+             if (adminFormMode === "add") {
+                 if (adminFormCollection === "library") {
+                 await addDoc(collection(db, "library"), {
+                     title,
+                     authors,
+                     publisher,
+                     date,
+                     isbn,
+                     amountPaid: "",
+                     pageCount: pageCountRaw === "" ? "" : (Number.isFinite(pageCountVal) ? pageCountVal : ""),
+                     cover,
+                     read,
+                     dateRead: read
+                       ? (/^\d{4}-\d{2}-\d{2}$/.test(dateRead) ? dateRead : new Date().toISOString().slice(0,10))
+                       : "",
+                     rating: (ratingVal !== "" && Number.isFinite(ratingVal)) ? ratingVal : "",
+                     specialType: specialOn ? (specialTypeVal || "") : "",
+                     specialVolumes: specialOn && specialTypeVal === "specialEdition" && Number.isFinite(specialVolVal) ? specialVolVal : "",
+                     collectiblePrice: specialOn && specialTypeVal === "collectible" && Number.isFinite(collectibleVal) ? collectibleVal : ""
+                 });
+                 addActivity(`Added "${title}" to library`);
+                 } else {
                   await addDoc(collection(db, "wishlist"), {
                       title,
                       authors,
                        publisher,
                        date,
-                       isbn,
+                       pageCount: pageCountRaw === "" ? "" : (Number.isFinite(pageCountVal) ? pageCountVal : ""),
+                       // ISBN hidden for wishlist
                        cover,
-                       amazonURL
+                       amazonURL,
+                       specialType: specialOn ? (specialTypeVal || "") : "",
+                       specialVolumes: specialOn && specialTypeVal === "specialEdition" && Number.isFinite(specialVolVal) ? specialVolVal : "",
+                       collectiblePrice: specialOn && specialTypeVal === "collectible" && Number.isFinite(collectibleVal) ? collectibleVal : ""
                    });
                     addActivity(`Added "${title}" to wishlist`);
                    }
@@ -5722,7 +6290,8 @@
                   authors,
                   publisher,
                   date,
-                  isbn,
+                  isbn: colName === "library" ? isbn : (sourceBook ? (sourceBook.ISBN || "") : ""),
+                  pageCount: pageCountRaw === "" ? "" : (Number.isFinite(pageCountVal) ? pageCountVal : ""),
                   cover
                   };
                   if (colName === "library") {
@@ -5730,8 +6299,15 @@
                   payload.dateRead = read
                     ? (/^\d{4}-\d{2}-\d{2}$/.test(dateRead) ? dateRead : new Date().toISOString().slice(0,10))
                     : "";
+                  payload.rating = (ratingVal !== "" && Number.isFinite(ratingVal)) ? ratingVal : "";
+                  payload.specialType = specialOn ? (specialTypeVal || "") : "";
+                  payload.specialVolumes = specialOn && specialTypeVal === "specialEdition" && Number.isFinite(specialVolVal) ? specialVolVal : "";
+                  payload.collectiblePrice = specialOn && specialTypeVal === "collectible" && Number.isFinite(collectibleVal) ? collectibleVal : "";
                   } else {
                   payload.amazonURL = amazonURL;
+                  payload.specialType = specialOn ? (specialTypeVal || "") : "";
+                  payload.specialVolumes = specialOn && specialTypeVal === "specialEdition" && Number.isFinite(specialVolVal) ? specialVolVal : "";
+                  payload.collectiblePrice = specialOn && specialTypeVal === "collectible" && Number.isFinite(collectibleVal) ? collectibleVal : "";
                   }
                   await updateDoc(ref, payload);
                   addActivity(`Edited "${title}" in ${colName}`);
