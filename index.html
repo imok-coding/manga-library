@@ -3335,10 +3335,12 @@ max-height: 90vh;
          }
 
          function handleCardMultiClick(e, card, id, sectionKey) {
+           // Only multi-select when a modifier key is held
            const cards = Array.from((sectionKey === 'library' ? bookGrid : wishlistGrid).querySelectorAll('.card'));
            const currentIndex = cards.indexOf(card);
            const isRange = e.shiftKey && multiSelectLastIndex !== null;
            const isToggle = e.metaKey || e.ctrlKey;
+           let handled = false;
 
            if (isRange && currentIndex !== -1 && multiSelectLastIndex !== null) {
              const start = Math.min(multiSelectLastIndex, currentIndex);
@@ -3348,15 +3350,19 @@ max-height: 90vh;
                if (!rangeCard) continue;
                selectCard(rangeCard, rangeCard.dataset.id);
              }
+             handled = true;
            } else if (isToggle) {
              toggleCardSelection(card, id);
+             handled = true;
            } else {
-             // Default click: toggle without clearing prior selections
-             toggleCardSelection(card, id);
+             // No modifier: just set the anchor index for future shift ranges
+             multiSelectLastIndex = currentIndex;
+             return false;
            }
 
            multiSelectLastIndex = currentIndex;
            updateMultiSelectInfo();
+           return handled;
          }
          
          // ===== AUTH MODAL LOGIC =====
@@ -3779,7 +3785,12 @@ max-height: 90vh;
           const buttons = dashListButtons;
           const currentIndex = buttons.indexOf(btn);
 
-          if (shift && dashLastIndex !== null && currentIndex !== -1) {
+          let selectionChanged = false;
+
+          if (!shift && !ctrl) {
+            // No modifiers: just set anchor and proceed to open detail
+            dashLastIndex = currentIndex;
+          } else if (shift && dashLastIndex !== null && currentIndex !== -1) {
             const start = Math.min(dashLastIndex, currentIndex);
             const end = Math.max(dashLastIndex, currentIndex);
             for (let i = start; i <= end; i++) {
@@ -3788,23 +3799,20 @@ max-height: 90vh;
                 dashMultiSelectedIds.add(b.dataset.bookId);
               }
             }
+            selectionChanged = true;
           } else if (ctrl) {
             if (dashMultiSelectedIds.has(bookId)) {
               dashMultiSelectedIds.delete(bookId);
             } else {
               dashMultiSelectedIds.add(bookId);
             }
-          } else {
-            // Default click toggles without clearing existing range selections
-            if (dashMultiSelectedIds.has(bookId)) {
-              dashMultiSelectedIds.delete(bookId);
-            } else {
-              dashMultiSelectedIds.add(bookId);
-            }
+            selectionChanged = true;
           }
 
-          dashLastIndex = currentIndex;
-          updateDashSelectionUI();
+          if (selectionChanged) {
+            dashLastIndex = currentIndex;
+            updateDashSelectionUI();
+          }
 
           // Always open detail on click to keep existing behavior
           dashSelectedBookId = bookId;
@@ -5646,12 +5654,14 @@ max-height: 90vh;
 
             card.addEventListener('click', (e) => {
               if (multiSelectActive && isAdmin && currentSectionKey === 'library') {
-                e.preventDefault();
-                e.stopPropagation();
-                handleCardMultiClick(e, card, b.id, 'library');
-              } else {
-                showPopup(b);
+                const handled = handleCardMultiClick(e, card, b.id, 'library');
+                if (handled) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  return;
+                }
               }
+              showPopup(b);
             });
 
             libFragment.appendChild(card);
@@ -5740,12 +5750,14 @@ max-height: 90vh;
 
             card.addEventListener('click', (e) => {
               if (multiSelectActive && isAdmin && currentSectionKey === 'wishlist') {
-                e.preventDefault();
-                e.stopPropagation();
-                handleCardMultiClick(e, card, b.id, 'wishlist');
-              } else {
-                showPopup(b);
+                const handled = handleCardMultiClick(e, card, b.id, 'wishlist');
+                if (handled) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  return;
+                }
               }
+              showPopup(b);
             });
 
             wishFragment.appendChild(card);
