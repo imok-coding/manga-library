@@ -24,7 +24,7 @@
       <style>
          /* ===== BODY & BASE ===== */
          body {
-         background: #1e0d14 url("https://i.imgur.com/aRbxSEm.png") center top / cover no-repeat fixed;
+         background: #1e0d14 url("https://imgur.com/7co2elX.png") center top / cover no-repeat fixed;
          color: #fff;
          font-family: Helvetica, Arial, sans-serif;
          margin: 0;
@@ -1606,6 +1606,10 @@
          color: #ffb6c1;
          border: 1px solid #ffb6c1;
          box-shadow: none;
+         }
+         /* Improve tap responsiveness on touch devices */
+         button, .menu-item {
+         touch-action: manipulation;
          }
          @media (max-width: 600px) {
          #multiSelectBar {
