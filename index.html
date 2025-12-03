@@ -389,16 +389,16 @@
 .calendar-grid {
 display: grid;
 grid-template-columns: repeat(7, 1fr);
-grid-template-rows: repeat(6, minmax(82px, 1fr));
+grid-auto-rows: minmax(78px, auto);
 gap: 6px;
-min-height: 520px; /* keep calendar height consistent across months */
-height: 520px;
+height: auto;
+min-height: 0;
 }
-        #releaseCalendar {
-        height: 520px;
+         #releaseCalendar {
+        height: auto;
         }
          .calendar-day {
-         min-height: 62px;
+         min-height: 60px;
          border: 1px solid rgba(255,182,193,0.25);
          border-radius: 10px;
          padding: 6px;
@@ -431,7 +431,7 @@ height: 520px;
          display: flex;
          flex-direction: column;
          gap: 4px;
-         overflow: hidden;
+         overflow: visible;
          }
          .calendar-more-btn {
          margin-top: 2px;
@@ -450,6 +450,9 @@ height: 520px;
          display: none;
          flex-direction: column;
          gap: 4px;
+         margin-top: 4px;
+         max-height: 140px;
+         overflow-y: auto;
          }
          .calendar-day-overlay {
          position: absolute;
@@ -1013,11 +1016,14 @@ max-height: 90vh;
          align-items: stretch;
          box-sizing: border-box;
          padding: 4px;
+         max-height: 540px;
+         overflow: hidden;
          }
          .dash-library-list,
          .dash-library-details {
          min-height: 380px;
          height: 100%;
+         max-height: 540px;
          box-sizing: border-box;
          }
          .dash-library-list {
@@ -1097,6 +1103,26 @@ max-height: 90vh;
          background: rgba(43,15,29,0.6);
          display: flex;
          flex-direction: column;
+         overflow-y: auto;
+         }
+         .dash-bulk-row {
+         display: flex;
+         flex-direction: column;
+         gap: 8px;
+         padding: 10px;
+         margin-bottom: 10px;
+         border: 1px dashed rgba(255,182,193,0.45);
+         border-radius: 10px;
+         background: rgba(255,182,193,0.08);
+         }
+         .dash-bulk-controls {
+         display: flex;
+         align-items: center;
+         gap: 8px;
+         flex-wrap: wrap;
+         }
+         #dashBulkPaidInput {
+         max-width: 140px;
          }
          .dash-detail-title {
          margin: 0 0 8px;
@@ -1891,10 +1917,13 @@ max-height: 90vh;
          }
          .dash-library {
          grid-template-columns: 1fr;
+         max-height: none;
+         overflow: visible;
          }
          .dash-library-list,
          .dash-library-details {
          min-height: 0;
+         max-height: none;
          }
          }
          #multiCreatePanel {
@@ -2436,6 +2465,13 @@ max-height: 90vh;
                      <div class="dash-library">
                      <div class="dash-library-list" id="dashLibraryList"></div>
                      <div class="dash-library-details">
+                     <div id="dashBulkPaidRow" class="dash-bulk-row" style="display:none;">
+                        <div class="dash-bulk-info" id="dashBulkPaidLabel">Apply Amount Paid to selected books</div>
+                        <div class="dash-bulk-controls">
+                           <input type="number" id="dashBulkPaidInput" step="0.01" min="0" placeholder="0.00">
+                           <button class="dash-btn primary" id="dashBulkPaidApply">Apply to Selected</button>
+                        </div>
+                     </div>
                      <div id="dashLibraryEmpty">Select a series or book to edit</div>
                      <div id="dashSeriesForm" style="display:none;">
                         <div class="dash-detail-title" id="dashSeriesTitle"></div>
@@ -2994,6 +3030,10 @@ max-height: 90vh;
          const dashDetailSpecialVolumes = document.getElementById('dashDetailSpecialVolumes');
          const dashDetailCollectiblePriceRow = document.getElementById('dashDetailCollectiblePriceRow');
          const dashDetailCollectiblePrice = document.getElementById('dashDetailCollectiblePrice');
+         const dashBulkPaidRow = document.getElementById('dashBulkPaidRow');
+         const dashBulkPaidLabel = document.getElementById('dashBulkPaidLabel');
+         const dashBulkPaidInput = document.getElementById('dashBulkPaidInput');
+         const dashBulkPaidApply = document.getElementById('dashBulkPaidApply');
          const dashDetailSave   = document.getElementById('dashDetailSave');
          const dashDetailCancel = document.getElementById('dashDetailCancel');
          
@@ -3919,7 +3959,7 @@ max-height: 90vh;
             dashListFooter.style.marginTop = '8px';
             dashListFooter.style.gap = '8px';
             dashMultiEditBtn = document.createElement('button');
-            dashMultiEditBtn.textContent = 'Edit Selected';
+            dashMultiEditBtn.textContent = 'Bulk Amount Paid';
             dashMultiEditBtn.style.padding = '6px 12px';
             dashMultiEditBtn.style.borderRadius = '999px';
             dashMultiEditBtn.style.border = '1px solid #ff69b4';
@@ -3940,9 +3980,37 @@ max-height: 90vh;
             const id = btn.dataset.bookId;
             btn.classList.toggle('multi-selected', dashMultiSelectedIds.has(id));
           });
+          const selectionCount = dashMultiSelectedIds.size;
           if (dashMultiEditBtn) {
-            dashMultiEditBtn.style.display = dashMultiSelectedIds.size > 0 ? 'inline-block' : 'none';
+            dashMultiEditBtn.style.display = selectionCount > 0 ? 'inline-block' : 'none';
+            dashMultiEditBtn.textContent = selectionCount > 0
+              ? `Bulk Amount Paid (${selectionCount})`
+              : 'Bulk Amount Paid';
           }
+          updateDashBulkPaidUI();
+        }
+
+        function updateDashBulkPaidUI(forceShow = false) {
+          if (!dashBulkPaidRow || !dashBulkPaidLabel || !dashBulkPaidInput) return;
+          const ids = Array.from(dashMultiSelectedIds);
+          const count = ids.length;
+          if (!count && !forceShow) {
+            dashBulkPaidRow.style.display = 'none';
+            return;
+          }
+          const selectedBooks = ids
+            .map(id => libraryBooks.find(b => b.id === id))
+            .filter(Boolean);
+          const paidValues = Array.from(new Set(selectedBooks.map(b => {
+            const v = b && b.AmountPaid !== undefined && b.AmountPaid !== null && b.AmountPaid !== ""
+              ? String(b.AmountPaid)
+              : "";
+            return v;
+          })));
+          dashBulkPaidLabel.textContent = `Apply Amount Paid to ${count} selected book${count === 1 ? '' : 's'}`;
+          dashBulkPaidRow.style.display = count > 0 ? 'flex' : 'none';
+          // Pre-fill shared value when all selected items match
+          dashBulkPaidInput.value = paidValues.length === 1 ? paidValues[0] : "";
         }
 
         function clearDashSelection() {
@@ -3997,84 +4065,16 @@ max-height: 90vh;
         }
 
         function openDashboardMultiEdit() {
-          if (!dashMultiSelectedIds.size) return;
-          const ids = Array.from(dashMultiSelectedIds);
-          multiSelectionDocIds = ids.slice();
-          const items = [];
-          ids.forEach(id => {
-            const b = libraryBooks.find(x => x.id === id);
-            if (!b) return;
-            const parsed = parseTitleForSort(b.Title);
-            const existingDate = (b.Date || "").trim();
-            const dateValue = /^\d{4}-\d{2}-\d{2}$/.test(existingDate) ? existingDate : "";
-            items.push({
-              title: b.Title || "",
-              authors: b.Authors || "",
-              publisher: b.Publisher || "",
-              date: dateValue,
-              isbn: b.ISBN || "",
-              pageCount: b.PageCount || "",
-              cover: b.Cover || "",
-              amazonURL: b.AmazonURL || "",
-              read: !!b.Read,
-              dateRead: b.DateRead || "",
-              rating: b.Rating || "",
-              specialType: b.SpecialType || "",
-              specialVolumes: b.SpecialVolumes || "",
-              collectiblePrice: b.CollectiblePrice || "",
-              sortName: parsed.name || (b.Title || "").toLowerCase(),
-              sortVol: parsed.vol || 0,
-              vol: parsed.vol || 0,
-              existsAlready: true,
-              docId: b.id
-            });
-          });
-          if (!items.length) return;
-          // Sort to keep a deterministic order
-          items.sort((a, b) => {
-            const nameCmp = (a.sortName || '').localeCompare(b.sortName || '');
-            if (nameCmp !== 0) return nameCmp;
-            const volCmp = (a.sortVol || 0) - (b.sortVol || 0);
-            if (volCmp !== 0) return volCmp;
-            return (a.title || '').localeCompare(b.title || '');
-          });
-
-          // Normalize fields for bulk editing: if values differ, blank them so the user can supply a single value.
-          const bulkFields = [
-            'title','authors','publisher','date','isbn','pageCount','cover','amazonURL',
-            'read','dateRead','rating','specialType','specialVolumes','collectiblePrice'
-          ];
-          const shared = {};
-          bulkFields.forEach(field => {
-            if (field === 'read') {
-              const first = items[0].read === true;
-              const allSame = items.every(it => (!!it.read) === first);
-              shared.read = allSame ? first : null;
-            } else {
-              const vals = items.map(it => (it[field] === undefined || it[field] === null) ? '' : String(it[field]));
-              const first = vals[0];
-              const allSame = vals.every(v => v === first);
-              shared[field] = allSame ? first : '';
-            }
-          });
-          items.forEach(it => {
-            bulkFields.forEach(field => {
-              if (field === 'read') {
-                it.read = shared.read;
-              } else {
-                it[field] = shared[field];
-              }
-            });
-          });
-
-          // Collapse into a single logical entry for UI navigation
-          multiCreateItems = [ items[0] ];
-          multiCreateVolumes = [1];
-          multiCreateIndex = 0;
-          multiEditorMode = 'selection';
-          adminFormCollection = 'library';
-          multiEditorOverlay.style.display = "flex";
-          loadCurrentMultiCreateEntry();
+          if (!dashBulkPaidRow || !dashBulkPaidInput) return;
+          const count = dashMultiSelectedIds.size;
+          if (!count) {
+            alert('Select books in Library Manager (use Ctrl/Cmd or Shift) before bulk editing.');
+            return;
+          }
+          updateDashBulkPaidUI(true);
+          dashBulkPaidRow.style.display = 'flex';
+          dashBulkPaidRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          dashBulkPaidInput.focus();
         }
 
         function openSeriesDetail(seriesKey) {
@@ -4222,6 +4222,37 @@ max-height: 90vh;
           dashDetailSpecialType.addEventListener('change', syncDashSpecialUI);
         }
 
+        async function applyDashBulkPaid() {
+          const ids = Array.from(dashMultiSelectedIds);
+          if (!ids.length) {
+            alert('Select books in Library Manager (use Ctrl/Cmd or Shift) first.');
+            return;
+          }
+          if (!dashBulkPaidInput) return;
+          const raw = dashBulkPaidInput.value.trim();
+          const hasValue = raw !== "";
+          const parsed = hasValue ? parseFloat(raw) : "";
+          if (hasValue && !Number.isFinite(parsed)) {
+            alert('Enter a valid number for Amount Paid.');
+            return;
+          }
+          try {
+            for (const id of ids) {
+              await updateDoc(doc(db, "library", id), {
+                amountPaid: hasValue ? parsed : ""
+              });
+            }
+            await loadLibraryFromFirestore(true);
+            renderDashboardLibraryList();
+            if (ids[0]) openDashboardDetail(ids[0]);
+            addActivity(`Updated amount paid for ${ids.length} book${ids.length === 1 ? '' : 's'} in library`);
+            alert(`Applied Amount Paid to ${ids.length} selection${ids.length === 1 ? '' : 's'}.`);
+          } catch (err) {
+            console.error(err);
+            alert('Failed to apply Amount Paid to selection.');
+          }
+        }
+
         if (dashDetailCancel) {
           dashDetailCancel.addEventListener('click', () => {
             dashSelectedBookId = null;
@@ -4279,6 +4310,10 @@ max-height: 90vh;
               alert("Failed to save changes.");
             }
           });
+        }
+
+        if (dashBulkPaidApply) {
+          dashBulkPaidApply.addEventListener('click', applyDashBulkPaid);
         }
 
         async function saveSeriesChanges() {
@@ -4852,11 +4887,13 @@ max-height: 90vh;
                   docId: b.id
               });
            });
-         
+
            if (!items.length) {
                alert('Could not load selected items.');
                return;
            }
+
+           multiSelectionDocIds = ids.slice();
          
            // Sort by series/name, then numeric volume, then title to avoid 1,10,2 ordering
            items.sort((a, b) => {
@@ -5530,7 +5567,7 @@ max-height: 90vh;
            if (releaseCalendar) releaseCalendar.innerHTML = '';
            const daysInMonth = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0).getDate();
            const firstWeekday = monthStart.getDay();
-           const totalCells = Math.max(42, Math.ceil((firstWeekday + daysInMonth) / 7) * 7);
+           const totalCells = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
 
            for (let i = 0; i < firstWeekday; i++) {
              const pad = document.createElement('div');
@@ -5538,8 +5575,8 @@ max-height: 90vh;
              releaseCalendar.appendChild(pad);
            }
 
-           let placedReleaseCount = 0;
-           const MAX_VISIBLE = 3;
+          let placedReleaseCount = 0;
+          const MAX_VISIBLE = 2;
 
            for (let day = 1; day <= daysInMonth; day++) {
              const cell = document.createElement('div');
@@ -5555,24 +5592,40 @@ max-height: 90vh;
              const releaseWrap = document.createElement('div');
              releaseWrap.className = 'calendar-releases';
 
-             releasesForDay.slice(0, MAX_VISIBLE).forEach(r => {
-               const chip = document.createElement('div');
-               chip.className = 'calendar-release';
-               chip.textContent = r.item.Title || 'Untitled';
-               releaseWrap.appendChild(chip);
-             });
+            releasesForDay.slice(0, MAX_VISIBLE).forEach(r => {
+              const chip = document.createElement('div');
+              chip.className = 'calendar-release';
+              chip.textContent = r.item.Title || 'Untitled';
+              releaseWrap.appendChild(chip);
+            });
 
-             if (releasesForDay.length > MAX_VISIBLE) {
-               const moreCount = releasesForDay.length - MAX_VISIBLE;
-               const toggle = document.createElement('button');
-               toggle.type = 'button';
-               toggle.className = 'calendar-more-btn';
-               toggle.textContent = `+${moreCount} more`;
-               toggle.addEventListener('click', () => {
-                 openCalendarDayModal(formatDateDisplay(new Date(monthStart.getFullYear(), monthStart.getMonth(), day)), releasesForDay);
-               });
-               releaseWrap.appendChild(toggle);
-             }
+            if (releasesForDay.length > MAX_VISIBLE) {
+              const moreCount = releasesForDay.length - MAX_VISIBLE;
+              const hiddenList = document.createElement('div');
+              hiddenList.className = 'calendar-more-list';
+              hiddenList.style.display = 'none';
+              releasesForDay.slice(MAX_VISIBLE).forEach(r => {
+                const chip = document.createElement('div');
+                chip.className = 'calendar-release';
+                chip.textContent = r.item.Title || 'Untitled';
+                hiddenList.appendChild(chip);
+              });
+
+              const toggle = document.createElement('button');
+              toggle.type = 'button';
+              toggle.className = 'calendar-more-btn';
+              const setLabel = (expanded) => {
+                toggle.textContent = expanded ? 'Hide extra' : `+${moreCount} more`;
+              };
+              setLabel(false);
+              toggle.addEventListener('click', () => {
+                const expanded = hiddenList.style.display === 'flex';
+                hiddenList.style.display = expanded ? 'none' : 'flex';
+                setLabel(!expanded);
+              });
+              releaseWrap.appendChild(toggle);
+              releaseWrap.appendChild(hiddenList);
+            }
 
              cell.appendChild(releaseWrap);
              releaseCalendar.appendChild(cell);
