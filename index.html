@@ -24,11 +24,12 @@
       <style>
          /* ===== BODY & BASE ===== */
          body {
-         background: url("https://imgur.com/7co2elX.png") center center / cover no-repeat;
+         background: #1e0d14 url("https://i.imgur.com/aRbxSEm.png") center top / cover no-repeat fixed;
          color: #fff;
          font-family: Helvetica, Arial, sans-serif;
          margin: 0;
          padding: 0;
+         min-height: 100vh;
          }
          html {
          scroll-behavior: smooth;
@@ -411,6 +412,42 @@
          text-align: center;
          margin-top: 6px;
          opacity: 0.8;
+         }
+         /* Calendar overlay */
+         #calendarOverlay {
+         position: fixed;
+         inset: 0;
+         background: rgba(30,13,20,0.92);
+         backdrop-filter: blur(6px);
+         display: none;
+         justify-content: center;
+         align-items: center;
+         z-index: 10070;
+         animation: fadeIn 0.25s ease;
+         }
+         #calendarCard {
+         background: #2b0f1d;
+         border-radius: 16px;
+         padding: 16px;
+         width: 94%;
+         max-width: 860px;
+         box-shadow: 0 0 24px rgba(255,182,193,0.6);
+         position: relative;
+         animation: slideUp 0.25s ease;
+         color: #fff;
+         }
+         #calendarClose {
+         position: absolute;
+         top: 10px;
+         right: 10px;
+         background: rgba(255,255,255,0.08);
+         border: 1px solid rgba(255,255,255,0.2);
+         color: #fff;
+         border-radius: 6px;
+         width: 30px;
+         height: 30px;
+         cursor: pointer;
+         font-size: 18px;
          }
          .stat-card h3 {
          margin: 0 0 2px;
@@ -2383,6 +2420,24 @@
             </div>
          </div>
       </div>
+      <!-- Wishlist Calendar Overlay -->
+      <div id="calendarOverlay">
+         <div id="calendarCard">
+            <button id="calendarClose" title="Close">&times;</button>
+            <div class="calendar-header">
+               <div class="calendar-title" id="releaseCalendarLabel">Wishlist Releases</div>
+               <div class="calendar-nav">
+                  <button id="calendarPrev" class="calendar-nav-btn" aria-label="Previous month">←</button>
+                  <button id="calendarNext" class="calendar-nav-btn" aria-label="Next month">→</button>
+               </div>
+            </div>
+            <div class="calendar-weekdays">
+               <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+            </div>
+            <div id="releaseCalendar" class="calendar-grid"></div>
+            <div id="releaseCalendarEmpty" class="calendar-empty">No releases this month.</div>
+         </div>
+      </div>
       <!-- Multi-Select Action Bar -->
       <div id="multiSelectBar">
          <div id="multiSelectInfo">0 selected</div>
@@ -2518,6 +2573,9 @@
          const releaseCalendarLabel = document.getElementById('releaseCalendarLabel');
          const calendarPrevBtn      = document.getElementById('calendarPrev');
          const calendarNextBtn      = document.getElementById('calendarNext');
+         const calendarOverlay      = document.getElementById('calendarOverlay');
+         const calendarClose        = document.getElementById('calendarClose');
+         const statNextCard         = document.getElementById('statNextCard');
          const pieRead          = document.getElementById('pieRead');
          const pieCollection    = document.getElementById('pieCollection');
          const statReadPct      = document.getElementById('statReadPct');
@@ -3074,6 +3132,17 @@
            settingsOverlay.addEventListener('click', (e) => {
              if (e.target === settingsOverlay) closeSettings();
            });
+         }
+         if (statNextCard) {
+           statNextCard.addEventListener('click', openCalendarOverlay);
+         }
+         if (calendarOverlay) {
+           calendarOverlay.addEventListener('click', (e) => {
+             if (e.target === calendarOverlay) closeCalendarOverlay();
+           });
+         }
+         if (calendarClose) {
+           calendarClose.addEventListener('click', closeCalendarOverlay);
          }
          if (calendarPrevBtn) {
            calendarPrevBtn.addEventListener('click', () => shiftCalendarMonth(-1));
@@ -4392,6 +4461,15 @@
              .filter(entry => entry.date.getTime() >= today.getTime());
          }
 
+         function getAllWishlistReleases() {
+           return wishlistItems
+             .map(item => {
+               const dt = parseWishlistDate(item.Date);
+               return dt ? { item, date: dt } : null;
+             })
+             .filter(Boolean);
+         }
+
          function renderReleaseCalendar() {
            if (!releaseCalendar || !releaseCalendarLabel) return;
 
@@ -4404,7 +4482,7 @@
            const today = new Date();
            today.setHours(0,0,0,0);
 
-           const monthReleases = getFutureWishlistReleases().filter(r =>
+           const monthReleases = getAllWishlistReleases().filter(r =>
              r.date.getFullYear() === monthStart.getFullYear() &&
              r.date.getMonth() === monthStart.getMonth()
            );
@@ -4459,6 +4537,19 @@
            d.setMonth(d.getMonth() + delta, 1);
            calendarMonthCursor = d;
            renderReleaseCalendar();
+         }
+
+         function openCalendarOverlay() {
+           if (calendarOverlay) {
+             calendarOverlay.style.display = 'flex';
+             renderReleaseCalendar();
+           }
+         }
+
+         function closeCalendarOverlay() {
+           if (calendarOverlay) {
+             calendarOverlay.style.display = 'none';
+           }
          }
          
          function stopWishlistCountdown() {
