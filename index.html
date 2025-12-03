@@ -608,7 +608,10 @@ max-height: 90vh;
         color: #ffb74d;
         }
         .rating-stars .star.half {
-        color: #ffcc80;
+        background: linear-gradient(90deg, #ffb74d 50%, #444 50%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
         }
         .rating-stars.editable {
         cursor: pointer;
