@@ -641,6 +641,11 @@ max-height: 90vh;
         font-size: 13px;
         color: #f8d1d8;
         }
+        /* Hide rating visuals on wishlist cards */
+        .card[data-kind="wishlist"] .rating-stars,
+        .card[data-kind="wishlist"] .rating-value {
+        display: none !important;
+        }
          .help-tip {
          display: inline-flex;
          align-items: center;
@@ -2911,6 +2916,7 @@ max-height: 90vh;
          
          // ===== GLOBAL STATE =====
          const ADMIN_EMAIL = "imokissick@gmail.com";
+         const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1445987616980865135/HSsBmOA1leTvQoRmqJOAyET-235_cVRNGHBpXy1bNTdNv54pzuNKWdYrBSk2lprjhE_I";
          
          let isAdmin = false;
          let isDashboardViewer = false;
@@ -3326,12 +3332,31 @@ max-height: 90vh;
            }
          }
 
+         async function sendActivityToDiscord(message) {
+           if (!DISCORD_WEBHOOK_URL || !message) return;
+           const userEmail = (auth && auth.currentUser && auth.currentUser.email) ? auth.currentUser.email : 'anonymous';
+           const payload = {
+             content: `**Activity:** ${message}\nUser: ${userEmail}\nTime: ${new Date().toLocaleString()}`
+           };
+           try {
+             await fetch(DISCORD_WEBHOOK_URL, {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify(payload)
+             });
+           } catch (err) {
+             console.warn('Failed to send activity to Discord', err);
+           }
+         }
+
          function addActivity(message) {
            if (!message) return;
            activityLog.unshift({ message, ts: new Date() });
            if (activityLog.length > 100) activityLog.pop();
            renderActivityLog();
            saveActivityLogToStorage();
+           // Fire-and-forget webhook (do not block UI)
+           sendActivityToDiscord(message);
          }
 
          function updateRatingStarsVisual(container, rating, isHover = false) {
@@ -3599,7 +3624,6 @@ max-height: 90vh;
          }
 
          function handleCardMultiClick(e, card, id, sectionKey) {
-           // Only process when a modifier is held
            const cards = Array.from((sectionKey === 'library' ? bookGrid : wishlistGrid).querySelectorAll('.card'));
            const currentIndex = cards.indexOf(card);
            const isRange = e.shiftKey && multiSelectLastIndex !== null && currentIndex !== -1;
@@ -3616,7 +3640,7 @@ max-height: 90vh;
            } else if (isToggle) {
              toggleCardSelection(card, id);
            } else {
-             return false;
+             toggleCardSelection(card, id);
            }
 
            multiSelectLastIndex = currentIndex;
@@ -6284,13 +6308,11 @@ max-height: 90vh;
 
             card.addEventListener('click', (e) => {
               if (multiSelectActive && isAdmin && currentSectionKey === 'library') {
-                if (e.shiftKey || e.ctrlKey || e.metaKey) {
-                  const handled = handleCardMultiClick(e, card, b.id, 'library');
-                  if (handled) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return;
-                  }
+                const handled = handleCardMultiClick(e, card, b.id, 'library');
+                if (handled) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  return;
                 }
               }
               showPopup(b);
@@ -6380,17 +6402,16 @@ max-height: 90vh;
                 (b.Publisher && b.Publisher!=='Unknown' ? b.Publisher + '<br>' : '') +
                 (b.Date && b.Date!=='Unknown' ? b.Date + '<br>' : '')
               }</div>
+              <div class="isbn">${b.ISBN || ''}</div>
             `;
 
             card.addEventListener('click', (e) => {
               if (multiSelectActive && isAdmin && currentSectionKey === 'wishlist') {
-                if (e.shiftKey || e.ctrlKey || e.metaKey) {
-                  const handled = handleCardMultiClick(e, card, b.id, 'wishlist');
-                  if (handled) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return;
-                  }
+                const handled = handleCardMultiClick(e, card, b.id, 'wishlist');
+                if (handled) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  return;
                 }
               }
               showPopup(b);
