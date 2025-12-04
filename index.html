@@ -2797,6 +2797,24 @@ max-height: 90vh;
                <button id="exportJsonBtn" class="settings-btn">Export to JSON</button>
                <button id="exportCsvBtn" class="settings-btn">Export to CSV</button>
                <button id="exportCoversBtn" class="settings-btn">Export Covers as Zip</button>
+               <div style="margin-top:10px; padding:10px; border:1px solid rgba(255,182,193,0.25); border-radius:10px; background:rgba(255,182,193,0.06);">
+                 <div style="font-weight:700; color:#ffb6c1; margin-bottom:6px;">User Roles</div>
+                 <label style="display:flex; flex-direction:column; gap:4px; margin-bottom:8px; color:#f8d1d8; font-size:12px;">
+                   User email
+                   <input type="email" id="roleEmailInput" placeholder="user@example.com" style="font-size:12px; padding:6px 8px;">
+                 </label>
+                 <label style="display:flex; flex-direction:column; gap:4px; margin-bottom:8px; color:#f8d1d8; font-size:12px;">
+                   Role
+                   <select id="roleSelect" style="font-size:12px; padding:6px 8px;">
+                     <option value="dashboardViewer">Dashboard Viewer (view stats only)</option>
+                   </select>
+                 </label>
+                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                   <button id="assignRoleBtn" class="settings-btn" style="flex:1;">Grant Role</button>
+                   <button id="revokeRoleBtn" class="settings-btn" style="flex:1; background:rgba(255,85,85,0.15); border-color:rgba(255,85,85,0.6); color:#ffaaaa;">Revoke Role</button>
+                 </div>
+                 <div id="roleStatus" style="margin-top:6px; font-size:12px; color:#f8d1d8;"></div>
+               </div>
             </div>
          </div>
       </div>
@@ -2890,6 +2908,7 @@ max-height: 90vh;
          const ADMIN_EMAIL = "imokissick@gmail.com";
          
          let isAdmin = false;
+         let isDashboardViewer = false;
          let libraryBooks = [];
          let wishlistItems = [];
          let readClickState = 0; // 0 = default, 1 = only read, 2 = only unread
@@ -3042,6 +3061,11 @@ max-height: 90vh;
          const exportJsonBtn = document.getElementById('exportJsonBtn');
          const exportCsvBtn = document.getElementById('exportCsvBtn');
          const exportCoversBtn = document.getElementById('exportCoversBtn');
+         const roleEmailInput = document.getElementById('roleEmailInput');
+         const roleSelect = document.getElementById('roleSelect');
+         const assignRoleBtn = document.getElementById('assignRoleBtn');
+         const revokeRoleBtn = document.getElementById('revokeRoleBtn');
+         const roleStatus = document.getElementById('roleStatus');
          const activityLogList = document.getElementById('activityLogList');
          const statDetailOverlay = document.getElementById('statDetailOverlay');
          const statDetailCard = document.getElementById('statDetailCard');
@@ -3653,7 +3677,8 @@ max-height: 90vh;
                try {
                  await setDoc(doc(db, "users", cred.user.uid), {
                    email,
-                   admin: false
+                   admin: false,
+                   dashboardViewer: false
                  });
                } catch (docErr) {
                  console.error('Failed to save user doc', docErr);
@@ -3761,6 +3786,70 @@ max-height: 90vh;
            exportCoversBtn.addEventListener('click', () => {
              exportCoversZip();
              // leave settings open while processing for feedback
+           });
+         }
+         const setRoleStatus = (msg, isError = false) => {
+           if (!roleStatus) return;
+           roleStatus.textContent = msg || '';
+           roleStatus.style.color = isError ? '#ffaaaa' : '#f8d1d8';
+         };
+
+         async function findUserDocByEmail(email) {
+           const emailLower = (email || '').trim().toLowerCase();
+           if (!emailLower) return null;
+           const snap = await getDocs(collection(db, "users"));
+           let match = null;
+           snap.forEach(d => {
+             const data = d.data();
+             const storedEmail = (data.email || '').toLowerCase();
+             if (storedEmail === emailLower) {
+               match = { id: d.id, data };
+             }
+           });
+           return match;
+         }
+
+         async function updateUserRole(roleKey, email, enabled) {
+           if (!isAdmin) {
+             setRoleStatus('Only admins can change roles.', true);
+             return;
+           }
+           setRoleStatus('Updating role...');
+           try {
+             const userDoc = await findUserDocByEmail(email);
+             if (!userDoc) {
+               setRoleStatus('User not found in Firestore users collection.', true);
+               return;
+             }
+             await updateDoc(doc(db, "users", userDoc.id), { [roleKey]: !!enabled });
+             setRoleStatus(`Role ${enabled ? 'granted' : 'revoked'} for ${email}.`);
+           } catch (err) {
+             console.error('Role update failed', err);
+             setRoleStatus('Failed to update role. Check console for details.', true);
+           }
+         }
+
+         if (assignRoleBtn) {
+           assignRoleBtn.addEventListener('click', () => {
+             const email = roleEmailInput ? roleEmailInput.value.trim() : '';
+             const roleKey = roleSelect ? roleSelect.value : '';
+             if (!email || !roleKey) {
+               setRoleStatus('Email and role are required.', true);
+               return;
+             }
+             updateUserRole(roleKey, email, true);
+           });
+         }
+
+         if (revokeRoleBtn) {
+           revokeRoleBtn.addEventListener('click', () => {
+             const email = roleEmailInput ? roleEmailInput.value.trim() : '';
+             const roleKey = roleSelect ? roleSelect.value : '';
+             if (!email || !roleKey) {
+               setRoleStatus('Email and role are required.', true);
+               return;
+             }
+             updateUserRole(roleKey, email, false);
            });
          }
          if (statCardRatings) {
@@ -4221,6 +4310,10 @@ max-height: 90vh;
         }
 
         async function applyDashBulkPaid() {
+          if (!isAdmin) {
+            alert('Dashboard is read-only for your account.');
+            return;
+          }
           const ids = Array.from(dashMultiSelectedIds);
           if (!ids.length) {
             alert('Select books in Library Manager (use Ctrl/Cmd or Shift) first.');
@@ -4265,6 +4358,10 @@ max-height: 90vh;
 
         if (dashDetailSave) {
           dashDetailSave.addEventListener('click', async () => {
+            if (!isAdmin) {
+              alert('Dashboard is read-only for your account.');
+              return;
+            }
             if (!dashSelectedBookId) return;
             const readVal = dashDetailRead ? !!dashDetailRead.checked : false;
             const dp = dashDetailDatePurchased ? dashDetailDatePurchased.value.trim() : "";
@@ -4318,6 +4415,10 @@ max-height: 90vh;
         }
 
         async function saveSeriesChanges() {
+          if (!isAdmin) {
+            alert('Dashboard is read-only for your account.');
+            return;
+          }
           if (!dashSelectedSeriesKey) return;
           const group = dashGroupedSeries.find(g => g.seriesKey === dashSelectedSeriesKey);
           if (!group || !group.books.length) return;
@@ -4429,8 +4530,8 @@ max-height: 90vh;
          
         function switchSection(target) {
           // Block dashboard for non-admins
-          if (target === 'dashboard' && !isAdmin) {
-            alert('Dashboard is for admins only.');
+          if (target === 'dashboard' && !canViewDashboard()) {
+            alert('Dashboard is restricted to admins or dashboard viewers.');
             return;
           }
           currentSectionKey = target === 'wishlist' ? 'wishlist'
@@ -6581,6 +6682,10 @@ max-height: 90vh;
          
          
          async function applyMultiSelectAction(action) {
+           if (!isAdmin) {
+             alert('Multi-select actions require admin access.');
+             return;
+           }
            const ids = Array.from(multiSelectedIds);
            if (!ids.length) {
              alert('Select at least one item first.');
@@ -6716,15 +6821,29 @@ max-height: 90vh;
            }
          });
          
-        function updateAdminUI() {
-          if (menuDashboard) {
-            menuDashboard.style.display = isAdmin ? 'block' : 'none';
-          }
+         const canViewDashboard = () => (isAdmin || isDashboardViewer);
+         const canEditContent = () => isAdmin;
+
+         function updateAdminUI() {
+           if (menuDashboard) {
+             menuDashboard.style.display = canViewDashboard() ? 'block' : 'none';
+           }
            if (isAdmin) {
              adminBar.style.display = "block";
            } else {
              adminBar.style.display = "none";
            }
+
+           // Disable dashboard edit controls when not admin
+           const editableButtons = [
+             dashDetailSave,
+             dashSeriesSave,
+             dashBulkPaidApply,
+             dashMultiEditBtn
+           ].filter(Boolean);
+           editableButtons.forEach(btn => {
+             btn.disabled = !isAdmin;
+           });
          }
          
          
@@ -6735,14 +6854,16 @@ max-height: 90vh;
              loginBtn.style.display = 'none';
              logoutBtn.style.display = 'inline-block';
          
-             // Check Firestore for admin flag
+             // Check Firestore for admin flag and viewer role
              let adminFlag = false;
+             let viewerFlag = false;
              try {
                const userRef = doc(db, "users", user.uid);
                const userSnap = await getDoc(userRef);
                if (userSnap.exists()) {
                  const data = userSnap.data();
                  adminFlag = !!data.admin;
+                 viewerFlag = !!data.dashboardViewer;
                } else if (user.email === ADMIN_EMAIL) {
                  // Fallback so you don't lock yourself out:
                  adminFlag = true;
@@ -6750,8 +6871,8 @@ max-height: 90vh;
              } catch (err) {
                console.error("Error checking admin flag", err);
              }
-         
              isAdmin = adminFlag;
+             isDashboardViewer = viewerFlag && !adminFlag; // admin supersedes viewer
              updateAdminUI();
              closeAuthModal();
            } else {
@@ -6760,6 +6881,7 @@ max-height: 90vh;
              loginBtn.style.display = 'inline-block';
              logoutBtn.style.display = 'none';
              isAdmin = false;
+             isDashboardViewer = false;
              updateAdminUI();
            }
          });
