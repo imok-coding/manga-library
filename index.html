@@ -2799,10 +2799,15 @@ max-height: 90vh;
                <button id="exportCoversBtn" class="settings-btn">Export Covers as Zip</button>
                <div style="margin-top:10px; padding:10px; border:1px solid rgba(255,182,193,0.25); border-radius:10px; background:rgba(255,182,193,0.06);">
                  <div style="font-weight:700; color:#ffb6c1; margin-bottom:6px;">User Roles</div>
-                 <label style="display:flex; flex-direction:column; gap:4px; margin-bottom:8px; color:#f8d1d8; font-size:12px;">
-                   User email
-                   <input type="email" id="roleEmailInput" placeholder="user@example.com" style="font-size:12px; padding:6px 8px;">
-                 </label>
+                 <div style="display:flex; gap:8px; align-items:flex-end; margin-bottom:8px;">
+                   <label style="flex:1; display:flex; flex-direction:column; gap:4px; color:#f8d1d8; font-size:12px;">
+                     User
+                     <select id="roleUserSelect" style="font-size:12px; padding:6px 8px;">
+                       <option value="">Select a user</option>
+                     </select>
+                   </label>
+                   <button id="roleRefreshBtn" class="settings-btn" style="padding:6px 10px; font-size:11px;">Refresh</button>
+                 </div>
                  <label style="display:flex; flex-direction:column; gap:4px; margin-bottom:8px; color:#f8d1d8; font-size:12px;">
                    Role
                    <select id="roleSelect" style="font-size:12px; padding:6px 8px;">
@@ -3061,10 +3066,49 @@ max-height: 90vh;
          const exportJsonBtn = document.getElementById('exportJsonBtn');
          const exportCsvBtn = document.getElementById('exportCsvBtn');
          const exportCoversBtn = document.getElementById('exportCoversBtn');
-         const roleEmailInput = document.getElementById('roleEmailInput');
+         const ensureUserProfile = async (user) => {
+           if (!user) return { admin: false, dashboardViewer: false };
+           const userRef = doc(db, "users", user.uid);
+           const emailLower = (user.email || '').toLowerCase();
+           const defaultProfile = {
+             email: emailLower,
+             admin: user.email === ADMIN_EMAIL,
+             dashboardViewer: false
+           };
+           try {
+             const snap = await getDoc(userRef);
+             let data = snap.exists() ? (snap.data() || {}) : null;
+         
+             if (!data) {
+               await setDoc(userRef, defaultProfile, { merge: true });
+               data = defaultProfile;
+             } else {
+               const toMerge = {};
+               if (!data.email && emailLower) toMerge.email = emailLower;
+               if (typeof data.dashboardViewer === 'undefined') toMerge.dashboardViewer = false;
+               if (typeof data.admin === 'undefined' && defaultProfile.admin) toMerge.admin = true;
+               if (Object.keys(toMerge).length) {
+                 await setDoc(userRef, toMerge, { merge: true });
+                 data = { ...data, ...toMerge };
+               }
+             }
+         
+             return {
+               id: user.uid,
+               email: data.email || emailLower,
+               admin: !!data.admin || defaultProfile.admin,
+               dashboardViewer: !!data.dashboardViewer
+             };
+           } catch (err) {
+             console.error("ensureUserProfile failed", err);
+             return { admin: defaultProfile.admin, dashboardViewer: defaultProfile.dashboardViewer };
+           }
+         };
+         const roleUserSelect = document.getElementById('roleUserSelect');
          const roleSelect = document.getElementById('roleSelect');
          const assignRoleBtn = document.getElementById('assignRoleBtn');
          const revokeRoleBtn = document.getElementById('revokeRoleBtn');
+         const roleRefreshBtn = document.getElementById('roleRefreshBtn');
          const roleStatus = document.getElementById('roleStatus');
          const activityLogList = document.getElementById('activityLogList');
          const statDetailOverlay = document.getElementById('statDetailOverlay');
@@ -3676,10 +3720,10 @@ max-height: 90vh;
                // create a user document with admin: false by default
                try {
                  await setDoc(doc(db, "users", cred.user.uid), {
-                   email,
+                   email: email.toLowerCase(),
                    admin: false,
                    dashboardViewer: false
-                 });
+                 }, { merge: true });
                } catch (docErr) {
                  console.error('Failed to save user doc', docErr);
                }
@@ -3738,6 +3782,7 @@ max-height: 90vh;
 
          function openSettings() {
            if (settingsOverlay) settingsOverlay.style.display = 'flex';
+           if (isAdmin) loadRoleUsers();
          }
          function closeSettings() {
            if (settingsOverlay) settingsOverlay.style.display = 'none';
@@ -3793,32 +3838,94 @@ max-height: 90vh;
            roleStatus.textContent = msg || '';
            roleStatus.style.color = isError ? '#ffaaaa' : '#f8d1d8';
          };
+         let roleUsersCache = [];
 
-         async function findUserDocByEmail(email) {
-           const emailLower = (email || '').trim().toLowerCase();
-           if (!emailLower) return null;
-           const { query, where } = await import("https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js");
-           const q = query(collection(db, "users"), where("email", "==", emailLower));
-           const snap = await getDocs(q);
-           if (snap.empty) return null;
-           const docSnap = snap.docs[0];
-           return { id: docSnap.id, data: docSnap.data() };
+         function renderRoleUsers(users) {
+           if (!roleUserSelect) return;
+           roleUserSelect.innerHTML = '';
+           const placeholder = document.createElement('option');
+           placeholder.value = '';
+           placeholder.textContent = users.length ? 'Select a user' : 'No users found';
+           roleUserSelect.appendChild(placeholder);
+           users.forEach(u => {
+             const opt = document.createElement('option');
+             opt.value = u.id;
+             opt.textContent = u.email || '(no email)';
+             opt.dataset.email = u.email || '';
+             opt.dataset.admin = u.admin ? 'true' : 'false';
+             opt.dataset.dashboardViewer = u.dashboardViewer ? 'true' : 'false';
+             roleUserSelect.appendChild(opt);
+           });
          }
 
-         async function updateUserRole(roleKey, email, enabled) {
+         function getSelectedRoleUser() {
+           if (!roleUserSelect) return null;
+           const selected = roleUserSelect.options[roleUserSelect.selectedIndex];
+           if (!selected || !selected.value) return null;
+           return {
+             id: selected.value,
+             email: selected.dataset.email || '',
+             admin: selected.dataset.admin === 'true',
+             dashboardViewer: selected.dataset.dashboardViewer === 'true'
+           };
+         }
+
+         function showSelectedUserRoleStatus() {
+           const selected = getSelectedRoleUser();
+           if (!selected) {
+             setRoleStatus('Choose a user to manage roles.');
+             return;
+           }
+           const tags = [];
+           if (selected.admin) tags.push('admin');
+           if (selected.dashboardViewer) tags.push('dashboard viewer');
+           const tagText = tags.length ? `Current roles: ${tags.join(', ')}` : 'Current roles: none';
+           setRoleStatus(`${selected.email} - ${tagText}`);
+         }
+
+         async function loadRoleUsers() {
+           if (!roleUserSelect || !isAdmin) return;
+           setRoleStatus('Loading users...');
+           try {
+             const snap = await getDocs(collection(db, "users"));
+             const users = snap.docs.map(docSnap => {
+               const data = docSnap.data() || {};
+               return {
+                 id: docSnap.id,
+                 email: (data.email || '').toLowerCase(),
+                 admin: !!data.admin,
+                 dashboardViewer: !!data.dashboardViewer
+               };
+             }).sort((a, b) => (a.email || '').localeCompare(b.email || ''));
+             roleUsersCache = users;
+             renderRoleUsers(users);
+             showSelectedUserRoleStatus();
+           } catch (err) {
+             console.error('Failed to load users', err);
+             setRoleStatus('Failed to load users list.', true);
+           }
+         }
+
+         async function updateUserRole(roleKey, enabled) {
            if (!isAdmin) {
              setRoleStatus('Only admins can change roles.', true);
              return;
            }
+           const selected = getSelectedRoleUser();
+           if (!selected) {
+             setRoleStatus('Select a user first.', true);
+             return;
+           }
            setRoleStatus('Updating role...');
            try {
-             const userDoc = await findUserDocByEmail(email);
-             if (!userDoc) {
-             setRoleStatus('User not found. Ask them to sign in once so a user record is created, then try again.', true);
-               return;
-             }
-             await updateDoc(doc(db, "users", userDoc.id), { [roleKey]: !!enabled });
-             setRoleStatus(`Role ${enabled ? 'granted' : 'revoked'} for ${email}.`);
+             await updateDoc(doc(db, "users", selected.id), { [roleKey]: !!enabled });
+             const cached = roleUsersCache.find(u => u.id === selected.id);
+             if (cached) cached[roleKey] = !!enabled;
+             const option = roleUserSelect ? roleUserSelect.querySelector(`option[value=\"${selected.id}\"]`) : null;
+             if (option) option.dataset[roleKey] = (!!enabled).toString();
+             const emailLabel = selected.email || 'user';
+             setRoleStatus(`Role ${enabled ? 'granted' : 'revoked'} for ${emailLabel}.`);
+             showSelectedUserRoleStatus();
            } catch (err) {
              console.error('Role update failed', err);
              setRoleStatus('Failed to update role. Check console for details.', true);
@@ -3827,26 +3934,31 @@ max-height: 90vh;
 
          if (assignRoleBtn) {
            assignRoleBtn.addEventListener('click', () => {
-             const email = roleEmailInput ? roleEmailInput.value.trim() : '';
              const roleKey = roleSelect ? roleSelect.value : '';
-             if (!email || !roleKey) {
-               setRoleStatus('Email and role are required.', true);
+             if (!roleKey) {
+               setRoleStatus('Role is required.', true);
                return;
              }
-             updateUserRole(roleKey, email, true);
+             updateUserRole(roleKey, true);
            });
          }
 
          if (revokeRoleBtn) {
            revokeRoleBtn.addEventListener('click', () => {
-             const email = roleEmailInput ? roleEmailInput.value.trim() : '';
              const roleKey = roleSelect ? roleSelect.value : '';
-             if (!email || !roleKey) {
-               setRoleStatus('Email and role are required.', true);
+             if (!roleKey) {
+               setRoleStatus('Role is required.', true);
                return;
              }
-             updateUserRole(roleKey, email, false);
+             updateUserRole(roleKey, false);
            });
+         }
+
+         if (roleUserSelect) {
+           roleUserSelect.addEventListener('change', showSelectedUserRoleStatus);
+         }
+         if (roleRefreshBtn) {
+           roleRefreshBtn.addEventListener('click', () => loadRoleUsers());
          }
          if (statCardRatings) {
            statCardRatings.addEventListener('click', showRatingsDetail);
@@ -6850,27 +6962,13 @@ max-height: 90vh;
              loginBtn.style.display = 'none';
              logoutBtn.style.display = 'inline-block';
          
-             // Check Firestore for admin flag and viewer role
+             // Check / create user profile and read roles
              let adminFlag = false;
              let viewerFlag = false;
              try {
-               const userRef = doc(db, "users", user.uid);
-               const userSnap = await getDoc(userRef);
-               if (userSnap.exists()) {
-                 const data = userSnap.data();
-                 adminFlag = !!data.admin;
-                 viewerFlag = !!data.dashboardViewer;
-               } else {
-                 // auto-create user doc on first sign-in so roles can be managed
-                 const payload = {
-                   email: (user.email || '').toLowerCase(),
-                   admin: user.email === ADMIN_EMAIL,
-                   dashboardViewer: false
-                 };
-                 await setDoc(userRef, payload);
-                 adminFlag = payload.admin;
-                 viewerFlag = payload.dashboardViewer;
-               }
+               const profile = await ensureUserProfile(user);
+               adminFlag = !!profile.admin;
+               viewerFlag = !!profile.dashboardViewer;
              } catch (err) {
                console.error("Error checking admin flag", err);
              }
