@@ -7121,44 +7121,66 @@ max-height: 90vh;
         
           try {
             if (multiEditorMode === 'selection') {
-              // Bulk apply to the selected library docs
-              const base = multiCreateItems[0] || {};
-              const docIds = (multiSelectionDocIds && multiSelectionDocIds.length)
-                ? multiSelectionDocIds
-                : multiCreateItems.map(it => it.docId).filter(Boolean);
-              if (!docIds.length) {
+              // Apply per-item so edits don't overwrite all docs with the first entry
+              const items = multiCreateItems.map((it, idx) => ({
+                data: it,
+                docId: it.docId || (multiSelectionDocIds[idx] || null)
+              })).filter(entry => entry.docId);
+
+              if (!items.length) {
                 alert("No documents selected to update.");
                 return;
               }
-              const payload = {};
-              if (base.title) payload.title = base.title;
-              if (base.authors) payload.authors = base.authors;
-              if (base.publisher) payload.publisher = base.publisher;
-              if (base.date) payload.date = base.date;
-              if (base.isbn) payload.isbn = base.isbn;
-              if (base.pageCount !== undefined && base.pageCount !== null && base.pageCount !== "") {
-                const pc = parseInt(base.pageCount, 10);
-                if (Number.isFinite(pc)) payload.pageCount = pc;
-              }
-              if (base.cover) payload.cover = base.cover;
-              // Only allow read/dateRead updates if a definitive value is present
-              if (base.read !== null && base.read !== undefined) {
-                payload.read = !!base.read;
-                payload.dateRead = payload.read
-                  ? (base.dateRead && /^\d{4}-\d{2}-\d{2}$/.test(base.dateRead)
-                      ? base.dateRead
-                      : new Date().toISOString().slice(0,10))
-                  : "";
-              }
-              if (!Object.keys(payload).length) {
-                alert("No shared fields to apply. Fill a field to update all selected items.");
+
+              const buildPayload = (item) => {
+                const payload = {};
+                if (item.title) payload.title = item.title;
+                if (item.authors) payload.authors = item.authors;
+                if (item.publisher) payload.publisher = item.publisher;
+                if (item.date) payload.date = item.date;
+                if (item.pageCount !== undefined && item.pageCount !== null && item.pageCount !== "") {
+                  const pc = parseInt(item.pageCount, 10);
+                  if (Number.isFinite(pc)) payload.pageCount = pc;
+                }
+                if (item.cover) payload.cover = item.cover;
+
+                if (col === "library") {
+                  if (item.isbn) payload.isbn = item.isbn;
+                  if (item.read !== null && item.read !== undefined) {
+                    payload.read = !!item.read;
+                    payload.dateRead = payload.read
+                      ? (item.dateRead && /^\d{4}-\d{2}-\d{2}$/.test(item.dateRead)
+                          ? item.dateRead
+                          : new Date().toISOString().slice(0,10))
+                      : "";
+                  }
+                } else {
+                  if (item.amazonURL) payload.amazonURL = item.amazonURL;
+                }
+
+                return payload;
+              };
+
+              const updates = items.map(({ data, docId }) => {
+                const payload = buildPayload(data);
+                if (!Object.keys(payload).length) return null;
+                return updateDoc(doc(db, col, docId), payload);
+              }).filter(Boolean);
+
+              if (!updates.length) {
+                alert("No fields to update. Fill a field to apply changes.");
                 return;
               }
-              await Promise.all(docIds.map(id => updateDoc(doc(db, col, id), payload)));
+
+              await Promise.all(updates);
               multiEditorOverlay.style.display = "none";
               multiCreateActive = false;
-              await loadLibraryFromFirestore(true);
-              addActivity(`Updated ${docIds.length} selected item(s) in library`);
+              if (col === "wishlist") {
+                await loadWishlistFromFirestore(true);
+              } else {
+                await loadLibraryFromFirestore(true);
+              }
+              addActivity(`Updated ${updates.length} selected item(s) in ${col}`);
               exitMultiSelectMode();
               clearDashSelection();
             } else {
