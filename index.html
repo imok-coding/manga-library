@@ -3082,23 +3082,21 @@ max-height: 90vh;
              dashboardViewer: false
            };
            try {
+             // Always upsert the profile so the doc is created on first sign-in.
+             await setDoc(userRef, defaultProfile, { merge: true });
+
              const snap = await getDoc(userRef);
-             let data = snap.exists() ? (snap.data() || {}) : null;
-         
-             if (!data) {
-               await setDoc(userRef, defaultProfile, { merge: true });
-               data = defaultProfile;
-             } else {
-               const toMerge = {};
-               if (!data.email && emailLower) toMerge.email = emailLower;
-               if (typeof data.dashboardViewer === 'undefined') toMerge.dashboardViewer = false;
-               if (typeof data.admin === 'undefined' && defaultProfile.admin) toMerge.admin = true;
-               if (Object.keys(toMerge).length) {
-                 await setDoc(userRef, toMerge, { merge: true });
-                 data = { ...data, ...toMerge };
-               }
+             const data = snap.exists() ? (snap.data() || {}) : defaultProfile;
+
+             // Backfill any missing fields in existing docs.
+             const toMerge = {};
+             if (!data.email && emailLower) toMerge.email = emailLower;
+             if (typeof data.dashboardViewer === 'undefined') toMerge.dashboardViewer = false;
+             if (typeof data.admin === 'undefined' && defaultProfile.admin) toMerge.admin = true;
+             if (Object.keys(toMerge).length) {
+               await setDoc(userRef, toMerge, { merge: true });
              }
-         
+
              return {
                id: user.uid,
                email: data.email || emailLower,
