@@ -3797,16 +3797,12 @@ max-height: 90vh;
          async function findUserDocByEmail(email) {
            const emailLower = (email || '').trim().toLowerCase();
            if (!emailLower) return null;
-           const snap = await getDocs(collection(db, "users"));
-           let match = null;
-           snap.forEach(d => {
-             const data = d.data();
-             const storedEmail = (data.email || '').toLowerCase();
-             if (storedEmail === emailLower) {
-               match = { id: d.id, data };
-             }
-           });
-           return match;
+           const { query, where } = await import("https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js");
+           const q = query(collection(db, "users"), where("email", "==", emailLower));
+           const snap = await getDocs(q);
+           if (snap.empty) return null;
+           const docSnap = snap.docs[0];
+           return { id: docSnap.id, data: docSnap.data() };
          }
 
          async function updateUserRole(roleKey, email, enabled) {
@@ -3818,7 +3814,7 @@ max-height: 90vh;
            try {
              const userDoc = await findUserDocByEmail(email);
              if (!userDoc) {
-               setRoleStatus('User not found in Firestore users collection.', true);
+             setRoleStatus('User not found. Ask them to sign in once so a user record is created, then try again.', true);
                return;
              }
              await updateDoc(doc(db, "users", userDoc.id), { [roleKey]: !!enabled });
@@ -6864,9 +6860,16 @@ max-height: 90vh;
                  const data = userSnap.data();
                  adminFlag = !!data.admin;
                  viewerFlag = !!data.dashboardViewer;
-               } else if (user.email === ADMIN_EMAIL) {
-                 // Fallback so you don't lock yourself out:
-                 adminFlag = true;
+               } else {
+                 // auto-create user doc on first sign-in so roles can be managed
+                 const payload = {
+                   email: (user.email || '').toLowerCase(),
+                   admin: user.email === ADMIN_EMAIL,
+                   dashboardViewer: false
+                 };
+                 await setDoc(userRef, payload);
+                 adminFlag = payload.admin;
+                 viewerFlag = payload.dashboardViewer;
                }
              } catch (err) {
                console.error("Error checking admin flag", err);
