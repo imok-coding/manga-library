@@ -2143,8 +2143,11 @@ max-height: 90vh;
          }
          #searchInput, #wishlistSearchInput {
          width: 100%;
-         margin: 10px auto;
-         font-size: 13px;
+         margin: 12px 0;
+         padding: 12px 14px;
+         font-size: 15px;
+         border-radius: 12px;
+         box-sizing: border-box;
          }
          .grid {
          grid-template-columns: repeat(3, 1fr);
@@ -5166,31 +5169,37 @@ max-height: 90vh;
            }
          }
          
-         function loadCurrentMultiCreateEntry() {
-           const item = multiCreateItems[multiCreateIndex];
-           updateMultiEditorHeader();
-         
-           // Position info (common)
-           if (multiEditorMode === 'selection') {
-             const count = multiSelectionDocIds.length || dashMultiSelectedIds.size || multiCreateItems.length;
-             multiEditorPosition.textContent = `Editing ${count} selected item${count === 1 ? '' : 's'}`;
-           } else {
-             multiEditorPosition.textContent = `Entry ${multiCreateIndex + 1} of ${multiCreateItems.length}`;
-           }
-         
-           if (multiEditorMode === 'series' && currentSeriesSuggestion) {
-               // Series / volume mode
-               const vol = multiCreateVolumes[multiCreateIndex];
-               multiEditorSeriesLabel.textContent =
-                   (currentSeriesSuggestion.displayName || currentSeriesSuggestion.baseName);
-               multiEditorVolumeLabel.style.display = 'block';
-               multiEditorVolumeLabel.textContent = `Volume ${vol}`;
-           } else {
-               // Multi-select edit mode
-               multiEditorSeriesLabel.textContent = item.title || (
-                   currentSectionKey === 'library'
-                       ? 'Library Entry'
-                       : 'Wishlist Entry'
+        function loadCurrentMultiCreateEntry() {
+          const item = multiCreateItems[multiCreateIndex];
+          updateMultiEditorHeader();
+
+          // Position info (common)
+          if (multiEditorMode === 'selection') {
+            const total = multiSelectionDocIds.length || dashMultiSelectedIds.size || multiCreateItems.length;
+            const current = multiCreateIndex + 1;
+            // Show the overall selection count once, plus a concise position indicator.
+            multiEditorSeriesLabel.textContent = `Editing ${total} selected item${total === 1 ? '' : 's'}`;
+            multiEditorPosition.textContent = `${current}/${total}`;
+          } else {
+            multiEditorPosition.textContent = `Entry ${multiCreateIndex + 1} of ${multiCreateItems.length}`;
+          }
+
+          if (multiEditorMode === 'series' && currentSeriesSuggestion) {
+              // Series / volume mode
+              const vol = multiCreateVolumes[multiCreateIndex];
+              multiEditorSeriesLabel.textContent =
+                  (currentSeriesSuggestion.displayName || currentSeriesSuggestion.baseName);
+              multiEditorVolumeLabel.style.display = 'block';
+              multiEditorVolumeLabel.textContent = `Volume ${vol}`;
+          } else if (multiEditorMode === 'selection') {
+              // Keep the header focused on selection summary; hide the volume label.
+              multiEditorVolumeLabel.style.display = 'none';
+          } else {
+              // Multi-select edit mode
+              multiEditorSeriesLabel.textContent = item.title || (
+                  currentSectionKey === 'library'
+                      ? 'Library Entry'
+                      : 'Wishlist Entry'
                );
                multiEditorVolumeLabel.style.display = 'none';
            }
@@ -5261,8 +5270,6 @@ max-height: 90vh;
              } else {
                toggleRow(multiEditorAmazonWrapper, !isMixed(item.amazonURL || ""));
              }
-             // Update header to reflect aggregation
-             multiEditorSeriesLabel.textContent = `Editing ${multiSelectionDocIds.length || dashMultiSelectedIds.size} selected items`;
              multiEditorVolumeLabel.style.display = 'none';
            } else {
              // Ensure rows are visible in normal mode
