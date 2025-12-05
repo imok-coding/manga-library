@@ -5831,7 +5831,9 @@ max-height: 90vh;
              const releaseWrap = document.createElement('div');
              releaseWrap.className = 'calendar-releases';
 
-            const dayLabel = `${monthName} ${day}`;
+            const dayLabel = `${monthStart.toLocaleDateString(undefined, {
+                month: "long"
+            })} ${day}, ${monthStart.getFullYear()}`;
             const openDayPopup = () => openCalendarDayModal(dayLabel, releasesForDay);
 
             releasesForDay.slice(0, MAX_VISIBLE).forEach(r => {
@@ -7368,7 +7370,7 @@ max-height: 90vh;
                  });
                  addActivity(`Added "${title}" to library`);
                  } else {
-                  await addDoc(collection(db, "wishlist"), {
+                 await addDoc(collection(db, "wishlist"), {
                       title,
                       authors,
                        publisher,
@@ -7377,9 +7379,10 @@ max-height: 90vh;
                        // ISBN hidden for wishlist
                        cover,
                        amazonURL,
-                       specialType: specialOn ? (specialTypeVal || "") : "",
-                       specialVolumes: specialOn && specialTypeVal === "specialEdition" && Number.isFinite(specialVolVal) ? specialVolVal : "",
-                       collectiblePrice: specialOn && specialTypeVal === "collectible" && Number.isFinite(collectibleVal) ? collectibleVal : ""
+                       // Wishlist form doesn't collect special fields here; set safe defaults
+                       specialType: "",
+                       specialVolumes: "",
+                       collectiblePrice: ""
                    });
                     addActivity(`Added "${title}" to wishlist`);
                    }
