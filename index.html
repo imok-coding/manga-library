@@ -2589,7 +2589,7 @@ max-height: 90vh;
          <div id="adminFormCard">
             <button id="adminFormClose" title="Close">&times;</button>
             <div id="adminFormImageWrap">
-               <img id="adminCoverPreview" src="https://imgur.com/EdCZbn6.png" alt="Cover">
+               <img id="adminCoverPreview" src="https://imgur.com/chUgq4W.png" alt="Cover">
             </div>
             <div id="adminFormFields">
                <h2 id="adminFormTitle">Add Book</h2>
@@ -2691,7 +2691,7 @@ max-height: 90vh;
             <button id="multiEditorClose" title="Close">&times;</button>
             <div id="multiEditorImageWrap">
                <img id="multiEditorCoverPreview"
-                  src="https://imgur.com/EdCZbn6.png"
+                  src="https://imgur.com/chUgq4W.png"
                   alt="Cover">
             </div>
             <div id="multiEditorFields">
@@ -5214,7 +5214,7 @@ max-height: 90vh;
            multiEditorCoverInput.value     = item.cover || "";
 
            multiEditorCoverPreview.src =
-               item.cover || "https://imgur.com/EdCZbn6.png";
+               item.cover || "https://imgur.com/chUgq4W.png";
          
            // Show Amazon URL only for wishlist editing
            const isWishlist = (adminFormCollection === "wishlist" || currentSectionKey === 'wishlist');
@@ -6302,7 +6302,7 @@ max-height: 90vh;
             ].join(' ').toLowerCase();
             card.dataset.search = searchable;
             card.innerHTML = `
-                <img loading="lazy" decoding="async" src="${b.Cover || 'https://imgur.com/EdCZbn6.png'}" alt="Cover">
+                <img loading="lazy" decoding="async" src="${b.Cover || 'https://imgur.com/chUgq4W.png'}" alt="Cover">
                 <div class="title">${b.Title || ''}</div>
                 <div class="meta">${
                   (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
@@ -6402,7 +6402,7 @@ max-height: 90vh;
             ].join(' ').toLowerCase();
             card.dataset.search = searchable;
             card.innerHTML = `
-              <img loading="lazy" decoding="async" src="${b.Cover || 'https://imgur.com/EdCZbn6.png'}" alt="Cover">
+              <img loading="lazy" decoding="async" src="${b.Cover || 'https://imgur.com/chUgq4W.png'}" alt="Cover">
               <div class="title">${b.Title || ''}</div>
               <div class="meta">${
                 (b.Authors && b.Authors!=='Unknown' ? b.Authors + '<br>' : '') +
@@ -6656,7 +6656,7 @@ max-height: 90vh;
            }
          
          
-           popupImage.src = book.Cover || 'https://imgur.com/EdCZbn6.png';
+           popupImage.src = book.Cover || 'https://imgur.com/chUgq4W.png';
            popupTitle.innerHTML = book.Title || '';
            let meta = '';
            if (book.Authors && book.Authors !== 'Unknown') meta += book.Authors + '<br>';
@@ -7046,7 +7046,7 @@ max-height: 90vh;
              if (adminDateReadInput) setDateInputValue(adminDateReadInput, "");
              if (adminDateReadWrapper) adminDateReadWrapper.style.display = "none";
              if (adminIsbnWrapper) adminIsbnWrapper.style.display = "block";
-          adminCoverPreview.src     = "https://imgur.com/EdCZbn6.png";
+          adminCoverPreview.src     = "https://imgur.com/chUgq4W.png";
       }
          
            function openAdminForm(options) {
@@ -7092,7 +7092,7 @@ max-height: 90vh;
 
                adminIsbnInput.value      = book.ISBN || "";
                adminCoverInput.value     = book.Cover || "";
-               adminCoverPreview.src     = book.Cover || "https://imgur.com/EdCZbn6.png";
+               adminCoverPreview.src     = book.Cover || "https://imgur.com/chUgq4W.png";
                if (adminPageCountInput) adminPageCountInput.value = (book.PageCount !== undefined && book.PageCount !== null && book.PageCount !== "") ? book.PageCount : "";
 
                if (isWishlist) {
@@ -7307,7 +7307,7 @@ max-height: 90vh;
                if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
                adminCoverPreview.src = url;
                } else {
-               adminCoverPreview.src = "https://imgur.com/EdCZbn6.png";
+               adminCoverPreview.src = "https://imgur.com/chUgq4W.png";
                }
            });
            
@@ -7316,7 +7316,7 @@ max-height: 90vh;
                if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
                    multiEditorCoverPreview.src = url;
                } else {
-                   multiEditorCoverPreview.src = "https://imgur.com/EdCZbn6.png";
+                   multiEditorCoverPreview.src = "https://imgur.com/chUgq4W.png";
                }
            });
            
