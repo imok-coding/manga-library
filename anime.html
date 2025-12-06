@@ -804,9 +804,13 @@
         const picture = node.main_picture || {};
         const coverUrl = picture.large || picture.medium || "";
 
+        // Prefer English title, fallback to main MAL title, then Japanese
+        const englishTitle = node.alternative_titles?.en;
+        const japaneseTitle = node.alternative_titles?.ja;
+
         return {
           id: node.id,
-          title: node.title || "Unknown title",
+          title: englishTitle || node.title || japaneseTitle || "Unknown title",
           cover: coverUrl,
           type: node.media_type || "Anime",
           episodes: typeof node.num_episodes === "number"
