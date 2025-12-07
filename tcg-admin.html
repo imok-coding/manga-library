@@ -428,453 +428,220 @@
   </div>
 
   <script type="module">
-    // ===== Firebase config (same as index.html) =====
+    // --- Firebase setup (keep your config) ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import {
+        getFirestore,
+        collection,
+        addDoc,
+    } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
     const firebaseConfig = {
-      apiKey: "AIzaSyCOOnlmEcAcJywsS93LLfLSywy9ENqnppM",
-      authDomain: "tyler-manga-library.firebaseapp.com",
-      projectId: "tyler-manga-library",
-      storageBucket: "tyler-manga-library.firebasestorage.app",
-      messagingSenderId: "307412068362",
-      appId: "1:307412068362:web:6cfe5666187439dfa757f3"
+        apiKey: "AIzaSyCOOnlmEcAcJywsS93LLfLSywy9ENqnppM",
+        authDomain: "tyler-manga-library.firebaseapp.com",
+        projectId: "tyler-manga-library",
+        storageBucket: "tyler-manga-library.firebasestorage.app",
+        messagingSenderId: "307412068362",
+        appId: "1:307412068362:web:6cfe5666187439dfa757f3"
     };
 
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-    import {
-      getAuth,
-      GoogleAuthProvider,
-      signInWithPopup,
-      signOut,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      getDocs,
-      addDoc,
-      updateDoc,
-      deleteDoc,
-      doc,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
-
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
-    const ADMIN_EMAIL = "imokissick@gmail.com";
 
-    let isAdmin = false;
-    let currentUser = null;
+    // --- API bases ---
+    const POKEMON_API_BASE = "https://api.pokemontcg.io/v2/cards";
+    const OP_API_BASE = "https://optcgapi.com/api";
 
-    const authStatusText = document.getElementById("authStatusText");
-    const authSignInBtn = document.getElementById("authSignInBtn");
-    const authSignOutBtn = document.getElementById("authSignOutBtn");
-    const notAdminMessage = document.getElementById("notAdminMessage");
-    const mainContent = document.getElementById("mainContent");
-
-    const gameSelect = document.getElementById("gameSelect");
-    const searchQuery = document.getElementById("searchQuery");
-    const searchBtn = document.getElementById("searchBtn");
-    const searchStatus = document.getElementById("searchStatus");
-    const resultsGrid = document.getElementById("resultsGrid");
-    const logArea = document.getElementById("logArea");
-
-    const existingGameFilter = document.getElementById("existingGameFilter");
-    const existingSearch = document.getElementById("existingSearch");
-    const existingList = document.getElementById("existingList");
-
-    let searchResults = [];
-    let existingCards = [];
-
-    // ===== Auth =====
-    onAuthStateChanged(auth, async (user) => {
-      currentUser = user;
-      if (user) {
-        isAdmin = user.email === ADMIN_EMAIL;
-        authStatusText.textContent = isAdmin
-          ? `Signed in as admin: ${user.email}`
-          : `Signed in: ${user.email}`;
-        authSignInBtn.style.display = "none";
-        authSignOutBtn.style.display = "inline-flex";
-      } else {
-        currentUser = null;
-        isAdmin = false;
-        authStatusText.textContent = "Not signed in.";
-        authSignInBtn.style.display = "inline-flex";
-        authSignOutBtn.style.display = "none";
-      }
-
-      if (!isAdmin) {
-        notAdminMessage.style.display = "block";
-        mainContent.style.display = "none";
-      } else {
-        notAdminMessage.style.display = "none";
-        mainContent.style.display = "grid";
-        await loadExistingCards();
-      }
-    });
-
-    authSignInBtn.addEventListener("click", async () => {
-      try {
-        await signInWithPopup(auth, provider);
-      } catch (err) {
-        console.error(err);
-        alert("Sign-in failed. See console.");
-      }
-    });
-
-    authSignOutBtn.addEventListener("click", async () => {
-      try {
-        await signOut(auth);
-      } catch (err) {
-        console.error(err);
-        alert("Sign-out failed.");
-      }
-    });
-
-    // ===== Helper: log =====
-    function log(msg, isError = false) {
-      const line = document.createElement("div");
-      line.className = "log-line";
-      if (isError) line.classList.add("danger-text");
-      const time = new Date().toLocaleTimeString();
-      line.textContent = `[${time}] ${msg}`;
-      logArea.prepend(line);
-    }
-
-    // ===== API TCG search =====
-    function looksLikeCode(value) {
-      const v = value.trim().toUpperCase();
-      if (/^OP\d{2}-\d{3}$/.test(v)) return true; // OP01-001
-      if (/^[A-Z0-9]+-\d+$/.test(v)) return true;  // base1-4 style
-      return false;
-    }
-
-    async function searchApiTcg(game, query) {
-      const trimmed = query.trim();
-      if (!trimmed) return [];
-
-      const baseGameSlug = game === "onepiece" ? "one-piece" : "pokemon";
-
-      let param = "name";
-      if (looksLikeCode(trimmed)) {
-        param = "id";
-      }
-
-      const url = `https://apitcg.com/api/${baseGameSlug}/cards?${param}=${encodeURIComponent(trimmed)}`;
-      searchStatus.textContent = "Querying API TCG…";
-      log(`Request: ${url}`);
-
-      const res = await fetch(url);
-      if (!res.ok) {
-        throw new Error(`API error ${res.status}`);
-      }
-      const json = await res.json();
-
-      // Both Pokémon & One Piece examples use json.data as array in docs.
-      const arr = Array.isArray(json.data) ? json.data : [];
-      searchStatus.textContent = `Found ${arr.length} card(s).`;
-      return arr;
-    }
-
-    searchBtn.addEventListener("click", async () => {
-      if (!isAdmin) {
-        alert("Admin only.");
-        return;
-      }
-      const q = searchQuery.value;
-      if (!q.trim()) {
-        alert("Enter a name or ID.");
-        return;
-      }
-
-      const game = gameSelect.value;
-      searchBtn.disabled = true;
-      resultsGrid.innerHTML = "";
-      searchStatus.textContent = "Searching…";
-
-      try {
-        searchResults = await searchApiTcg(game, q);
-        if (!searchResults.length) {
-          searchStatus.textContent = "No results.";
-          return;
+    // --- Simple logger utility (optional) ---
+    const logArea = document.getElementById("log");
+    function log(msg) {
+        if (logArea) {
+        const line = document.createElement("div");
+        line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        logArea.prepend(line);
+        } else {
+        console.log(msg);
         }
-        renderSearchResults();
-      } catch (err) {
-        console.error(err);
-        log(`Error: ${err.message}`, true);
-        searchStatus.textContent = "Search failed.";
-      } finally {
-        searchBtn.disabled = false;
-      }
-    });
-
-    function extractCommonFields(game, apiCard) {
-      if (game === "onepiece") {
-        return {
-          game,
-          code: apiCard.code || apiCard.id || "",
-          name: apiCard.name || "",
-          setName: apiCard.set?.name || "",
-          rarity: apiCard.rarity || "",
-          imageSmall: apiCard.images?.small || "",
-          imageLarge: apiCard.images?.large || apiCard.images?.small || ""
-        };
-      } else { // pokemon
-        return {
-          game,
-          code: apiCard.id || "",
-          name: apiCard.name || "",
-          setName: apiCard.set?.name || "",
-          rarity: apiCard.rarity || "",
-          imageSmall: apiCard.images?.small || "",
-          imageLarge: apiCard.images?.large || apiCard.images?.small || ""
-        };
-      }
     }
 
-    function renderSearchResults() {
-      const game = gameSelect.value;
-      resultsGrid.innerHTML = "";
-
-      if (!searchResults.length) return;
-
-      searchResults.forEach((apiCard, index) => {
-        const common = extractCommonFields(game, apiCard);
-
-        const cardEl = document.createElement("article");
-        cardEl.className = "result-card";
-
-        cardEl.innerHTML = `
-          <div class="result-header">
-            <div class="result-thumb-wrap">
-              ${common.imageSmall
-                ? `<img src="${common.imageSmall}" alt="${common.name}">`
-                : ""}
-            </div>
-            <div class="result-meta">
-              <div class="result-name">${common.name || "(no name)"}</div>
-              <div class="result-line">${common.setName || ""}</div>
-              <div class="result-line">${common.code || ""}</div>
-              <div class="result-line">Rarity: ${common.rarity || "-"}</div>
-            </div>
-          </div>
-          <div class="result-controls">
-            <div style="display:flex;align-items:center;gap:6px;">
-              <span class="tag">${game === "pokemon" ? "Pokémon" : "One Piece"}</span>
-              <label style="font-size:0.75rem;color:var(--text-soft);">
-                $ Price
-                <input type="number" step="0.01" min="0" class="small-input" id="price-input-${index}" value="0" />
-              </label>
-            </div>
-            <button class="btn" data-import-index="${index}">Import</button>
-          </div>
-        `;
-
-        const importBtn = cardEl.querySelector("[data-import-index]");
-        importBtn.addEventListener("click", () => handleImportClicked(index));
-
-        resultsGrid.appendChild(cardEl);
-      });
+    // --- Helpers: detect if One Piece query is a card code like OP01-001/ST04-016 ---
+    function looksLikeOPCode(value) {
+        // Covers OP01-001, EB01-003, ST04-016, PRB01-001, etc.
+        return /^[A-Z]{2,4}\d{2}-\d{3}$/i.test(value.trim());
     }
 
-    // Stub for future live pricing via a backend (JustTCG or similar).
-    async function fetchLivePriceFromBackend(commonCard) {
-      // Example (you’d implement a Cloud Function & call it here):
-      // const res = await fetch(`/api/tcg-price?game=${commonCard.game}&code=${encodeURIComponent(commonCard.code)}`);
-      // if (!res.ok) return null;
-      // const data = await res.json();
-      // return data.priceUsd ?? null;
-      return null;
-    }
+    // --- Fetch functions ---
 
-    async function handleImportClicked(index) {
-      if (!isAdmin) {
-        alert("Admin only.");
-        return;
-      }
-      const game = gameSelect.value;
-      const apiCard = searchResults[index];
-      const common = extractCommonFields(game, apiCard);
+    async function searchPokemonByName(name) {
+        const q = `name:${name}`;
+        const url = `${POKEMON_API_BASE}?q=${encodeURIComponent(q)}&pageSize=20`;
+        log(`Request (Pokémon): ${url}`);
 
-      const priceInput = document.getElementById(`price-input-${index}`);
-      let price = Number(priceInput?.value || 0);
-      if (!Number.isFinite(price) || price < 0) price = 0;
-
-      try {
-        // If later you wire backend pricing, you could uncomment:
-        // const livePrice = await fetchLivePriceFromBackend(common);
-        // if (livePrice != null) price = livePrice;
-
-        const payload = {
-          game: common.game,
-          code: common.code,
-          name: common.name,
-          setName: common.setName,
-          rarity: common.rarity,
-          imageSmall: common.imageSmall,
-          imageLarge: common.imageLarge,
-          price,
-          owned: 0,
-          createdAt: serverTimestamp(),
-          createdBy: currentUser?.email || null
-        };
-
-        const colRef = collection(db, "tcgCards");
-        const docRef = await addDoc(colRef, payload);
-        log(`Imported card ${common.name} (${common.code}) -> doc ${docRef.id}`);
-        await loadExistingCards();
-      } catch (err) {
-        console.error(err);
-        log(`Failed to import card: ${err.message}`, true);
-        alert("Failed to import card. See console.");
-      }
-    }
-
-    // ===== Existing cards (right panel) =====
-    async function loadExistingCards() {
-      try {
-        const snap = await getDocs(collection(db, "tcgCards"));
-        existingCards = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderExistingCards();
-      } catch (err) {
-        console.error(err);
-        log(`Failed to load existing tcgCards: ${err.message}`, true);
-        existingList.innerHTML = "<div class='danger-text'>Failed to load existing cards.</div>";
-      }
-    }
-
-    function renderExistingCards() {
-      const gameFilter = existingGameFilter.value;
-      const q = (existingSearch.value || "").toLowerCase().trim();
-
-      let arr = existingCards.slice();
-      if (gameFilter !== "all") {
-        arr = arr.filter(c => (c.game || "").toLowerCase() === gameFilter);
-      }
-
-      if (q) {
-        arr = arr.filter(c => {
-          const name = (c.name || "").toLowerCase();
-          const setName = (c.setName || "").toLowerCase();
-          const code = (c.code || "").toLowerCase();
-          return (
-            name.includes(q) ||
-            setName.includes(q) ||
-            code.includes(q)
-          );
-        });
-      }
-
-      // Sort by game then set then name for sanity
-      arr.sort((a, b) => {
-        const g = (a.game || "").localeCompare(b.game || "");
-        if (g) return g;
-        const s = (a.setName || "").localeCompare(b.setName || "");
-        if (s) return s;
-        return (a.name || "").localeCompare(b.name || "");
-      });
-
-      existingList.innerHTML = "";
-      if (!arr.length) {
-        existingList.innerHTML = "<div style='font-size:0.8rem;color:var(--text-soft);'>No cards match filters.</div>";
-        return;
-      }
-
-      arr.forEach(card => {
-        const price = typeof card.price === "number" ? card.price : 0;
-        const owned = typeof card.owned === "number" ? card.owned : 0;
-
-        const row = document.createElement("div");
-        row.className = "existing-item";
-
-        row.innerHTML = `
-          <div class="existing-img">
-            ${card.imageSmall || card.imageLarge
-              ? `<img src="${card.imageSmall || card.imageLarge}" alt="${card.name}">`
-              : ""}
-          </div>
-          <div class="existing-meta">
-            <div class="existing-name" title="${card.name || ""}">${card.name || ""}</div>
-            <div class="existing-sub">
-              ${(card.game || "").toUpperCase()} · ${card.setName || ""} · ${card.code || ""}
-            </div>
-            <div class="existing-sub">
-              Rarity: ${card.rarity || "-"} · Stored price: $${price.toFixed(2)} · Owned: ${owned}
-            </div>
-          </div>
-          <div class="existing-actions">
-            <input type="number" step="0.01" min="0" value="${price.toFixed(2)}" data-price-input="${card.id}" />
-            <input type="number" step="1" min="0" value="${owned}" data-owned-input="${card.id}" />
-            <button class="btn secondary" data-save="${card.id}">Save</button>
-            <button class="btn danger" data-delete="${card.id}">Delete</button>
-          </div>
-        `;
-
-        const saveBtn = row.querySelector("[data-save]");
-        saveBtn.addEventListener("click", () => saveExistingCard(card.id));
-
-        const deleteBtn = row.querySelector("[data-delete]");
-        deleteBtn.addEventListener("click", () => deleteExistingCard(card.id, card.name, card.code));
-
-        existingList.appendChild(row);
-      });
-    }
-
-    async function saveExistingCard(id) {
-      if (!isAdmin) {
-        alert("Admin only.");
-        return;
-      }
-      const priceInput = existingList.querySelector(`[data-price-input="${id}"]`);
-      const ownedInput = existingList.querySelector(`[data-owned-input="${id}"]`);
-      let price = Number(priceInput?.value || 0);
-      if (!Number.isFinite(price) || price < 0) price = 0;
-      let owned = Number(ownedInput?.value || 0);
-      if (!Number.isFinite(owned) || owned < 0) owned = 0;
-
-      try {
-        await updateDoc(doc(db, "tcgCards", id), {
-          price,
-          owned
-        });
-        log(`Updated card ${id}: price=$${price.toFixed(2)}, owned=${owned}`);
-        const idx = existingCards.findIndex(c => c.id === id);
-        if (idx >= 0) {
-          existingCards[idx].price = price;
-          existingCards[idx].owned = owned;
+        const res = await fetch(url);
+        if (!res.ok) {
+        throw new Error(`Pokémon API error: ${res.status} ${res.statusText}`);
         }
-        renderExistingCards();
-      } catch (err) {
-        console.error(err);
-        log(`Failed to update card ${id}: ${err.message}`, true);
-        alert("Failed to save. See console.");
-      }
+        const data = await res.json();
+        return (data && data.data) || [];
     }
 
-    async function deleteExistingCard(id, name, code) {
-      if (!isAdmin) {
-        alert("Admin only.");
+    async function fetchOnePieceByCode(code) {
+        const cardId = code.trim().toUpperCase();
+        const url = `${OP_API_BASE}/sets/card/${cardId}/`;
+        log(`Request (One Piece): ${url}`);
+
+        const res = await fetch(url);
+        if (!res.ok) {
+        throw new Error(`OPTCG API error: ${res.status} ${res.statusText}`);
+        }
+        const data = await res.json();
+        // This endpoint returns a list (base + alt arts etc.)
+        return Array.isArray(data) ? data : [];
+    }
+
+    // --- Mapping functions (normalize to your Firestore schema) ---
+
+    function mapPokemonCard(apiCard) {
+        // Try to pull a reasonable market price from tcgplayer.prices
+        let marketPrice = 0;
+        const prices = apiCard.tcgplayer?.prices || {};
+        for (const key of Object.keys(prices)) {
+        const p = prices[key];
+        if (p && typeof p.market === "number") {
+            marketPrice = p.market;
+            break;
+        }
+        }
+
+        return {
+        game: "pokemon",
+        apiId: apiCard.id,
+        code: apiCard.number || "",
+        name: apiCard.name || "",
+        setName: apiCard.set?.name || "",
+        rarity: apiCard.rarity || "",
+        imageSmall: apiCard.images?.small || "",
+        imageLarge: apiCard.images?.large || "",
+        // Pokémon: we DO use market price
+        price: marketPrice,
+        owned: 0,
+        createdAt: Date.now()
+        };
+    }
+
+    function mapOnePieceCard(apiCard) {
+        // `apiCard` shape based on OPTCG sample:
+        // inventory_price, market_price, card_name, set_name, card_set_id, card_image, etc.
+        return {
+        game: "onepiece",
+        apiId: apiCard.card_image_id || apiCard.card_set_id,
+        code: apiCard.card_set_id || "",
+        name: apiCard.card_name || "",
+        setName: apiCard.set_name || "",
+        rarity: apiCard.rarity || "",
+        imageSmall: apiCard.card_image || "",
+        imageLarge: apiCard.card_image || "",
+        // One Piece: **no auto pricing** right now
+        price: 0,
+        owned: 0,
+        createdAt: Date.now()
+        };
+    }
+
+    // --- DOM elements (adjust IDs to your markup) ---
+    const gameSelect = document.getElementById("gameSelect");   // e.g. <select id="gameSelect"><option value="pokemon">...</option>...
+    const queryInput = document.getElementById("cardQuery");    // e.g. search box
+    const resultsContainer = document.getElementById("results"); // container to show search results
+
+    // Render results to the page with "Import" buttons
+    function renderResults(cards, game) {
+        if (!resultsContainer) return;
+        resultsContainer.innerHTML = "";
+
+        if (!cards.length) {
+        resultsContainer.textContent = "No cards found.";
         return;
-      }
-      if (!confirm(`Delete card "${name || code || id}" from Firestore?`)) return;
+        }
 
-      try {
-        await deleteDoc(doc(db, "tcgCards", id));
-        log(`Deleted card ${id}`);
-        existingCards = existingCards.filter(c => c.id !== id);
-        renderExistingCards();
-      } catch (err) {
-        console.error(err);
-        log(`Failed to delete card ${id}: ${err.message}`, true);
-        alert("Failed to delete. See console.");
-      }
+        cards.forEach((card) => {
+        const cardDiv = document.createElement("div");
+        cardDiv.className = "admin-card-result";
+
+        const title = document.createElement("div");
+        title.className = "card-title";
+        title.textContent = card.name;
+
+        const subtitle = document.createElement("div");
+        subtitle.className = "card-subtitle";
+        subtitle.textContent = `${card.setName} • ${card.rarity} • Code: ${card.code}`;
+
+        const img = document.createElement("img");
+        img.className = "card-thumb";
+        img.src = card.imageSmall || card.imageLarge || "";
+        img.alt = card.name;
+
+        const importBtn = document.createElement("button");
+        importBtn.textContent = "Import to Firestore";
+        importBtn.addEventListener("click", () => importCard(card));
+
+        cardDiv.appendChild(img);
+        cardDiv.appendChild(title);
+        cardDiv.appendChild(subtitle);
+        cardDiv.appendChild(importBtn);
+        resultsContainer.appendChild(cardDiv);
+        });
     }
 
-    existingGameFilter.addEventListener("change", renderExistingCards);
-    existingSearch.addEventListener("input", () => {
-      renderExistingCards();
-    });
+    async function importCard(card) {
+        try {
+        await addDoc(collection(db, "tcgCards"), card);
+        log(`Imported card: [${card.game}] ${card.name} (${card.code})`);
+        alert(`Imported: ${card.name}`);
+        } catch (err) {
+        console.error(err);
+        log(`Error importing card: ${err.message}`);
+        alert("Failed to import card. Check console/log.");
+        }
+    }
+
+    // --- Main search handler ---
+
+    const searchBtn = document.getElementById("searchBtn"); // e.g. <button id="searchBtn">Search</button>
+
+    if (searchBtn) {
+        searchBtn.addEventListener("click", async () => {
+        const game = gameSelect ? gameSelect.value : "pokemon";
+        const query = (queryInput?.value || "").trim();
+
+        if (!query) {
+            alert("Enter a card name (Pokémon) or card code (One Piece, e.g. OP01-001).");
+            return;
+        }
+
+        try {
+            let cards = [];
+
+            if (game === "pokemon") {
+            const apiCards = await searchPokemonByName(query);
+            cards = apiCards.map(mapPokemonCard);
+            } else if (game === "onepiece") {
+            if (!looksLikeOPCode(query)) {
+                alert("For now, search One Piece by card code (e.g. OP01-001, ST04-016).");
+                return;
+            }
+            const apiCards = await fetchOnePieceByCode(query);
+            cards = apiCards.map(mapOnePieceCard);
+            }
+
+            renderResults(cards, game);
+        } catch (err) {
+            console.error(err);
+            log(`Error: Failed to fetch (${err.message})`);
+            alert("API request failed. Check log/console for details.");
+        }
+        });
+    }
   </script>
+
 </body>
 </html>
