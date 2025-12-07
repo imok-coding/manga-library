@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TCG Admin Importer</title>
+  <meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1e0d14">
+
+  <style>
+    :root {
+      --bg: #1e0d14;
+      --bg-deep: #0b0610;
+      --panel: rgba(9,2,16,0.95);
+      --accent: #ffb6c1;
+      --accent-soft: #ffd1dc;
+      --text-main: #ffffff;
+      --text-soft: #d0c5cf;
+      --danger: #ff4b6a;
+      --border-soft: rgba(255,182,193,0.35);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 16px 40px rgba(0,0,0,0.8);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg) url("https://imgur.com/7co2elX.png") center top / cover no-repeat fixed;
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .page-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 16px 40px;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .title-block h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: var(--accent);
+    }
+
+    .title-block p {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      color: var(--text-soft);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,182,193,0.35);
+      background: rgba(11,6,16,0.9);
+      color: var(--accent-soft);
+      text-decoration: none;
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+    }
+
+    .back-link span {
+      font-size: 1.1rem;
+    }
+
+    .auth-status {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .auth-status small {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid var(--accent-soft);
+      background: rgba(30,13,20,0.95);
+      color: var(--accent-soft);
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .btn.secondary {
+      border-color: rgba(255,255,255,0.25);
+      color: #fff;
+      background: rgba(11,6,16,0.95);
+    }
+
+    .btn.danger {
+      border-color: var(--danger);
+      color: #fff;
+      background: rgba(120,15,35,0.95);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: var(--radius-lg);
+      padding: 14px 14px 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 8px;
+      color: var(--accent-soft);
+    }
+
+    .panel-sub {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      margin: 0 0 10px;
+    }
+
+    .field-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    label {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+    }
+
+    select, input[type="text"], input[type="number"] {
+      background: rgba(6,3,9,0.95);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      padding: 6px 10px;
+    }
+
+    input::placeholder {
+      color: var(--text-soft);
+    }
+
+    .grow {
+      flex: 1 1 160px;
+    }
+
+    .results-grid {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      max-height: 520px;
+      overflow-y: auto;
+    }
+
+    .result-card {
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.18);
+      background: radial-gradient(circle at 0 0, rgba(255,182,193,0.1), rgba(6,0,10,0.98));
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .result-header {
+      display: flex;
+      gap: 8px;
+    }
+
+    .result-thumb-wrap {
+      width: 72px;
+      min-width: 72px;
+      aspect-ratio: 3/4;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .result-thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .result-meta {
+      flex: 1;
+      min-width: 0;
+      font-size: 0.78rem;
+    }
+
+    .result-name {
+      font-weight: 600;
+      color: var(--accent-soft);
+      margin-bottom: 2px;
+    }
+
+    .result-line {
+      color: var(--text-soft);
+      font-size: 0.75rem;
+    }
+
+    .result-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+
+    .small-input {
+      width: 90px;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--accent-soft);
+      background: rgba(11,6,16,0.95);
+    }
+
+    .log-area {
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 10px;
+      background: rgba(0,0,0,0.7);
+      font-size: 0.75rem;
+      color: var(--text-soft);
+      max-height: 140px;
+      overflow-y: auto;
+    }
+
+    .log-line {
+      margin-bottom: 2px;
+    }
+
+    .danger-text {
+      color: var(--danger);
+    }
+
+    .existing-list {
+      margin-top: 8px;
+      max-height: 520px;
+      overflow-y: auto;
+      font-size: 0.8rem;
+    }
+
+    .existing-item {
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      padding: 8px;
+      margin-bottom: 6px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: rgba(6,0,10,0.95);
+    }
+
+    .existing-img {
+      width: 52px;
+      min-width: 52px;
+      aspect-ratio: 3/4;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .existing-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .existing-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .existing-name {
+      font-weight: 600;
+      color: var(--accent-soft);
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .existing-sub {
+      font-size: 0.75rem;
+      color: var(--text-soft);
+    }
+
+    .existing-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .existing-actions input {
+      width: 80px;
+      font-size: 0.75rem;
+      padding: 4px 6px;
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header>
+      <div class="title-block">
+        <a href="tcg.html" class="back-link"><span>&lt;</span> Back to TCG viewer</a>
+        <h1>TCG Admin Importer</h1>
+        <p>Search Pokémon &amp; One Piece cards via API and push them into Firestore.</p>
+      </div>
+      <div class="auth-status">
+        <small id="authStatusText">Checking sign-in…</small>
+        <button class="btn secondary" id="authSignInBtn" style="display:none;">Sign in with Google</button>
+        <button class="btn secondary" id="authSignOutBtn" style="display:none;">Sign out</button>
+      </div>
+    </header>
+
+    <div id="notAdminMessage" class="panel danger-text" style="display:none; text-align:center;">
+      Admin-only page. Sign in with the same account that’s admin on your main library.
+    </div>
+
+    <main id="mainContent" style="display:none;">
+      <!-- Left: Search + API results -->
+      <section class="panel">
+        <h2 class="panel-title">Search &amp; Import from API TCG</h2>
+        <p class="panel-sub">
+          Uses <strong>apitcg.com</strong> for card images &amp; metadata (Pokémon &amp; One Piece).
+          Price is stored locally for now; you can later wire a backend for live pricing.
+        </p>
+
+        <div class="field-row">
+          <label>Game:</label>
+          <select id="gameSelect">
+            <option value="pokemon">Pokémon</option>
+            <option value="onepiece">One Piece</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <label class="grow">
+            <span style="display:block;font-size:0.75rem;color:var(--text-soft);">Search by name or exact ID</span>
+            <input type="text" id="searchQuery" class="grow" placeholder="e.g. charizard / OP01-001 / luffy" />
+          </label>
+        </div>
+
+        <div class="field-row">
+          <button class="btn" id="searchBtn">Search</button>
+          <small style="color:var(--text-soft);">
+            Simple rule: if it looks like a code (OPxx-xxx), search by ID; otherwise by name.
+          </small>
+        </div>
+
+        <div id="searchStatus" class="panel-sub" style="margin-top:4px;"></div>
+
+        <div id="resultsGrid" class="results-grid"></div>
+
+        <div class="log-area" id="logArea"></div>
+      </section>
+
+      <!-- Right: Existing Firestore cards & quick editing -->
+      <section class="panel">
+        <h2 class="panel-title">Existing TCG Cards (Firestore)</h2>
+        <p class="panel-sub">
+          Quick-edit stored price &amp; owned count for cards already in <code>tcgCards</code>.
+        </p>
+
+        <div class="field-row">
+          <label>Filter game:</label>
+          <select id="existingGameFilter">
+            <option value="all">All</option>
+            <option value="pokemon">Pokémon</option>
+            <option value="onepiece">One Piece</option>
+          </select>
+          <input type="text" id="existingSearch" class="grow" placeholder="Search by name / set / code" />
+        </div>
+
+        <div id="existingList" class="existing-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    // ===== Firebase config (same as index.html) =====
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOOnlmEcAcJywsS93LLfLSywy9ENqnppM",
+      authDomain: "tyler-manga-library.firebaseapp.com",
+      projectId: "tyler-manga-library",
+      storageBucket: "tyler-manga-library.firebasestorage.app",
+      messagingSenderId: "307412068362",
+      appId: "1:307412068362:web:6cfe5666187439dfa757f3"
+    };
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      addDoc,
+      updateDoc,
+      deleteDoc,
+      doc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+    const ADMIN_EMAIL = "imokissick@gmail.com";
+
+    let isAdmin = false;
+    let currentUser = null;
+
+    const authStatusText = document.getElementById("authStatusText");
+    const authSignInBtn = document.getElementById("authSignInBtn");
+    const authSignOutBtn = document.getElementById("authSignOutBtn");
+    const notAdminMessage = document.getElementById("notAdminMessage");
+    const mainContent = document.getElementById("mainContent");
+
+    const gameSelect = document.getElementById("gameSelect");
+    const searchQuery = document.getElementById("searchQuery");
+    const searchBtn = document.getElementById("searchBtn");
+    const searchStatus = document.getElementById("searchStatus");
+    const resultsGrid = document.getElementById("resultsGrid");
+    const logArea = document.getElementById("logArea");
+
+    const existingGameFilter = document.getElementById("existingGameFilter");
+    const existingSearch = document.getElementById("existingSearch");
+    const existingList = document.getElementById("existingList");
+
+    let searchResults = [];
+    let existingCards = [];
+
+    // ===== Auth =====
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      if (user) {
+        isAdmin = user.email === ADMIN_EMAIL;
+        authStatusText.textContent = isAdmin
+          ? `Signed in as admin: ${user.email}`
+          : `Signed in: ${user.email}`;
+        authSignInBtn.style.display = "none";
+        authSignOutBtn.style.display = "inline-flex";
+      } else {
+        currentUser = null;
+        isAdmin = false;
+        authStatusText.textContent = "Not signed in.";
+        authSignInBtn.style.display = "inline-flex";
+        authSignOutBtn.style.display = "none";
+      }
+
+      if (!isAdmin) {
+        notAdminMessage.style.display = "block";
+        mainContent.style.display = "none";
+      } else {
+        notAdminMessage.style.display = "none";
+        mainContent.style.display = "grid";
+        await loadExistingCards();
+      }
+    });
+
+    authSignInBtn.addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        console.error(err);
+        alert("Sign-in failed. See console.");
+      }
+    });
+
+    authSignOutBtn.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+      } catch (err) {
+        console.error(err);
+        alert("Sign-out failed.");
+      }
+    });
+
+    // ===== Helper: log =====
+    function log(msg, isError = false) {
+      const line = document.createElement("div");
+      line.className = "log-line";
+      if (isError) line.classList.add("danger-text");
+      const time = new Date().toLocaleTimeString();
+      line.textContent = `[${time}] ${msg}`;
+      logArea.prepend(line);
+    }
+
+    // ===== API TCG search =====
+    function looksLikeCode(value) {
+      const v = value.trim().toUpperCase();
+      if (/^OP\d{2}-\d{3}$/.test(v)) return true; // OP01-001
+      if (/^[A-Z0-9]+-\d+$/.test(v)) return true;  // base1-4 style
+      return false;
+    }
+
+    async function searchApiTcg(game, query) {
+      const trimmed = query.trim();
+      if (!trimmed) return [];
+
+      const baseGameSlug = game === "onepiece" ? "one-piece" : "pokemon";
+
+      let param = "name";
+      if (looksLikeCode(trimmed)) {
+        param = "id";
+      }
+
+      const url = `https://apitcg.com/api/${baseGameSlug}/cards?${param}=${encodeURIComponent(trimmed)}`;
+      searchStatus.textContent = "Querying API TCG…";
+      log(`Request: ${url}`);
+
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error(`API error ${res.status}`);
+      }
+      const json = await res.json();
+
+      // Both Pokémon & One Piece examples use json.data as array in docs.
+      const arr = Array.isArray(json.data) ? json.data : [];
+      searchStatus.textContent = `Found ${arr.length} card(s).`;
+      return arr;
+    }
+
+    searchBtn.addEventListener("click", async () => {
+      if (!isAdmin) {
+        alert("Admin only.");
+        return;
+      }
+      const q = searchQuery.value;
+      if (!q.trim()) {
+        alert("Enter a name or ID.");
+        return;
+      }
+
+      const game = gameSelect.value;
+      searchBtn.disabled = true;
+      resultsGrid.innerHTML = "";
+      searchStatus.textContent = "Searching…";
+
+      try {
+        searchResults = await searchApiTcg(game, q);
+        if (!searchResults.length) {
+          searchStatus.textContent = "No results.";
+          return;
+        }
+        renderSearchResults();
+      } catch (err) {
+        console.error(err);
+        log(`Error: ${err.message}`, true);
+        searchStatus.textContent = "Search failed.";
+      } finally {
+        searchBtn.disabled = false;
+      }
+    });
+
+    function extractCommonFields(game, apiCard) {
+      if (game === "onepiece") {
+        return {
+          game,
+          code: apiCard.code || apiCard.id || "",
+          name: apiCard.name || "",
+          setName: apiCard.set?.name || "",
+          rarity: apiCard.rarity || "",
+          imageSmall: apiCard.images?.small || "",
+          imageLarge: apiCard.images?.large || apiCard.images?.small || ""
+        };
+      } else { // pokemon
+        return {
+          game,
+          code: apiCard.id || "",
+          name: apiCard.name || "",
+          setName: apiCard.set?.name || "",
+          rarity: apiCard.rarity || "",
+          imageSmall: apiCard.images?.small || "",
+          imageLarge: apiCard.images?.large || apiCard.images?.small || ""
+        };
+      }
+    }
+
+    function renderSearchResults() {
+      const game = gameSelect.value;
+      resultsGrid.innerHTML = "";
+
+      if (!searchResults.length) return;
+
+      searchResults.forEach((apiCard, index) => {
+        const common = extractCommonFields(game, apiCard);
+
+        const cardEl = document.createElement("article");
+        cardEl.className = "result-card";
+
+        cardEl.innerHTML = `
+          <div class="result-header">
+            <div class="result-thumb-wrap">
+              ${common.imageSmall
+                ? `<img src="${common.imageSmall}" alt="${common.name}">`
+                : ""}
+            </div>
+            <div class="result-meta">
+              <div class="result-name">${common.name || "(no name)"}</div>
+              <div class="result-line">${common.setName || ""}</div>
+              <div class="result-line">${common.code || ""}</div>
+              <div class="result-line">Rarity: ${common.rarity || "-"}</div>
+            </div>
+          </div>
+          <div class="result-controls">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="tag">${game === "pokemon" ? "Pokémon" : "One Piece"}</span>
+              <label style="font-size:0.75rem;color:var(--text-soft);">
+                $ Price
+                <input type="number" step="0.01" min="0" class="small-input" id="price-input-${index}" value="0" />
+              </label>
+            </div>
+            <button class="btn" data-import-index="${index}">Import</button>
+          </div>
+        `;
+
+        const importBtn = cardEl.querySelector("[data-import-index]");
+        importBtn.addEventListener("click", () => handleImportClicked(index));
+
+        resultsGrid.appendChild(cardEl);
+      });
+    }
+
+    // Stub for future live pricing via a backend (JustTCG or similar).
+    async function fetchLivePriceFromBackend(commonCard) {
+      // Example (you’d implement a Cloud Function & call it here):
+      // const res = await fetch(`/api/tcg-price?game=${commonCard.game}&code=${encodeURIComponent(commonCard.code)}`);
+      // if (!res.ok) return null;
+      // const data = await res.json();
+      // return data.priceUsd ?? null;
+      return null;
+    }
+
+    async function handleImportClicked(index) {
+      if (!isAdmin) {
+        alert("Admin only.");
+        return;
+      }
+      const game = gameSelect.value;
+      const apiCard = searchResults[index];
+      const common = extractCommonFields(game, apiCard);
+
+      const priceInput = document.getElementById(`price-input-${index}`);
+      let price = Number(priceInput?.value || 0);
+      if (!Number.isFinite(price) || price < 0) price = 0;
+
+      try {
+        // If later you wire backend pricing, you could uncomment:
+        // const livePrice = await fetchLivePriceFromBackend(common);
+        // if (livePrice != null) price = livePrice;
+
+        const payload = {
+          game: common.game,
+          code: common.code,
+          name: common.name,
+          setName: common.setName,
+          rarity: common.rarity,
+          imageSmall: common.imageSmall,
+          imageLarge: common.imageLarge,
+          price,
+          owned: 0,
+          createdAt: serverTimestamp(),
+          createdBy: currentUser?.email || null
+        };
+
+        const colRef = collection(db, "tcgCards");
+        const docRef = await addDoc(colRef, payload);
+        log(`Imported card ${common.name} (${common.code}) -> doc ${docRef.id}`);
+        await loadExistingCards();
+      } catch (err) {
+        console.error(err);
+        log(`Failed to import card: ${err.message}`, true);
+        alert("Failed to import card. See console.");
+      }
+    }
+
+    // ===== Existing cards (right panel) =====
+    async function loadExistingCards() {
+      try {
+        const snap = await getDocs(collection(db, "tcgCards"));
+        existingCards = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderExistingCards();
+      } catch (err) {
+        console.error(err);
+        log(`Failed to load existing tcgCards: ${err.message}`, true);
+        existingList.innerHTML = "<div class='danger-text'>Failed to load existing cards.</div>";
+      }
+    }
+
+    function renderExistingCards() {
+      const gameFilter = existingGameFilter.value;
+      const q = (existingSearch.value || "").toLowerCase().trim();
+
+      let arr = existingCards.slice();
+      if (gameFilter !== "all") {
+        arr = arr.filter(c => (c.game || "").toLowerCase() === gameFilter);
+      }
+
+      if (q) {
+        arr = arr.filter(c => {
+          const name = (c.name || "").toLowerCase();
+          const setName = (c.setName || "").toLowerCase();
+          const code = (c.code || "").toLowerCase();
+          return (
+            name.includes(q) ||
+            setName.includes(q) ||
+            code.includes(q)
+          );
+        });
+      }
+
+      // Sort by game then set then name for sanity
+      arr.sort((a, b) => {
+        const g = (a.game || "").localeCompare(b.game || "");
+        if (g) return g;
+        const s = (a.setName || "").localeCompare(b.setName || "");
+        if (s) return s;
+        return (a.name || "").localeCompare(b.name || "");
+      });
+
+      existingList.innerHTML = "";
+      if (!arr.length) {
+        existingList.innerHTML = "<div style='font-size:0.8rem;color:var(--text-soft);'>No cards match filters.</div>";
+        return;
+      }
+
+      arr.forEach(card => {
+        const price = typeof card.price === "number" ? card.price : 0;
+        const owned = typeof card.owned === "number" ? card.owned : 0;
+
+        const row = document.createElement("div");
+        row.className = "existing-item";
+
+        row.innerHTML = `
+          <div class="existing-img">
+            ${card.imageSmall || card.imageLarge
+              ? `<img src="${card.imageSmall || card.imageLarge}" alt="${card.name}">`
+              : ""}
+          </div>
+          <div class="existing-meta">
+            <div class="existing-name" title="${card.name || ""}">${card.name || ""}</div>
+            <div class="existing-sub">
+              ${(card.game || "").toUpperCase()} · ${card.setName || ""} · ${card.code || ""}
+            </div>
+            <div class="existing-sub">
+              Rarity: ${card.rarity || "-"} · Stored price: $${price.toFixed(2)} · Owned: ${owned}
+            </div>
+          </div>
+          <div class="existing-actions">
+            <input type="number" step="0.01" min="0" value="${price.toFixed(2)}" data-price-input="${card.id}" />
+            <input type="number" step="1" min="0" value="${owned}" data-owned-input="${card.id}" />
+            <button class="btn secondary" data-save="${card.id}">Save</button>
+            <button class="btn danger" data-delete="${card.id}">Delete</button>
+          </div>
+        `;
+
+        const saveBtn = row.querySelector("[data-save]");
+        saveBtn.addEventListener("click", () => saveExistingCard(card.id));
+
+        const deleteBtn = row.querySelector("[data-delete]");
+        deleteBtn.addEventListener("click", () => deleteExistingCard(card.id, card.name, card.code));
+
+        existingList.appendChild(row);
+      });
+    }
+
+    async function saveExistingCard(id) {
+      if (!isAdmin) {
+        alert("Admin only.");
+        return;
+      }
+      const priceInput = existingList.querySelector(`[data-price-input="${id}"]`);
+      const ownedInput = existingList.querySelector(`[data-owned-input="${id}"]`);
+      let price = Number(priceInput?.value || 0);
+      if (!Number.isFinite(price) || price < 0) price = 0;
+      let owned = Number(ownedInput?.value || 0);
+      if (!Number.isFinite(owned) || owned < 0) owned = 0;
+
+      try {
+        await updateDoc(doc(db, "tcgCards", id), {
+          price,
+          owned
+        });
+        log(`Updated card ${id}: price=$${price.toFixed(2)}, owned=${owned}`);
+        const idx = existingCards.findIndex(c => c.id === id);
+        if (idx >= 0) {
+          existingCards[idx].price = price;
+          existingCards[idx].owned = owned;
+        }
+        renderExistingCards();
+      } catch (err) {
+        console.error(err);
+        log(`Failed to update card ${id}: ${err.message}`, true);
+        alert("Failed to save. See console.");
+      }
+    }
+
+    async function deleteExistingCard(id, name, code) {
+      if (!isAdmin) {
+        alert("Admin only.");
+        return;
+      }
+      if (!confirm(`Delete card "${name || code || id}" from Firestore?`)) return;
+
+      try {
+        await deleteDoc(doc(db, "tcgCards", id));
+        log(`Deleted card ${id}`);
+        existingCards = existingCards.filter(c => c.id !== id);
+        renderExistingCards();
+      } catch (err) {
+        console.error(err);
+        log(`Failed to delete card ${id}: ${err.message}`, true);
+        alert("Failed to delete. See console.");
+      }
+    }
+
+    existingGameFilter.addEventListener("change", renderExistingCards);
+    existingSearch.addEventListener("input", () => {
+      renderExistingCards();
+    });
+  </script>
+</body>
+</html>
